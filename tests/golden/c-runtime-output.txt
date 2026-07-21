@@ -1,0 +1,95 @@
+====================================================================
+OMNICRON COPRODUCT PARTITION: VERIFICATION ARTIFACT
+====================================================================
+
+[1] Injecting RULES.o and FACTS.o, both claiming coordinate 0x48:
+  Injected RULES.o at contribution index 0 (status=0)
+  Injected FACTS.o at contribution index 1 (status=0)
+
+[2] Inspecting the blackboard fiber at 0x48:
+  Contribution count at 0x48: 2
+    origin 0x52554C45  car=0x12345678  cdr=0x89ABCDEF
+    origin 0x46414354  car=0x11223344  cdr=0x55667788
+
+[3] Occupancy and conflict boards:
+  Occupancy popcount: 1 (expected 1 -- same visible byte, two origins)
+  Conflict popcount:  1 (expected 1 -- 0x48 is contested)
+
+[4] CONS(RULES, FACTS) vs CONS(FACTS, RULES):
+  CONS(RULES,FACTS) resolved=0x8F5A10B3  visible=0xB3  route=LOCAL/CAR (selector 1)
+  CONS(FACTS,RULES) resolved=0x6F1B09F5  visible=0xF5  route=LOCAL/CAR (selector 1)
+  Order-sensitivity confirmed: TRUE
+
+[5] Validating equivalence between RULES.o and FACTS.o contributors:
+  valid=false  reason=5  resolved_left=0x6937C38D  resolved_right=0x8976DACB
+  omi_blackboard_union status=3 (REJECTED -- not validated)
+  find(RULES)=0  find(FACTS)=1  same class=false
+
+[6] A second pair engineered to validate, to show a lawful union:
+  valid=true  reason=1
+  omi_blackboard_union status=0 (UNIFIED)
+  find(COMBINATORS)=2  find(CLOSURES)=2  same class=true
+
+[7] Delta law and the Tetragrammatron segment XOR invariant:
+  delta_C16(0x1234) = 0xEB79  (C=0x5A3C)
+  sector FS (0x00): boundary XOR = 0x1E  (PASS)
+  sector GS (0x20): boundary XOR = 0x1E  (PASS)
+  sector RS (0x40): boundary XOR = 0x1E  (PASS)
+  sector US (0x60): boundary XOR = 0x1E  (PASS)
+  All four sectors witness RS (0x1E): PASS
+  Polybius D+/D- XOR-cancel and SUM to 0x1E: PASS
+
+  Rejecting an out-of-range scope at the validation gate:
+  valid=false  reason=3 (SCOPE_OUT_OF_RANGE, as expected)
+
+[8] Low/high 0x80 mirror involution check:
+  m(0x48) = 0xC8, m(m(0x48)) = 0x48  (PASS)
+
+[9] CAR/CDR quadrant router (pure AND/OR/XOR/shift, no arithmetic):
+  Address 0xA28B -> selector 5 -> route REMOTE/CDR
+  Quadrant bounds: TL=0x8080 TR=0x80F0 BR=0xB0F0 BL=0xB080
+  Roundtrip check: nibble_compress(TL) = 0x88 (PASS)
+  Full selector table interleave/compress roundtrip: PASS
+  All quadrant corners decode to their selectors and buses: PASS
+  Representative interior addresses decode correctly: PASS
+  Selector bus split 0..3=Local/CAR, 4..7=Remote/CDR: PASS
+  Remote base == Local base XOR 0x80 for all 4 pairs: PASS
+
+[10] LOGOS/NOMOS/PATHOS Hamming code and the Gnomonic Projection Azimuth:
+  FS=1 GS=0 RS=1 US=1 -> LOGOS=0 NOMOS=1 PATHOS=0 OMNION=0
+  Uncorrupted codeword SECDED check: status=0 (OK, no error)
+  Single-bit corruption (GS flipped) SECDED check: status=1 (corrected), GS recovered=0
+  Azimuth anchors: 0x55 XOR 0xAA = 0xFF, balance check: PASS
+  angle(0x40) = 90.0 deg, angle(0xC0) = 270.0 deg
+  The 0-degree OMNION model:
+    OMNION=0 -> azimuth byte 0x00 (0 deg)
+    OMNION=1 -> azimuth byte 0x80 (180 deg)
+    Antipodal pair is the 0x80 mirror of the reference: PASS
+
+[11] Algorithmic clock and the 0x00 & 0-degree OMNION Centroid:
+  r0 involution holds for 0x5C23: PASS
+  Centroid clock state 0x0000 band: width=0 density=0 texture=0
+    tick 1 -> state=0x1D1D  band=[w:13 d:8 t:8]  minute=0x9090 hour=0x7B7B
+    tick 2 -> state=0x8888  band=[w:16 d:4 t:8]  minute=0xBBBB hour=0x2222
+    tick 3 -> state=0x6A6A  band=[w:15 d:8 t:12]  minute=0x7E7E hour=0x0C0C
+  Centroid alignment check (0x0000, OMNION=0): PASS
+    addr 0x0007 (OMNION=0) -> radius=7.00  azimuth=0.0 deg
+    addr 0x3030 (OMNION=0) -> radius=67.88  azimuth=45.0 deg
+    addr 0x8008 (OMNION=1) -> radius=128.25  azimuth=266.4 deg
+  Fixed centroid state: OMNION=0 -> 0x0000, OMNION=1 -> 0x0000
+  centroid_resolution(0x1234, OMNION=0) = 0x1234
+  centroid_resolution(0x1234, OMNION=1) = 0x1234
+  OMNION=0 -> logical azimuth=0x00 (0 degrees)
+  OMNION=1 -> logical azimuth=0x80 (180 degrees)
+
+  User-Local / User-Remote algorithmic clock sync (both views kept):
+    same-seed peers after 3 ticks:
+      [diagnostic band-delta] PASS
+      [exact centroid resolution, OMNION=0] PASS (local=0xA504 remote=0xA504)
+    different-seed peer after 3 ticks:
+      [diagnostic band-delta] correctly differs
+      [exact centroid resolution, OMNION=0] PASS (correctly rejected) (local=0xA504 drifted=0x9595)
+
+====================================================================
+COPRODUCT REMAINS ORIGIN-PRESERVING: 4 total contributions retained
+====================================================================

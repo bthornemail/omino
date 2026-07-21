@@ -1,0 +1,1387 @@
+/* ============================================================================
+ * OMNICRON COPRODUCT PARTITION
+ * ----------------------------------------------------------------------------
+ * A first-principles C encoding of "The Omnicron Coproduct Partition":
+ * an origin-preserving sum (coproduct) of independent .o knowledge boards,
+ * composed through CONS into a shared 256-position OMI-Lisp plane, with
+ * validated (never automatic) equivalence maintained by Union-Find.
+ *
+ * Section references (# N) point back to the source doctrine document.
+ *
+ * Dependency-free ANSI C99. No malloc. Fixed-capacity, deterministic,
+ * non-destructive bitwise operations throughout.
+ * ============================================================================
+ */
+
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <stdbool.h>
+#include <string.h>
+#include <math.h>
+
+/* ============================================================================
+ * 0. LIMITS AND STATUS
+ * ============================================================================
+ */
+
+#define OMI_PLANE_SIZE               256u   /* # 3  shared OMI-Lisp plane      */
+#define OMI_MAX_CONTRIBUTIONS        256u   /* coproduct capacity              */
+#define OMI_MAX_FIBER_CONTRIBUTORS     8u   /* # 14 per-coordinate fiber depth */
+
+typedef enum {
+    OMI_OK = 0,
+    OMI_ERROR_CAPACITY,          /* blackboard or fiber is full               */
+    OMI_ERROR_INVALID_INDEX,     /* contribution index out of range           */
+    OMI_ERROR_NOT_VALIDATED      /* union attempted without a valid witness   */
+} omi_status;
+
+/* ============================================================================
+ * 1. OMI-LISP PLANE PRIMITIVES  (# 3, # 6 sparse rank-8 boards)
+ * ============================================================================
+ */
+
+typedef struct {
+    uint64_t lane[4];   /* 256 bits = 4 x 64-bit lanes, bit p == coordinate p */
+} OmiBoard256;
+
+static inline void omi_board256_clear(OmiBoard256 *b) {
+    b->lane[0] = b->lane[1] = b->lane[2] = b->lane[3] = 0ULL;
+}
+
+static inline void omi_board256_set(OmiBoard256 *b, uint8_t p) {
+    b->lane[p >> 6] |= (1ULL << (p & 63));
+}
+
+static inline bool omi_board256_test(const OmiBoard256 *b, uint8_t p) {
+    return (b->lane[p >> 6] >> (p & 63)) & 1ULL;
+}
+
+static inline void omi_board256_or(OmiBoard256 *out, const OmiBoard256 *a, const OmiBoard256 *b) {
+    for (int i = 0; i < 4; i++) out->lane[i] = a->lane[i] | b->lane[i];
+}
+
+static inline void omi_board256_and(OmiBoard256 *out, const OmiBoard256 *a, const OmiBoard256 *b) {
+    for (int i = 0; i < 4; i++) out->lane[i] = a->lane[i] & b->lane[i];
+}
+
+static inline void omi_board256_xor(OmiBoard256 *out, const OmiBoard256 *a, const OmiBoard256 *b) {
+    for (int i = 0; i < 4; i++) out->lane[i] = a->lane[i] ^ b->lane[i];
+}
+
+/* # 42 disjoint union cardinality: |A ⊔ B| = |A| + |B| when A ∩ B = ∅ */
+static inline uint32_t omi_board256_popcount(const OmiBoard256 *b) {
+    uint32_t total = 0;
+    for (int i = 0; i < 4; i++) {
+        uint64_t v = b->lane[i];
+        v = v - ((v >> 1) & 0x5555555555555555ULL);
+        v = (v & 0x3333333333333333ULL) + ((v >> 2) & 0x3333333333333333ULL);
+        v = (v + (v >> 4)) & 0x0F0F0F0F0F0F0F0FULL;
+        total += (uint32_t)((v * 0x0101010101010101ULL) >> 56);
+    }
+    return total;
+}
+
+/* the low/high carrier mirror: m(x) = x XOR 0x80, m(m(x)) = x  (# 3) */
+static inline uint8_t omi_plane_mirror(uint8_t x) {
+    return (uint8_t)(x ^ 0x80u);
+}
+
+/* ============================================================================
+ * 2. CONTRIBUTION AND PROVENANCE  (# 14, # 36)
+ * ============================================================================
+ */
+
+typedef struct {
+    uint32_t source_id;
+
+    uint32_t car;
+    uint32_t cdr;
+
+    uint16_t resolver_profile;
+    uint8_t  scope;    /* 0=FS 1=GS 2=RS 3=US, see # 46 */
+    uint8_t  flags;
+
+    uint8_t  source_digest[32]; /* optional transport-integrity metadata; never identity */
+} OmiContributionRef;
+
+typedef struct {
+    uint32_t source_id;
+
+    uint32_t car;
+    uint32_t cdr;
+
+    OmiBoard256 board;
+
+    uint16_t resolver_profile;
+    uint8_t  scope;
+    uint8_t  contribution_type;
+
+    uint8_t  digest[32]; /* optional transport-integrity metadata; never identity */
+} OmiBoardContribution;
+
+/* # 14 blackboard fiber: every origin-tagged contribution behind one byte */
+typedef struct {
+    uint8_t  visible_coordinate;
+    uint32_t contribution_count;
+    uint16_t contributor_index[OMI_MAX_FIBER_CONTRIBUTORS]; /* into contributions[] */
+} OmiBlackboardFiber;
+
+/* ============================================================================
+ * 3. VALIDATED UNION-FIND  (# 24, # 25, # 26)
+ * ----------------------------------------------------------------------------
+ * Union-Find MAINTAINS equivalence classes. It never DECIDES equivalence.
+ * omi_union_validated therefore requires an OmiValidationResult carrying
+ * an explicit `valid` flag, produced only by omi_blackboard_validate_equivalence.
+ * ============================================================================
+ */
+
+typedef struct {
+    uint32_t parent[OMI_MAX_CONTRIBUTIONS];
+    uint32_t rank[OMI_MAX_CONTRIBUTIONS];
+    uint32_t size;
+} OmiUnionFind;
+
+typedef enum {
+    OMI_VALID_REASON_NONE = 0,
+    OMI_VALID_REASON_RESOLVED_MATCH,   /* CONS(left) == CONS(right)          */
+    OMI_VALID_REASON_SCOPE_MISMATCH,
+    OMI_VALID_REASON_SCOPE_OUT_OF_RANGE, /* scope has no Tetragrammatron sector */
+    OMI_VALID_REASON_RESOLVER_MISMATCH,
+    OMI_VALID_REASON_NO_MATCH
+} OmiValidationReason;
+
+typedef struct {
+    bool                valid;
+    OmiValidationReason reason;
+    uint32_t            resolved_left;
+    uint32_t            resolved_right;
+} OmiValidationResult;
+
+static void omi_uf_init(OmiUnionFind *uf, uint32_t size) {
+    uf->size = size;
+    for (uint32_t i = 0; i < size; i++) {
+        uf->parent[i] = i;
+        uf->rank[i] = 0;
+    }
+}
+
+static uint32_t omi_find(OmiUnionFind *uf, uint32_t element) {
+    /* iterative path compression, no recursion */
+    uint32_t root = element;
+    while (uf->parent[root] != root) root = uf->parent[root];
+    while (uf->parent[element] != root) {
+        uint32_t next = uf->parent[element];
+        uf->parent[element] = root;
+        element = next;
+    }
+    return root;
+}
+
+/* # 25 union requires a validation witness; it is never exposed unrestricted */
+static bool omi_union_validated(OmiUnionFind *uf,
+                                 uint32_t left,
+                                 uint32_t right,
+                                 const OmiValidationResult *witness) {
+    if (witness == NULL || !witness->valid) return false;
+    if (left >= uf->size || right >= uf->size) return false;
+
+    uint32_t root_l = omi_find(uf, left);
+    uint32_t root_r = omi_find(uf, right);
+    if (root_l == root_r) return true; /* already unified, lawful no-op */
+
+    if (uf->rank[root_l] < uf->rank[root_r]) {
+        uf->parent[root_l] = root_r;
+    } else if (uf->rank[root_l] > uf->rank[root_r]) {
+        uf->parent[root_r] = root_l;
+    } else {
+        uf->parent[root_r] = root_l;
+        uf->rank[root_l]++;
+    }
+    return true;
+}
+
+/* ============================================================================
+ * 4. THE COPRODUCT BLACKBOARD  (# 36)
+ * ============================================================================
+ */
+
+typedef struct {
+    OmiBoard256 occupancy; /* # 7  union of every injected board             */
+    OmiBoard256 conflict;  /* set bits where >1 origin-distinct board claims */
+
+    OmiBlackboardFiber fibers[OMI_PLANE_SIZE];
+
+    OmiBoardContribution contributions[OMI_MAX_CONTRIBUTIONS];
+    uint32_t contribution_count;
+
+    OmiUnionFind equivalence;
+} OmiCoproductBlackboard;
+
+static void omi_blackboard_init(OmiCoproductBlackboard *bb) {
+    memset(bb, 0, sizeof(*bb));
+    for (uint32_t p = 0; p < OMI_PLANE_SIZE; p++) {
+        bb->fibers[p].visible_coordinate = (uint8_t)p;
+    }
+    omi_uf_init(&bb->equivalence, OMI_MAX_CONTRIBUTIONS);
+}
+
+/* ============================================================================
+ * 5. INJECTION  (# 37)
+ * ----------------------------------------------------------------------------
+ * Injection preserves source identity, adds the contribution disjointly
+ * (coproduct, not destructive merge), records overlaps in `conflict`
+ * without ever collapsing them, and appends the contributor into every
+ * fiber its board claims.
+ * ============================================================================
+ */
+
+static omi_status omi_blackboard_inject(OmiCoproductBlackboard *bb,
+                                         const OmiBoardContribution *contribution,
+                                         uint32_t *out_index) {
+    if (bb == NULL || contribution == NULL) return OMI_ERROR_INVALID_INDEX;
+    if (bb->contribution_count >= OMI_MAX_CONTRIBUTIONS) return OMI_ERROR_CAPACITY;
+
+    /* Preflight every claimed coordinate before mutating the blackboard.
+     * A capacity failure therefore leaves the complete coproduct unchanged. */
+    for (uint32_t p = 0; p < OMI_PLANE_SIZE; p++) {
+        if (!omi_board256_test(&contribution->board, (uint8_t)p)) continue;
+        if (bb->fibers[p].contribution_count >= OMI_MAX_FIBER_CONTRIBUTORS) {
+            return OMI_ERROR_CAPACITY;
+        }
+    }
+
+    const uint32_t index = bb->contribution_count;
+
+    /* # 8 overlap with existing occupancy is recorded, never collapsed. */
+    OmiBoard256 overlap;
+    OmiBoard256 conflict_next;
+    OmiBoard256 occupancy_next;
+    omi_board256_and(&overlap, &bb->occupancy, &contribution->board);
+    omi_board256_or(&conflict_next, &bb->conflict, &overlap);
+    omi_board256_or(&occupancy_next, &bb->occupancy, &contribution->board);
+
+    bb->contributions[index] = *contribution;
+    bb->conflict = conflict_next;
+    bb->occupancy = occupancy_next;
+
+    for (uint32_t p = 0; p < OMI_PLANE_SIZE; p++) {
+        if (!omi_board256_test(&contribution->board, (uint8_t)p)) continue;
+        OmiBlackboardFiber *fiber = &bb->fibers[p];
+        fiber->contributor_index[fiber->contribution_count] = (uint16_t)index;
+        fiber->contribution_count++;
+    }
+
+    bb->contribution_count++;
+    if (out_index != NULL) *out_index = index;
+    return OMI_OK;
+}
+
+/* ============================================================================
+ * 6. CAR/CDR QUADRANT ROUTER  (nibble-interleaved 16-bit CONS plane)
+ * ----------------------------------------------------------------------------
+ * Upgrade: routes Local/CAR vs Remote/CDR using only non-destructive bitwise
+ * operations -- AND, OR, XOR, and shift. No addition, subtraction, division,
+ * modulo, or comparison-threshold chains anywhere in this section.
+ *
+ * The Local/Remote partition turns out to be the same XOR-0x80 mirror already
+ * used for the low/high OMI-Lisp plane (omi_plane_mirror, Section 1): every
+ * Remote/CDR selector base equals its Local/CAR counterpart XOR 0x80. This
+ * section proves that invariant instead of asserting it.
+ * ============================================================================
+ */
+
+typedef enum {
+    OMI_BUS_LOCAL_CAR  = 0,
+    OMI_BUS_REMOTE_CDR = 1
+} OmiBusRoute;
+
+typedef struct {
+    uint16_t top_left;
+    uint16_t top_right;
+    uint16_t bottom_right;
+    uint16_t bottom_left;
+} OmiQuadrant16;
+
+/* clockwise (TL, TR, BR, BL) 8-bit corners for the 8 selector rectangles */
+static const uint8_t OMI_SELECTOR_TABLE[8][4] = {
+    {0x00, 0x07, 0x37, 0x30}, /* 0  Local/CAR  */
+    {0x08, 0x0F, 0x3F, 0x38}, /* 1  Local/CAR  */
+    {0x40, 0x47, 0x77, 0x70}, /* 2  Local/CAR  */
+    {0x48, 0x4F, 0x7F, 0x78}, /* 3  Local/CAR  */
+    {0x80, 0x87, 0xB7, 0xB0}, /* 4  Remote/CDR */
+    {0x88, 0x8F, 0xBF, 0xB8}, /* 5  Remote/CDR */
+    {0xC0, 0xC7, 0xF7, 0xF0}, /* 6  Remote/CDR */
+    {0xC8, 0xCF, 0xFF, 0xF8}  /* 7  Remote/CDR */
+};
+
+/* forward nibble interleave: 0xYX -> 0xY0X0, pure shift/mask/OR */
+static inline uint16_t omi_nibble_interleave(uint8_t v) {
+    return (uint16_t)(((uint16_t)(v & 0xF0u) << 8) | ((uint16_t)(v & 0x0Fu) << 4));
+}
+
+/* inverse of the interleave: 0xY0X0 -> 0xYX, pure shift/mask/OR */
+static inline uint8_t omi_nibble_compress(uint16_t address) {
+    return (uint8_t)(((address >> 8) & 0xF0u) | ((address >> 4) & 0x0Fu));
+}
+
+static OmiQuadrant16 omi_forward_map_quadrant(uint8_t selector_idx) {
+    selector_idx = (uint8_t)(selector_idx & 0x07u); /* mask into range, never branch */
+    OmiQuadrant16 q;
+    q.top_left     = omi_nibble_interleave(OMI_SELECTOR_TABLE[selector_idx][0]);
+    q.top_right    = omi_nibble_interleave(OMI_SELECTOR_TABLE[selector_idx][1]);
+    q.bottom_right = omi_nibble_interleave(OMI_SELECTOR_TABLE[selector_idx][2]);
+    q.bottom_left  = omi_nibble_interleave(OMI_SELECTOR_TABLE[selector_idx][3]);
+    return q;
+}
+
+/* selector index and route from pure bit extraction -- no thresholds, no arithmetic.
+ *
+ * The selector index is the packed 3-bit Knowledge Triple corner:
+ *   bit 0    = right-bank column bit, from compressed column bit 3
+ *   bits 1-2 = row band, from compressed row bits 6-7
+ *
+ * Selector bit 2 is therefore the CAR/CDR bus discriminator:
+ *   0xxx -> Local/CAR selectors 0..3
+ *   1xxx -> Remote/CDR selectors 4..7
+ */
+static OmiBusRoute omi_reverse_route(uint16_t address, uint8_t *out_selector_idx) {
+    uint8_t compressed = omi_nibble_compress(address);
+
+    uint8_t row = (uint8_t)(compressed & 0xF0u);
+    uint8_t col = (uint8_t)(compressed & 0x0Fu);
+
+    uint8_t band       = (uint8_t)((row >> 6) & 0x03u); /* 0..3 from the row nibble */
+    uint8_t right_half = (uint8_t)((col >> 3) & 0x01u); /* 0 or 1                   */
+
+    uint8_t selector_idx = (uint8_t)((band << 1) | right_half);
+    if (out_selector_idx) *out_selector_idx = selector_idx;
+
+    /* CAR/CDR discriminant is bit 2 of the selector index -- pure AND mask */
+    return (selector_idx & 0x04u) ? OMI_BUS_REMOTE_CDR : OMI_BUS_LOCAL_CAR;
+}
+
+/* correctness witness: Remote base == Local base XOR 0x80, the same mirror
+ * law as omi_plane_mirror -- proved, not merely asserted, over all 4 pairs */
+static bool omi_verify_car_cdr_mirror(void) {
+    for (uint8_t i = 0; i < 4; i++) {
+        uint8_t local_base  = OMI_SELECTOR_TABLE[i][0];
+        uint8_t remote_base = OMI_SELECTOR_TABLE[i + 4][0];
+        if ((uint8_t)(local_base ^ 0x80u) != remote_base) return false;
+    }
+    return true;
+}
+
+static bool omi_verify_selector_roundtrip(void) {
+    for (uint8_t selector = 0; selector < 8u; selector++) {
+        for (uint8_t corner = 0; corner < 4u; corner++) {
+            uint8_t compressed = OMI_SELECTOR_TABLE[selector][corner];
+            uint16_t expanded = omi_nibble_interleave(compressed);
+            if (omi_nibble_compress(expanded) != compressed) return false;
+        }
+    }
+    return true;
+}
+
+static bool omi_verify_quadrant_corner_decode(void) {
+    for (uint8_t selector = 0; selector < 8u; selector++) {
+        for (uint8_t corner = 0; corner < 4u; corner++) {
+            uint8_t decoded = 0xFFu;
+            OmiBusRoute route = omi_reverse_route(
+                omi_nibble_interleave(OMI_SELECTOR_TABLE[selector][corner]),
+                &decoded);
+            OmiBusRoute expected_route =
+                (selector & 0x04u) ? OMI_BUS_REMOTE_CDR : OMI_BUS_LOCAL_CAR;
+
+            if (decoded != selector) return false;
+            if (route != expected_route) return false;
+        }
+    }
+    return true;
+}
+
+static bool omi_verify_quadrant_interior_decode(void) {
+    static const uint8_t representative[8] = {
+        0x21u, 0x2Au, 0x51u, 0x5Au, 0x91u, 0x9Au, 0xD1u, 0xDAu
+    };
+
+    for (uint8_t selector = 0; selector < 8u; selector++) {
+        uint8_t decoded = 0xFFu;
+        OmiBusRoute route = omi_reverse_route(omi_nibble_interleave(representative[selector]),
+                                               &decoded);
+        OmiBusRoute expected_route =
+            (selector & 0x04u) ? OMI_BUS_REMOTE_CDR : OMI_BUS_LOCAL_CAR;
+
+        if (decoded != selector) return false;
+        if (route != expected_route) return false;
+    }
+    return true;
+}
+
+static bool omi_verify_selector_bus_split(void) {
+    for (uint8_t selector = 0; selector < 8u; selector++) {
+        uint8_t decoded = 0xFFu;
+        OmiBusRoute route = omi_reverse_route(omi_nibble_interleave(OMI_SELECTOR_TABLE[selector][0]),
+                                               &decoded);
+
+        if (decoded != selector) return false;
+        if ((selector < 4u && route != OMI_BUS_LOCAL_CAR) ||
+            (selector >= 4u && route != OMI_BUS_REMOTE_CDR)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/* ============================================================================
+ * 7. CONS COMPOSITION  (# 5, # 12, # 38)
+ * ----------------------------------------------------------------------------
+ * CONS is the mediating map out of the coproduct into the shared plane.
+ * It is deliberately NOT commutative bitwise OR: CAR and CDR keep order,
+ * and the fold below is a rotate/XOR delta law consistent with the rest
+ * of the OMI runtime (never plain OR of the two 32-bit words).
+ * ============================================================================
+ */
+
+typedef struct {
+    uint32_t left_contribution;
+    uint32_t right_contribution;
+
+    uint32_t resolved_word;      /* full 32-bit resolved relation           */
+    uint8_t  visible_coordinate; /* projection pi() onto the 256-plane      */
+
+    OmiBoard256 overlap_board;   /* left.board AND right.board              */
+    bool        conflict;        /* overlap_board is non-empty              */
+
+    OmiBusRoute route;           /* Local/CAR or Remote/CDR (Section 8)     */
+    uint8_t     selector_idx;    /* 0..7, which quadrant selector fired     */
+} OmiConsResult;
+
+static inline uint32_t omi_rotl32(uint32_t v, uint32_t shift) {
+    shift &= 31u;
+    return (v << shift) | (v >> ((32u - shift) & 31u));
+}
+
+/* deterministic, order-sensitive CAR/CDR fold -- CONS(car, cdr) */
+static uint32_t omi_cons_fold(uint32_t car, uint32_t cdr, uint16_t resolver_profile) {
+    uint32_t r1 = omi_rotl32(car, 1);
+    uint32_t r3 = omi_rotl32(cdr, 3);
+    uint32_t profile_salt = ((uint32_t)resolver_profile << 16) | resolver_profile;
+    return r1 ^ r3 ^ profile_salt;
+}
+
+static omi_status omi_blackboard_cons(OmiCoproductBlackboard *bb,
+                                       uint32_t left_contribution,
+                                       uint32_t right_contribution,
+                                       uint16_t resolver_profile,
+                                       OmiConsResult *out) {
+    if (left_contribution >= bb->contribution_count ||
+        right_contribution >= bb->contribution_count) {
+        return OMI_ERROR_INVALID_INDEX;
+    }
+
+    const OmiBoardContribution *left  = &bb->contributions[left_contribution];
+    const OmiBoardContribution *right = &bb->contributions[right_contribution];
+
+    out->left_contribution  = left_contribution;
+    out->right_contribution = right_contribution;
+
+    /* order matters: CONS(left.car, right.cdr), not a symmetric combination */
+    out->resolved_word = omi_cons_fold(left->car, right->cdr, resolver_profile);
+
+    /* pi(): project the full resolved word onto the 256-position plane */
+    out->visible_coordinate = (uint8_t)(out->resolved_word & 0xFFu);
+
+    omi_board256_and(&out->overlap_board, &left->board, &right->board);
+    out->conflict = omi_board256_popcount(&out->overlap_board) > 0;
+
+    /* route the resolved relation's low 16 bits through the quadrant router;
+     * this is the real integration point, not a standalone demo (Section 6) */
+    out->route = omi_reverse_route((uint16_t)(out->resolved_word & 0xFFFFu),
+                                    &out->selector_idx);
+
+    return OMI_OK;
+}
+
+/* ============================================================================
+ * 8. DELTA LAW AND THE TETRAGRAMMATRON SEGMENT XOR INVARIANT
+ * ----------------------------------------------------------------------------
+ * The delta law is the atomic, non-destructive state-transition primitive:
+ *
+ *   delta_C(x) = rotl(x,1) XOR rotl(x,3) XOR rotr(x,2) XOR C
+ *
+ * omi_delta_c16 is the bounded 16-bit v0 instance with C = 0x5A3C. It is
+ * available as a derived transformation alongside (not a replacement for)
+ * the 32-bit CONS fold in Section 7.
+ *
+ * The segment XOR invariant is a structural closure witness: every one of
+ * the four low character sectors (0x00, 0x20, 0x40, 0x60) resolves the same
+ * boundary XOR to 0x1E (RS, Record/Relation Separator), because the shared
+ * sector prefix B cancels under repeated XOR:
+ *
+ *   B ^ (B^0x1A) ^ (B^0x1B) ^ (B^0x1F) = (B^B^B^B) ^ (0x1A^0x1B^0x1F) = 0x1E
+ *
+ * This gives Tetragrammatron a stable closure invariant independent of
+ * which sector a scope maps to. The standing Polybius diagonals use a
+ * different paired witness: XOR returns 0x00 (cancellation), while SUM
+ * returns 0x1E (preserved relational weight).
+ * ============================================================================
+ */
+
+static inline uint16_t omi_rotl16(uint16_t x, unsigned shift) {
+    shift &= 15u;
+    return (uint16_t)((x << shift) | (x >> ((16u - shift) & 15u)));
+}
+
+static inline uint16_t omi_rotr16(uint16_t x, unsigned shift) {
+    shift &= 15u;
+    return (uint16_t)((x >> shift) | (x << ((16u - shift) & 15u)));
+}
+
+#define OMI_DELTA_C16_CONST 0x5A3Cu
+
+/* delta_C16(x) = (rotl16(x,1) XOR rotl16(x,3) XOR rotr16(x,2) XOR 0x5A3C) & 0xFFFF */
+static inline uint16_t omi_delta_c16(uint16_t x) {
+    uint16_t v = (uint16_t)(omi_rotl16(x, 1) ^ omi_rotl16(x, 3) ^ omi_rotr16(x, 2) ^ OMI_DELTA_C16_CONST);
+    return (uint16_t)(v & 0xFFFFu);
+}
+
+#define OMI_RELATION_WITNESS 0x1Eu /* RS -- Record/Relation Separator */
+
+/* the four low character sector prefixes; index i corresponds to scope i
+ * (0=FS 1=GS 2=RS 3=US), matching OmiContributionRef.scope (Section 2)   */
+static const uint8_t OMI_SECTOR_PREFIXES[4] = {0x00u, 0x20u, 0x40u, 0x60u};
+
+/* B ^ (B^0x1A) ^ (B^0x1B) ^ (B^0x1F) -- always 0x1E for any B, proved not asserted */
+static inline uint8_t omi_segment_xor_witness(uint8_t sector_prefix) {
+    uint8_t b = sector_prefix;
+    return (uint8_t)(b ^ (uint8_t)(b ^ 0x1Au) ^ (uint8_t)(b ^ 0x1Bu) ^ (uint8_t)(b ^ 0x1Fu));
+}
+
+static bool omi_verify_all_segment_witnesses(void) {
+    for (int i = 0; i < 4; i++) {
+        if (omi_segment_xor_witness(OMI_SECTOR_PREFIXES[i]) != OMI_RELATION_WITNESS) return false;
+    }
+    return true;
+}
+
+/* the standing Polybius diagonal witnesses (D+, D-) resolve the same 0x1E,
+ * under XOR (cancellation) and under SUM (structural weight)              */
+static const uint8_t OMI_POLYBIUS_D_PLUS[4]  = {0x0u, 0x5u, 0xAu, 0xFu};
+static const uint8_t OMI_POLYBIUS_D_MINUS[4] = {0x3u, 0x6u, 0x9u, 0xCu};
+
+static uint8_t omi_polybius_xor(const uint8_t diagonal[4]) {
+    uint8_t x = 0;
+    for (int i = 0; i < 4; i++) x ^= diagonal[i];
+    return x;
+}
+
+static uint16_t omi_polybius_sum(const uint8_t diagonal[4]) {
+    uint16_t s = 0;
+    for (int i = 0; i < 4; i++) s = (uint16_t)(s + diagonal[i]);
+    return s;
+}
+
+static bool omi_verify_polybius_diagonals(void) {
+    bool xor_ok = (omi_polybius_xor(OMI_POLYBIUS_D_PLUS) == 0) &&
+                  (omi_polybius_xor(OMI_POLYBIUS_D_MINUS) == 0);
+    bool sum_ok = (omi_polybius_sum(OMI_POLYBIUS_D_PLUS) == OMI_RELATION_WITNESS) &&
+                  (omi_polybius_sum(OMI_POLYBIUS_D_MINUS) == OMI_RELATION_WITNESS);
+    return xor_ok && sum_ok;
+}
+
+/* Tetragrammatron structural closure gate: a scope only closes if it indexes
+ * a real sector AND that sector's boundary witness resolves to 0x1E. This is
+ * the well-formedness precondition validate_equivalence enforces below.    */
+static bool omi_tetragrammatron_scope_closes(uint8_t scope) {
+    if (scope >= 4u) return false; /* out of range -- no sector to adjudicate */
+    return omi_segment_xor_witness(OMI_SECTOR_PREFIXES[scope]) == OMI_RELATION_WITNESS;
+}
+
+/* ============================================================================
+ * 9. VALIDATION AND EQUIVALENCE  (# 24, # 39)
+ * ----------------------------------------------------------------------------
+ * Validation is a structural law over resolved CONS values, scope, and
+ * resolver compatibility. It authorizes equivalence; it does not merge
+ * anything by itself. Only a `valid == true` result may be passed to
+ * omi_blackboard_union, which is the sole caller of omi_union_validated.
+ * ============================================================================
+ */
+
+static omi_status omi_blackboard_validate_equivalence(OmiCoproductBlackboard *bb,
+                                                        OmiContributionRef left,
+                                                        OmiContributionRef right,
+                                                        OmiValidationResult *out) {
+    memset(out, 0, sizeof(*out));
+
+    if (left.scope != right.scope) {
+        out->valid = false;
+        out->reason = OMI_VALID_REASON_SCOPE_MISMATCH;
+        return OMI_OK;
+    }
+    /* Tetragrammatron structural closure gate (Section 8): the scope must
+     * index a real sector, and that sector's segment XOR witness must
+     * resolve to 0x1E, before any resolved-value comparison is trusted. */
+    if (!omi_tetragrammatron_scope_closes(left.scope)) {
+        out->valid = false;
+        out->reason = OMI_VALID_REASON_SCOPE_OUT_OF_RANGE;
+        return OMI_OK;
+    }
+    if (left.resolver_profile != right.resolver_profile) {
+        out->valid = false;
+        out->reason = OMI_VALID_REASON_RESOLVER_MISMATCH;
+        return OMI_OK;
+    }
+
+    (void)bb;
+    uint32_t resolved_left  = omi_cons_fold(left.car,  left.cdr,  left.resolver_profile);
+    uint32_t resolved_right = omi_cons_fold(right.car, right.cdr, right.resolver_profile);
+
+    out->resolved_left  = resolved_left;
+    out->resolved_right = resolved_right;
+
+    if (resolved_left == resolved_right) {
+        out->valid  = true;
+        out->reason = OMI_VALID_REASON_RESOLVED_MATCH;
+    } else {
+        out->valid  = false;
+        out->reason = OMI_VALID_REASON_NO_MATCH;
+    }
+    return OMI_OK;
+}
+
+static omi_status omi_blackboard_union(OmiCoproductBlackboard *bb,
+                                        uint32_t left_contribution,
+                                        uint32_t right_contribution,
+                                        const OmiValidationResult *validation) {
+    if (!validation->valid) return OMI_ERROR_NOT_VALIDATED;
+    if (left_contribution >= bb->contribution_count ||
+        right_contribution >= bb->contribution_count) {
+        return OMI_ERROR_INVALID_INDEX;
+    }
+    bool ok = omi_union_validated(&bb->equivalence, left_contribution, right_contribution, validation);
+    return ok ? OMI_OK : OMI_ERROR_NOT_VALIDATED;
+}
+
+/* ============================================================================
+ * 10. LOGOS/NOMOS/PATHOS HAMMING CODE AND THE GNOMONIC PROJECTION AZIMUTH
+ * ----------------------------------------------------------------------------
+ * FS/GS/RS/US (four scope-bearing data bits) carry scope. LOGOS/NOMOS/PATHOS
+ * are three derived even-parity check relations over that quartet, forming a
+ * Hamming [7,4,3] codeword. OMNION is the extra overall-parity bit that lifts
+ * this to the extended Hamming [8,4,4] SECDED code.
+ *
+ * The Gnomonic Projection Azimuth is a separate, downstream concern: it
+ * orients an already-accepted relation on a 256-position byte circle. It
+ * never validates and never establishes incidence.
+ *
+ * This section closes the loop between the two: OMNION is a single bit, and
+ * a single bit is exactly enough information to distinguish two antipodal
+ * points on the azimuth circle. omi_omnion_azimuth_byte maps OMNION=0 to the
+ * reference orientation 0x00 (0 degrees) and OMNION=1 to the antipodal
+ * orientation 0x80 (180 degrees) -- the same XOR-0x80 mirror already used
+ * for the low/high plane (Section 1) and the CAR/CDR router (Section 6).
+ * ============================================================================
+ */
+
+/* ---- 10.1 LOGOS/NOMOS/PATHOS/OMNION (# 4, # Miquel Extended Encoding Rule) --- */
+
+typedef struct {
+    uint8_t fs;
+    uint8_t gs;
+    uint8_t rs;
+    uint8_t us;
+} OmiScopeQuartet; /* each field is 0 or 1 -- a single scope-bearing data bit */
+
+typedef struct {
+    uint8_t logos;
+    uint8_t nomos;
+    uint8_t pathos;
+    uint8_t omnion;
+} OmiEpistemicCheck;
+
+static OmiEpistemicCheck omi_compute_epistemic_check(OmiScopeQuartet q) {
+    OmiEpistemicCheck c;
+    c.logos  = (uint8_t)(q.fs ^ q.gs ^ q.us);
+    c.nomos  = (uint8_t)(q.fs ^ q.rs ^ q.us);
+    c.pathos = (uint8_t)(q.gs ^ q.rs ^ q.us);
+    c.omnion = (uint8_t)(c.logos ^ c.nomos ^ q.fs ^ c.pathos ^ q.gs ^ q.rs ^ q.us);
+    return c;
+}
+
+/* Hamming position order: 1=LOGOS 2=NOMOS 3=FS 4=PATHOS 5=GS 6=RS 7=US.
+ * Index 0 is unused; extension parity (OMNION) is carried separately. */
+typedef struct {
+    uint8_t bit[8];
+} OmiHammingCodeword;
+
+static OmiHammingCodeword omi_encode_hamming(OmiScopeQuartet q) {
+    OmiEpistemicCheck c = omi_compute_epistemic_check(q);
+    OmiHammingCodeword cw;
+    memset(&cw, 0, sizeof(cw));
+    cw.bit[1] = c.logos;
+    cw.bit[2] = c.nomos;
+    cw.bit[3] = q.fs;
+    cw.bit[4] = c.pathos;
+    cw.bit[5] = q.gs;
+    cw.bit[6] = q.rs;
+    cw.bit[7] = q.us;
+    return cw;
+}
+
+/* syndrome = sLOGOS | (sNOMOS << 1) | (sPATHOS << 2), positions 1..7 */
+static uint8_t omi_hamming_syndrome(const OmiHammingCodeword *cw) {
+    uint8_t s_logos  = (uint8_t)(cw->bit[1] ^ cw->bit[3] ^ cw->bit[5] ^ cw->bit[7]);
+    uint8_t s_nomos  = (uint8_t)(cw->bit[2] ^ cw->bit[3] ^ cw->bit[6] ^ cw->bit[7]);
+    uint8_t s_pathos = (uint8_t)(cw->bit[4] ^ cw->bit[5] ^ cw->bit[6] ^ cw->bit[7]);
+    return (uint8_t)(s_logos | (uint8_t)(s_nomos << 1) | (uint8_t)(s_pathos << 2));
+}
+
+typedef enum {
+    OMI_HAMMING_OK = 0,
+    OMI_HAMMING_CORRECTED_SINGLE,
+    OMI_HAMMING_CORRECTED_EXTENSION, /* the OMNION bit itself was the flipped bit */
+    OMI_HAMMING_DOUBLE_ERROR_DETECTED
+} OmiHammingStatus;
+
+/* extended [8,4,4] SECDED check: syndrome plus the received OMNION bit
+ * together distinguish "no error", "one data/check bit flipped",
+ * "OMNION itself flipped", and "uncorrectable double-bit error".        */
+static OmiHammingStatus omi_hamming_secded_check(OmiHammingCodeword *cw, uint8_t received_omnion) {
+    uint8_t syndrome = omi_hamming_syndrome(cw);
+
+    uint8_t recomputed_omnion = 0;
+    for (int i = 1; i <= 7; i++) recomputed_omnion ^= cw->bit[i];
+
+    uint8_t total_parity = (uint8_t)(recomputed_omnion ^ received_omnion);
+
+    if (syndrome == 0 && total_parity == 0) return OMI_HAMMING_OK;
+    if (syndrome != 0 && total_parity == 1) {
+        cw->bit[syndrome] ^= 1u;
+        return OMI_HAMMING_CORRECTED_SINGLE;
+    }
+    if (syndrome == 0 && total_parity == 1) {
+        return OMI_HAMMING_CORRECTED_EXTENSION; /* flip received_omnion at the caller */
+    }
+    return OMI_HAMMING_DOUBLE_ERROR_DETECTED; /* syndrome != 0, total_parity == 0 */
+}
+
+/* ---- 10.2 Gnomonic Projection Azimuth ------------------------------------- */
+
+#define OMI_AZIMUTH_ANCHOR_A 0x55u
+#define OMI_AZIMUTH_ANCHOR_B 0xAAu
+#define OMI_AZIMUTH_WORD_LO  0x55AAu
+#define OMI_AZIMUTH_WORD_HI  0xAA55u
+
+static inline double omi_azimuth_degrees(uint8_t byte) {
+    return ((double)byte * 360.0) / 256.0;
+}
+
+static inline uint32_t omi_popcount16(uint16_t v) {
+    uint32_t count = 0;
+    while (v) { count += (uint32_t)(v & 1u); v = (uint16_t)(v >> 1); }
+    return count;
+}
+
+static bool omi_verify_azimuth_anchors(void) {
+    /* 0x55 XOR 0xAA == 0xFF: the two anchors are exact bitwise complements */
+    bool complement_ok = (uint8_t)(OMI_AZIMUTH_ANCHOR_A ^ OMI_AZIMUTH_ANCHOR_B) == 0xFFu;
+    /* each 16-bit joined word carries exactly eight 1-bits and eight 0-bits */
+    bool balance_ok = (omi_popcount16(OMI_AZIMUTH_WORD_LO) == 8u) &&
+                       (omi_popcount16(OMI_AZIMUTH_WORD_HI) == 8u);
+    return complement_ok && balance_ok;
+}
+
+/* ---- 10.3 The 0-degree OMNION model --------------------------------------- */
+
+/* OMNION is one bit -- exactly enough to select between two antipodal
+ * azimuth positions. OMNION=0 is the reference orientation (0 degrees).
+ * OMNION=1 is the antipodal orientation (180 degrees). This is the same
+ * XOR-0x80 mirror as omi_plane_mirror and the CAR/CDR router's Local/Remote
+ * split (Sections 1 and 6) -- one law, applied at the orientation layer. */
+static inline uint8_t omi_omnion_azimuth_byte(uint8_t omnion) {
+    return (uint8_t)((omnion & 0x01u) << 7);
+}
+
+static bool omi_verify_omnion_azimuth_mirror(void) {
+    uint8_t reference = omi_omnion_azimuth_byte(0); /* 0x00 -> 0 degrees   */
+    uint8_t antipodal = omi_omnion_azimuth_byte(1); /* 0x80 -> 180 degrees */
+    return omi_plane_mirror(reference) == antipodal &&
+           omi_azimuth_degrees(reference) == 0.0 &&
+           omi_azimuth_degrees(antipodal) == 180.0;
+}
+
+/* ============================================================================
+ * 11. THE ALGORITHMIC CLOCK, THE OMNION CENTROID, AND LOCAL/REMOTE SYNC
+ * ----------------------------------------------------------------------------
+ * Corrected doctrine:
+ *
+ *   1. The Algorithmic Clock is a bounded logical state machine.
+ *   2. Its state advances exclusively through the oscillate law -- this
+ *      advance is GREEDY: every tick call unconditionally transitions the
+ *      state, regardless of whether anything downstream reads it.
+ *   3. OMNION defines the projective orientation of the clock.
+ *   4. OMNION=0 resolves against the primary centroid: address 0x0000,
+ *      azimuth 0 degrees, band (0,0,0).
+ *   5. OMNION=1 resolves against the antipodal centroid: the r0-reflection
+ *      of the primary centroid state (0xAAAA), azimuth 180 degrees.
+ *   6. Every state has an exact centroid-relative resolution (XOR against
+ *      the selected centroid state) -- this IS the synchronization
+ *      authority.
+ *   7. Local and remote clocks are synchronized when their exact
+ *      centroid-relative resolutions agree under the same tick, seed,
+ *      orientation, and law.
+ *   8. Width, density, and texture (the Band) are diagnostic projections of
+ *      clock state, not synchronization reference. They remain available --
+ *      this section keeps both, it does not delete the band view.
+ *   9. The geometric vector (radius/azimuth, Section 11.3 below) is LAZY:
+ *      it is a read-on-demand projection for display/calibration, computed
+ *      only when asked, and never drives a state transition by itself.
+ *  10. No wrapping "receipt" struct is introduced here. The address/state
+ *      word is already the place-value identity (Section 7's OMI addressing
+ *      doctrine: address is identity). A receipt-commitment field would
+ *      manufacture a second identity channel next to the state itself --
+ *      exactly the category error the no-hash-identity doctrine forbids.
+ *      Peers compare the resolution value directly.
+ *  11. Coq proves the law (AlgorithmicClock.v). C (here) demonstrates the
+ *      reference behavior. Verilog may realize the same law as synchronous
+ *      hardware without redefining the centroids or the transition.
+ *  12. No implementation surface may redefine the OMNION centroids or the
+ *      algorithmic transition.
+ * ============================================================================
+ */
+
+/* ---- 11.1 Coxeter-style reflection generators and the oscillate law ------- */
+
+static inline uint16_t omi_r0_reflection(uint16_t x) {
+    return (uint16_t)(x ^ 0xAAAAu); /* alternating-bit involution: r0(r0(x)) == x */
+}
+
+static inline uint16_t omi_r1_rotation(uint16_t x) { return omi_rotl16(x, 1); }
+static inline uint16_t omi_r2_rotation(uint16_t x) { return omi_rotl16(x, 3); }
+static inline uint16_t omi_r3_rotation(uint16_t x) { return omi_rotr16(x, 2); }
+
+/* second hand: bounded rotate/XOR advance law, constant 0x1D1D per AlgorithmicClock.v.
+ * GREEDY: called unconditionally by omi_clock_tick every advance, never deferred. */
+static inline uint16_t omi_clock_oscillate(uint16_t x) {
+    uint16_t r1 = omi_rotl16(x, 1);
+    uint16_t r2 = omi_rotl16(x, 3);
+    uint16_t r3 = omi_rotr16(x, 2);
+    return (uint16_t)(r1 ^ r2 ^ r3 ^ 0x1D1Du);
+}
+
+static inline uint16_t omi_minute_hand(uint16_t x) { return omi_r0_reflection(omi_r1_rotation(x)); }
+static inline uint16_t omi_hour_hand(uint16_t x) {
+    return omi_r0_reflection(omi_r1_rotation(omi_r2_rotation(x)));
+}
+static inline uint16_t omi_epoch_hand(uint16_t x) {
+    return omi_r0_reflection(omi_r1_rotation(omi_r2_rotation(omi_r3_rotation(x))));
+}
+
+static bool omi_verify_r0_involution(uint16_t sample) {
+    return omi_r0_reflection(omi_r0_reflection(sample)) == sample;
+}
+
+/* ---- 11.2 Band classification: kept as a DIAGNOSTIC projection only ------- */
+
+typedef struct {
+    uint32_t width;   /* bit_length: 0..16   */
+    uint32_t density; /* popcount:   0..16   */
+    uint32_t texture; /* edge_count: 0..16   */
+} OmiClockBand;
+
+static uint32_t omi_bit_length16(uint16_t x) {
+    uint32_t n = 0;
+    while (x) { x = (uint16_t)(x >> 1); n++; }
+    return n;
+}
+
+/* diagnostic only -- never used below to decide synchronization */
+static OmiClockBand omi_classify_clock_state(uint16_t x) {
+    OmiClockBand b;
+    b.width = omi_bit_length16(x);
+    b.density = omi_popcount16(x);
+    b.texture = 0;
+    for (uint32_t i = 0; i < 16u; i++) {
+        uint32_t bit_i = (uint32_t)((x >> i) & 1u);
+        uint32_t bit_j = (uint32_t)((x >> ((i + 1u) % 16u)) & 1u);
+        if (bit_i != bit_j) b.texture++;
+    }
+    return b;
+}
+
+typedef struct {
+    uint16_t state;
+    OmiClockBand band; /* diagnostic view of state, carried for display only */
+} OmiClockState;
+
+static OmiClockState omi_make_clock(uint16_t x) {
+    OmiClockState cs;
+    cs.state = x;
+    cs.band = omi_classify_clock_state(x);
+    return cs;
+}
+
+/* GREEDY advance: always transitions, never deferred or computed lazily */
+static OmiClockState omi_clock_tick(OmiClockState cs) {
+    return omi_make_clock(omi_clock_oscillate(cs.state));
+}
+
+/* ---- 11.3 The OMNION centroids and the LAZY geometric vector -------------- */
+
+#ifndef OMI_PI
+#define OMI_PI 3.14159265358979323846
+#endif
+
+#define OMI_CENTROID_PRIMARY_STATE      0x0000u /* fixed projective reference */
+#define OMI_CENTROID_PRIMARY_AZIMUTH    0x00u   /* 0 degrees                  */
+#define OMI_CENTROID_ANTIPODAL_AZIMUTH  0x80u   /* 180 degrees                */
+
+/* There is one fixed centroid state. OMNION selects only the projective
+ * orientation (0 or 180 degrees); it never redefines the centroid address. */
+static inline uint16_t omi_centroid_state(uint8_t omnion) {
+    (void)omnion;
+    return OMI_CENTROID_PRIMARY_STATE;
+}
+
+typedef struct {
+    uint16_t relative_address;
+    double   azimuth_angle;
+    double   radial_distance;
+} OmiGeometricVector;
+
+/* LAZY: a read-on-demand display/calibration projection. Computing it does
+ * not advance any clock and it is never consulted to decide synchronization
+ * -- Section 11.4 below is the exact synchronization reference. */
+static OmiGeometricVector omi_resolve_vector_to_centroid(uint16_t cons_address, uint8_t current_omnion) {
+    OmiGeometricVector vec;
+
+    uint16_t relative = (uint16_t)(cons_address ^ omi_centroid_state(current_omnion));
+    uint8_t row = (uint8_t)((relative >> 8) & 0xFFu);
+    uint8_t col = (uint8_t)(relative & 0xFFu);
+
+    vec.radial_distance = sqrt((double)row * (double)row + (double)col * (double)col);
+
+    double raw_angle = atan2((double)row, (double)col) * (180.0 / OMI_PI);
+    if ((current_omnion & 0x01u) == 1u) { /* OMNION=1: antipodal 180-degree mirror */
+        raw_angle += 180.0;
+        if (raw_angle >= 360.0) raw_angle -= 360.0;
+    }
+    if (raw_angle < 0.0) raw_angle = 0.0; /* row=col=0 -> atan2 is 0, guarded for -0.0 */
+
+    vec.azimuth_angle = raw_angle;
+    vec.relative_address = relative;
+    return vec;
+}
+
+static bool omi_verify_centroid_alignment(void) {
+    OmiGeometricVector zero_point = omi_resolve_vector_to_centroid(0x0000u, 0u);
+    return zero_point.radial_distance == 0.0 && zero_point.azimuth_angle == 0.0;
+}
+
+/* ---- 11.4 Centroid resolution: the exact synchronization reference ------------------------- */
+
+/* CentroidDelta = current_state XOR centroid_state -- exact, no rounding,
+ * no lossy projection. This is the canonical value peers compare. */
+static inline uint16_t omi_centroid_delta(uint16_t current_state, uint8_t omnion) {
+    return (uint16_t)(current_state ^ omi_centroid_state(omnion));
+}
+
+/* CentroidResolution = resolve(current_state, selected_centroid). For this
+ * v0 law the resolution IS the XOR delta; a future non-XOR resolve() may
+ * replace the body without changing any caller. */
+static inline uint16_t omi_centroid_resolution(uint16_t current_state, uint8_t omnion) {
+    return omi_centroid_delta(current_state, omnion);
+}
+
+/* ---- 11.5 OMNION logical orientation -------------------------------------- */
+
+typedef struct {
+    uint16_t state_word;
+    uint64_t step_accumulator;
+    uint8_t  current_azimuth; /* 0x00 or 0x80 -- logical orientation only */
+} OmiOrientedOmnionClock;
+
+static OmiOrientedOmnionClock omi_process_centroid_alignment(uint16_t current_state, uint8_t omnion) {
+    OmiOrientedOmnionClock clock;
+    clock.state_word = current_state;
+    clock.step_accumulator = 0;
+    clock.current_azimuth = omi_omnion_azimuth_byte(omnion); /* Section 10 */
+    return clock;
+}
+
+/* Physical clocks or SI-frequency calibration belong in optional adapters.
+ * They are not part of this deterministic logical-clock invariant. */
+
+/* ---- 11.6 User-Local / User-Remote algorithmic clock sync ----------------- */
+
+typedef struct {
+    OmiClockState clock;
+    uint64_t step_accumulator;
+} OmiClockSyncPeer;
+
+static OmiClockSyncPeer omi_clock_sync_peer_init(uint16_t seed) {
+    OmiClockSyncPeer p;
+    p.clock = omi_make_clock(seed);
+    p.step_accumulator = 0;
+    return p;
+}
+
+static void omi_clock_sync_peer_tick(OmiClockSyncPeer *p) {
+    p->clock = omi_clock_tick(p->clock); /* greedy advance */
+    p->step_accumulator++;
+}
+
+/* DIAGNOSTIC comparison, kept alongside the authority check below -- this is
+ * a lossy band-delta view and MUST NOT be used to decide synchronization. */
+typedef struct {
+    int32_t width_delta;
+    int32_t density_delta;
+    int32_t texture_delta;
+} OmiClockBandDelta;
+
+static OmiClockBandDelta omi_band_delta_from_centroid(OmiClockBand band) {
+    static const OmiClockBand CENTROID_BAND = {0u, 0u, 0u}; /* band of state 0x0000 */
+    OmiClockBandDelta d;
+    d.width_delta   = (int32_t)band.width   - (int32_t)CENTROID_BAND.width;
+    d.density_delta = (int32_t)band.density - (int32_t)CENTROID_BAND.density;
+    d.texture_delta = (int32_t)band.texture - (int32_t)CENTROID_BAND.texture;
+    return d;
+}
+
+static bool omi_clock_sync_check_diagnostic(const OmiClockSyncPeer *local, const OmiClockSyncPeer *remote) {
+    OmiClockBandDelta local_delta  = omi_band_delta_from_centroid(local->clock.band);
+    OmiClockBandDelta remote_delta = omi_band_delta_from_centroid(remote->clock.band);
+    return local_delta.width_delta   == remote_delta.width_delta &&
+           local_delta.density_delta == remote_delta.density_delta &&
+           local_delta.texture_delta == remote_delta.texture_delta;
+}
+
+/* EXACT comparison: synchronized iff local_sync == remote_sync, where
+ * each side is its own centroid_resolution under the same omnion orientation.
+ * No raw state, receipt, or band is exchanged or required to decide this. */
+static bool omi_clock_sync_check_resolved(const OmiClockSyncPeer *local,
+                                           const OmiClockSyncPeer *remote,
+                                           uint8_t omnion) {
+    uint16_t local_sync  = omi_centroid_resolution(local->clock.state, omnion);
+    uint16_t remote_sync = omi_centroid_resolution(remote->clock.state, omnion);
+    return local_sync == remote_sync;
+}
+
+/* ============================================================================
+ * 12. VERIFICATION HARNESS
+ * ============================================================================
+ */
+
+static OmiBoardContribution omi_make_contribution(uint32_t source_id,
+                                                   uint32_t car,
+                                                   uint32_t cdr,
+                                                   uint8_t scope,
+                                                   uint16_t resolver_profile,
+                                                   uint8_t single_bit_position) {
+    OmiBoardContribution c;
+    memset(&c, 0, sizeof(c));
+    c.source_id = source_id;
+    c.car = car;
+    c.cdr = cdr;
+    c.scope = scope;
+    c.resolver_profile = resolver_profile;
+    c.contribution_type = 0;
+    omi_board256_clear(&c.board);
+    omi_board256_set(&c.board, single_bit_position);
+    return c;
+}
+
+int main(void) {
+    printf("====================================================================\n");
+    printf("OMNICRON COPRODUCT PARTITION: VERIFICATION ARTIFACT\n");
+    printf("====================================================================\n\n");
+
+    OmiCoproductBlackboard bb;
+    omi_blackboard_init(&bb);
+
+    /* --- Section 1: two origin-distinct sources both claim 0x48 (# 1, # 8) --- */
+    printf("[1] Injecting RULES.o and FACTS.o, both claiming coordinate 0x48:\n");
+
+    OmiBoardContribution rules = omi_make_contribution(
+        /*source_id*/ 0x52554C45u /* 'RULE' */, 0x12345678u, 0x89ABCDEFu,
+        /*scope FS*/ 0, /*resolver*/ 1, /*bit*/ 0x48u);
+    OmiBoardContribution facts = omi_make_contribution(
+        /*source_id*/ 0x46414354u /* 'FACT' */, 0x11223344u, 0x55667788u,
+        /*scope FS*/ 0, /*resolver*/ 1, /*bit*/ 0x48u);
+
+    uint32_t rules_idx, facts_idx;
+    omi_status st;
+
+    st = omi_blackboard_inject(&bb, &rules, &rules_idx);
+    printf("  Injected RULES.o at contribution index %u (status=%d)\n", rules_idx, st);
+
+    st = omi_blackboard_inject(&bb, &facts, &facts_idx);
+    printf("  Injected FACTS.o at contribution index %u (status=%d)\n\n", facts_idx, st);
+
+    /* --- Section 2: fiber at 0x48 preserves both, does not collapse (# 14) --- */
+    printf("[2] Inspecting the blackboard fiber at 0x48:\n");
+    const OmiBlackboardFiber *fiber = &bb.fibers[0x48];
+    printf("  Contribution count at 0x48: %u\n", fiber->contribution_count);
+    for (uint32_t i = 0; i < fiber->contribution_count; i++) {
+        const OmiBoardContribution *c = &bb.contributions[fiber->contributor_index[i]];
+        printf("    origin 0x%08X  car=0x%08X  cdr=0x%08X\n",
+               c->source_id, c->car, c->cdr);
+    }
+    printf("\n");
+
+    /* --- Section 3: occupancy vs. conflict (# 7, # 15) --- */
+    printf("[3] Occupancy and conflict boards:\n");
+    printf("  Occupancy popcount: %u (expected 1 -- same visible byte, two origins)\n",
+           omi_board256_popcount(&bb.occupancy));
+    printf("  Conflict popcount:  %u (expected 1 -- 0x48 is contested)\n\n",
+           omi_board256_popcount(&bb.conflict));
+
+    /* --- Section 4: CONS composition is order-sensitive, not OR (# 5, # 6) --- */
+    printf("[4] CONS(RULES, FACTS) vs CONS(FACTS, RULES):\n");
+    OmiConsResult cons_rf, cons_fr;
+    omi_blackboard_cons(&bb, rules_idx, facts_idx, /*resolver*/ 1, &cons_rf);
+    omi_blackboard_cons(&bb, facts_idx, rules_idx, /*resolver*/ 1, &cons_fr);
+    printf("  CONS(RULES,FACTS) resolved=0x%08X  visible=0x%02X  route=%s (selector %u)\n",
+           cons_rf.resolved_word, cons_rf.visible_coordinate,
+           cons_rf.route == OMI_BUS_REMOTE_CDR ? "REMOTE/CDR" : "LOCAL/CAR",
+           cons_rf.selector_idx);
+    printf("  CONS(FACTS,RULES) resolved=0x%08X  visible=0x%02X  route=%s (selector %u)\n",
+           cons_fr.resolved_word, cons_fr.visible_coordinate,
+           cons_fr.route == OMI_BUS_REMOTE_CDR ? "REMOTE/CDR" : "LOCAL/CAR",
+           cons_fr.selector_idx);
+    printf("  Order-sensitivity confirmed: %s\n\n",
+           (cons_rf.resolved_word != cons_fr.resolved_word) ? "TRUE" : "FALSE");
+
+    /* --- Section 5: validation gates equivalence; union-find only maintains it --- */
+    printf("[5] Validating equivalence between RULES.o and FACTS.o contributors:\n");
+    OmiContributionRef rules_ref = {
+        .source_id = rules.source_id, .car = rules.car, .cdr = rules.cdr,
+        .resolver_profile = rules.resolver_profile, .scope = rules.scope, .flags = 0
+    };
+    OmiContributionRef facts_ref = {
+        .source_id = facts.source_id, .car = facts.car, .cdr = facts.cdr,
+        .resolver_profile = facts.resolver_profile, .scope = facts.scope, .flags = 0
+    };
+
+    OmiValidationResult validation;
+    omi_blackboard_validate_equivalence(&bb, rules_ref, facts_ref, &validation);
+    printf("  valid=%s  reason=%d  resolved_left=0x%08X  resolved_right=0x%08X\n",
+           validation.valid ? "true" : "false", validation.reason,
+           validation.resolved_left, validation.resolved_right);
+
+    omi_status union_status = omi_blackboard_union(&bb, rules_idx, facts_idx, &validation);
+    printf("  omi_blackboard_union status=%d (%s)\n",
+           union_status, union_status == OMI_OK ? "UNIFIED" : "REJECTED -- not validated");
+    printf("  find(RULES)=%u  find(FACTS)=%u  same class=%s\n\n",
+           omi_find(&bb.equivalence, rules_idx),
+           omi_find(&bb.equivalence, facts_idx),
+           omi_find(&bb.equivalence, rules_idx) == omi_find(&bb.equivalence, facts_idx)
+               ? "true" : "false");
+
+    /* --- Section 6: a second pair that DOES resolve equal, to show a lawful union --- */
+    printf("[6] A second pair engineered to validate, to show a lawful union:\n");
+    OmiBoardContribution combinators = omi_make_contribution(
+        0x434F4D42u /* 'COMB' */, 0xAAAAAAAAu, 0x55555555u, /*scope*/ 1, /*resolver*/ 2, 0x10u);
+    OmiBoardContribution closures = combinators; /* identical car/cdr/scope/resolver -> resolves equal */
+    closures.source_id = 0x434C4F53u; /* 'CLOS' */
+
+    uint32_t comb_idx, clos_idx;
+    omi_blackboard_inject(&bb, &combinators, &comb_idx);
+    omi_blackboard_inject(&bb, &closures, &clos_idx);
+
+    OmiContributionRef comb_ref = {
+        .source_id = combinators.source_id, .car = combinators.car, .cdr = combinators.cdr,
+        .resolver_profile = combinators.resolver_profile, .scope = combinators.scope, .flags = 0
+    };
+    OmiContributionRef clos_ref = {
+        .source_id = closures.source_id, .car = closures.car, .cdr = closures.cdr,
+        .resolver_profile = closures.resolver_profile, .scope = closures.scope, .flags = 0
+    };
+
+    OmiValidationResult validation2;
+    omi_blackboard_validate_equivalence(&bb, comb_ref, clos_ref, &validation2);
+    omi_status union_status2 = omi_blackboard_union(&bb, comb_idx, clos_idx, &validation2);
+    printf("  valid=%s  reason=%d\n", validation2.valid ? "true" : "false", validation2.reason);
+    printf("  omi_blackboard_union status=%d (%s)\n",
+           union_status2, union_status2 == OMI_OK ? "UNIFIED" : "REJECTED");
+    printf("  find(COMBINATORS)=%u  find(CLOSURES)=%u  same class=%s\n\n",
+           omi_find(&bb.equivalence, comb_idx),
+           omi_find(&bb.equivalence, clos_idx),
+           omi_find(&bb.equivalence, comb_idx) == omi_find(&bb.equivalence, clos_idx)
+               ? "true" : "false");
+
+    /* --- Section 7: delta law, segment XOR invariant, Polybius witnesses --- */
+    printf("[7] Delta law and the Tetragrammatron segment XOR invariant:\n");
+
+    uint16_t delta_sample = 0x1234u;
+    uint16_t delta_out = omi_delta_c16(delta_sample);
+    printf("  delta_C16(0x%04X) = 0x%04X  (C=0x%04X)\n",
+           delta_sample, delta_out, OMI_DELTA_C16_CONST);
+
+    static const char *sector_name[4] = {"FS", "GS", "RS", "US"};
+    for (int i = 0; i < 4; i++) {
+        uint8_t witness = omi_segment_xor_witness(OMI_SECTOR_PREFIXES[i]);
+        printf("  sector %s (0x%02X): boundary XOR = 0x%02X  (%s)\n",
+               sector_name[i], OMI_SECTOR_PREFIXES[i], witness,
+               witness == OMI_RELATION_WITNESS ? "PASS" : "FAIL");
+    }
+    printf("  All four sectors witness RS (0x1E): %s\n",
+           omi_verify_all_segment_witnesses() ? "PASS" : "FAIL");
+    printf("  Polybius D+/D- XOR-cancel and SUM to 0x1E: %s\n\n",
+           omi_verify_polybius_diagonals() ? "PASS" : "FAIL");
+
+    printf("  Rejecting an out-of-range scope at the validation gate:\n");
+    OmiContributionRef bad_scope_ref = rules_ref;
+    bad_scope_ref.scope = 9; /* no sector 9 -- must be rejected before CONS runs */
+    OmiValidationResult bad_validation;
+    omi_blackboard_validate_equivalence(&bb, bad_scope_ref, bad_scope_ref, &bad_validation);
+    printf("  valid=%s  reason=%d (%s)\n\n",
+           bad_validation.valid ? "true" : "false", bad_validation.reason,
+           bad_validation.reason == OMI_VALID_REASON_SCOPE_OUT_OF_RANGE
+               ? "SCOPE_OUT_OF_RANGE, as expected" : "unexpected reason");
+
+    /* --- Section 8: low/high mirror sanity check (# 3) --- */
+    printf("[8] Low/high 0x80 mirror involution check:\n");
+    uint8_t sample = 0x48u;
+    uint8_t mirrored = omi_plane_mirror(sample);
+    uint8_t restored = omi_plane_mirror(mirrored);
+    printf("  m(0x%02X) = 0x%02X, m(m(0x%02X)) = 0x%02X  (%s)\n\n",
+           sample, mirrored, sample, restored, restored == sample ? "PASS" : "FAIL");
+
+    /* --- Section 9: CAR/CDR quadrant router (# 6 upgrade) --- */
+    printf("[9] CAR/CDR quadrant router (pure AND/OR/XOR/shift, no arithmetic):\n");
+
+    uint16_t sample_address = 0xA28Bu;
+    uint8_t  selector_idx = 0xFFu;
+    OmiBusRoute route = omi_reverse_route(sample_address, &selector_idx);
+    printf("  Address 0x%04X -> selector %u -> route %s\n",
+           sample_address, selector_idx,
+           route == OMI_BUS_REMOTE_CDR ? "REMOTE/CDR" : "LOCAL/CAR");
+
+    OmiQuadrant16 bounds = omi_forward_map_quadrant(selector_idx);
+    printf("  Quadrant bounds: TL=0x%04X TR=0x%04X BR=0x%04X BL=0x%04X\n",
+           bounds.top_left, bounds.top_right, bounds.bottom_right, bounds.bottom_left);
+    printf("  Roundtrip check: nibble_compress(TL) = 0x%02X (%s)\n",
+           omi_nibble_compress(bounds.top_left),
+           omi_nibble_compress(bounds.top_left) == OMI_SELECTOR_TABLE[selector_idx][0]
+               ? "PASS" : "FAIL");
+    printf("  Full selector table interleave/compress roundtrip: %s\n",
+           omi_verify_selector_roundtrip() ? "PASS" : "FAIL");
+    printf("  All quadrant corners decode to their selectors and buses: %s\n",
+           omi_verify_quadrant_corner_decode() ? "PASS" : "FAIL");
+    printf("  Representative interior addresses decode correctly: %s\n",
+           omi_verify_quadrant_interior_decode() ? "PASS" : "FAIL");
+    printf("  Selector bus split 0..3=Local/CAR, 4..7=Remote/CDR: %s\n",
+           omi_verify_selector_bus_split() ? "PASS" : "FAIL");
+
+    bool mirror_ok = omi_verify_car_cdr_mirror();
+    printf("  Remote base == Local base XOR 0x80 for all 4 pairs: %s\n\n",
+           mirror_ok ? "PASS" : "FAIL");
+
+    /* --- Section 10: LOGOS/NOMOS/PATHOS/OMNION and the Gnomonic Azimuth --- */
+    printf("[10] LOGOS/NOMOS/PATHOS Hamming code and the Gnomonic Projection Azimuth:\n");
+
+    OmiScopeQuartet quartet = {1, 0, 1, 1}; /* FS=1 GS=0 RS=1 US=1 */
+    OmiEpistemicCheck check = omi_compute_epistemic_check(quartet);
+    printf("  FS=%u GS=%u RS=%u US=%u -> LOGOS=%u NOMOS=%u PATHOS=%u OMNION=%u\n",
+           quartet.fs, quartet.gs, quartet.rs, quartet.us,
+           check.logos, check.nomos, check.pathos, check.omnion);
+
+    OmiHammingCodeword codeword = omi_encode_hamming(quartet);
+    OmiHammingStatus clean_status = omi_hamming_secded_check(&codeword, check.omnion);
+    printf("  Uncorrupted codeword SECDED check: status=%d (%s)\n",
+           clean_status, clean_status == OMI_HAMMING_OK ? "OK, no error" : "UNEXPECTED");
+
+    OmiHammingCodeword corrupted = codeword;
+    corrupted.bit[5] ^= 1u; /* flip GS -- a single data-bit corruption */
+    OmiHammingStatus corrected_status = omi_hamming_secded_check(&corrupted, check.omnion);
+    printf("  Single-bit corruption (GS flipped) SECDED check: status=%d (%s), GS recovered=%u\n",
+           corrected_status,
+           corrected_status == OMI_HAMMING_CORRECTED_SINGLE ? "corrected" : "UNEXPECTED",
+           corrupted.bit[5]);
+
+    printf("  Azimuth anchors: 0x55 XOR 0xAA = 0x%02X, balance check: %s\n",
+           (uint8_t)(OMI_AZIMUTH_ANCHOR_A ^ OMI_AZIMUTH_ANCHOR_B),
+           omi_verify_azimuth_anchors() ? "PASS" : "FAIL");
+    printf("  angle(0x40) = %.1f deg, angle(0xC0) = %.1f deg\n",
+           omi_azimuth_degrees(0x40u), omi_azimuth_degrees(0xC0u));
+
+    printf("  The 0-degree OMNION model:\n");
+    uint8_t az_ref  = omi_omnion_azimuth_byte(check.omnion);
+    uint8_t az_flip = omi_omnion_azimuth_byte((uint8_t)(check.omnion ^ 1u));
+    printf("    OMNION=%u -> azimuth byte 0x%02X (%.0f deg)\n",
+           check.omnion, az_ref, omi_azimuth_degrees(az_ref));
+    printf("    OMNION=%u -> azimuth byte 0x%02X (%.0f deg)\n",
+           (uint8_t)(check.omnion ^ 1u), az_flip, omi_azimuth_degrees(az_flip));
+    printf("    Antipodal pair is the 0x80 mirror of the reference: %s\n\n",
+           omi_verify_omnion_azimuth_mirror() ? "PASS" : "FAIL");
+
+    /* --- Section 11: algorithmic clock, OMNION centroid, local/remote sync --- */
+    printf("[11] Algorithmic clock and the 0x00 & 0-degree OMNION Centroid:\n");
+
+    printf("  r0 involution holds for 0x5C23: %s\n",
+           omi_verify_r0_involution(0x5C23u) ? "PASS" : "FAIL");
+
+    OmiClockState clk = omi_make_clock(0x0000u);
+    printf("  Centroid clock state 0x0000 band: width=%u density=%u texture=%u\n",
+           clk.band.width, clk.band.density, clk.band.texture);
+    for (int cycle = 1; cycle <= 3; cycle++) {
+        clk = omi_clock_tick(clk);
+        printf("    tick %d -> state=0x%04X  band=[w:%u d:%u t:%u]  minute=0x%04X hour=0x%04X\n",
+               cycle, clk.state, clk.band.width, clk.band.density, clk.band.texture,
+               omi_minute_hand(clk.state), omi_hour_hand(clk.state));
+    }
+
+    printf("  Centroid alignment check (0x0000, OMNION=0): %s\n",
+           omi_verify_centroid_alignment() ? "PASS" : "FAIL");
+
+    uint16_t diagnostic_addrs[3] = {0x0007u, 0x3030u, 0x8008u};
+    uint8_t  diagnostic_omnion[3] = {0u, 0u, 1u};
+    for (int i = 0; i < 3; i++) {
+        OmiGeometricVector v = omi_resolve_vector_to_centroid(diagnostic_addrs[i], diagnostic_omnion[i]);
+        printf("    addr 0x%04X (OMNION=%u) -> radius=%.2f  azimuth=%.1f deg\n",
+               v.relative_address, diagnostic_omnion[i], v.radial_distance, v.azimuth_angle);
+    }
+
+    printf("  Fixed centroid state: OMNION=0 -> 0x%04X, OMNION=1 -> 0x%04X\n",
+           omi_centroid_state(0u), omi_centroid_state(1u));
+    printf("  centroid_resolution(0x1234, OMNION=0) = 0x%04X\n",
+           omi_centroid_resolution(0x1234u, 0u));
+    printf("  centroid_resolution(0x1234, OMNION=1) = 0x%04X\n",
+           omi_centroid_resolution(0x1234u, 1u));
+
+    OmiOrientedOmnionClock rc0 = omi_process_centroid_alignment(0x0000u, 0u);
+    OmiOrientedOmnionClock rc1 = omi_process_centroid_alignment(0x0000u, 1u);
+    printf("  OMNION=0 -> logical azimuth=0x%02X (0 degrees)\n", rc0.current_azimuth);
+    printf("  OMNION=1 -> logical azimuth=0x%02X (180 degrees)\n\n", rc1.current_azimuth);
+
+    printf("  User-Local / User-Remote algorithmic clock sync (both views kept):\n");
+    OmiClockSyncPeer local_peer  = omi_clock_sync_peer_init(0x1234u);
+    OmiClockSyncPeer remote_peer = omi_clock_sync_peer_init(0x1234u); /* same seed: in sync */
+    for (int step = 0; step < 3; step++) {
+        omi_clock_sync_peer_tick(&local_peer);
+        omi_clock_sync_peer_tick(&remote_peer);
+    }
+    printf("    same-seed peers after 3 ticks:\n");
+    printf("      [diagnostic band-delta] %s\n",
+           omi_clock_sync_check_diagnostic(&local_peer, &remote_peer) ? "PASS" : "FAIL");
+    printf("      [exact centroid resolution, OMNION=0] %s (local=0x%04X remote=0x%04X)\n",
+           omi_clock_sync_check_resolved(&local_peer, &remote_peer, 0u) ? "PASS" : "FAIL",
+           local_peer.clock.state, remote_peer.clock.state);
+
+    OmiClockSyncPeer drifted_peer = omi_clock_sync_peer_init(0xFFFFu); /* different seed */
+    for (int step = 0; step < 3; step++) omi_clock_sync_peer_tick(&drifted_peer);
+    printf("    different-seed peer after 3 ticks:\n");
+    printf("      [diagnostic band-delta] %s\n",
+           omi_clock_sync_check_diagnostic(&local_peer, &drifted_peer) ? "unexpectedly matched" : "correctly differs");
+    printf("      [exact centroid resolution, OMNION=0] %s (local=0x%04X drifted=0x%04X)\n\n",
+           omi_clock_sync_check_resolved(&local_peer, &drifted_peer, 0u) ? "unexpectedly in sync" : "PASS (correctly rejected)",
+           local_peer.clock.state, drifted_peer.clock.state);
+
+    printf("====================================================================\n");
+    printf("COPRODUCT REMAINS ORIGIN-PRESERVING: %u total contributions retained\n",
+           bb.contribution_count);
+    printf("====================================================================\n");
+    return 0;
+}

@@ -7,7 +7,20 @@
       "y": 0,
       "width": 360,
       "height": 160,
-      "text": "# Emergent Axial Lisp\nNative view root for LOGOS/NOMOS/PATHOS Hamming-Coded COBS-CONS."
+      "text": "# Emergent Axial Lisp\nNative view root for LOGOS/NOMOS/PATHOS Hamming-Coded COBS-CONS.",
+      "omi": {
+        "source": "examples/o/minimal.o",
+        "origin": "0x4D494E49",
+        "address": "0500-03bf-000c-2b05-2f05-0002-039f-05ff",
+        "car": "0x00000000",
+        "cdr": "0x00000000",
+        "cons": "pending",
+        "selector": null,
+        "scope": "FS/GS/RS/US",
+        "integrity": "LOGOS/NOMOS/PATHOS pending",
+        "validation": "pending",
+        "receipt": "pending"
+      }
     },
     {
       "id": "scope",
@@ -16,7 +29,20 @@
       "y": 240,
       "width": 320,
       "height": 180,
-      "text": "## Scope Axis\nFS / GS / RS / US carry the four data positions."
+      "text": "## Scope Axis\nFS / GS / RS / US carry the four data positions.",
+      "omi": {
+        "source": "examples/o/minimal.o",
+        "origin": "0x4D494E49",
+        "address": "0500-03bf-000c-2b05-2f05-0002-039f-05ff",
+        "car": "0x00000000",
+        "cdr": "0x00000000",
+        "cons": "pending",
+        "selector": 0,
+        "scope": "FS/GS/RS/US",
+        "integrity": "LOGOS/NOMOS/PATHOS pending",
+        "validation": "pending",
+        "receipt": "pending"
+      }
     },
     {
       "id": "integrity",
@@ -25,7 +51,20 @@
       "y": 240,
       "width": 340,
       "height": 180,
-      "text": "## Integrity Axis\nLOGOS / NOMOS / PATHOS are Hamming parity checks over scope."
+      "text": "## Integrity Axis\nLOGOS / NOMOS / PATHOS are Hamming parity checks over scope.",
+      "omi": {
+        "source": "examples/o/hamming-single-error.o",
+        "origin": "0x4D494E49",
+        "address": "0500-03bf-000c-2b05-2f05-0002-039f-05ff",
+        "car": "0x00000000",
+        "cdr": "0x00000000",
+        "cons": "pending",
+        "selector": null,
+        "scope": "FS/GS/RS/US",
+        "integrity": "hamming743",
+        "validation": "pending",
+        "receipt": "pending"
+      }
     },
     {
       "id": "cobs-cons",
@@ -34,7 +73,20 @@
       "y": 240,
       "width": 360,
       "height": 180,
-      "text": "## COBS-CONS Frame\nAddressed declaration lowers into a framed relation without making projection authoritative."
+      "text": "## COBS-CONS Frame\nAddressed declaration lowers into a framed relation without making projection authoritative.",
+      "omi": {
+        "source": "examples/o/minimal.o",
+        "origin": "0x4D494E49",
+        "address": "0500-03bf-000c-2b05-2f05-0002-039f-05ff",
+        "car": "0x00000000",
+        "cdr": "0x00000000",
+        "cons": "COBS-CONS pending",
+        "selector": null,
+        "scope": "FS/GS/RS/US",
+        "integrity": "LOGOS/NOMOS/PATHOS pending",
+        "validation": "pending",
+        "receipt": "pending"
+      }
     },
     {
       "id": "triple-cube",
@@ -43,7 +95,20 @@
       "y": -10,
       "width": 360,
       "height": 210,
-      "text": "## 3D Knowledge Triple Cube\n8 state-corners: Left/Right bank, Low/High elevation, Local/CAR or Remote/CDR routing."
+      "text": "## 3D Knowledge Triple Cube\n8 state-corners: Left/Right bank, Low/High elevation, Local/CAR or Remote/CDR routing.",
+      "omi": {
+        "source": "examples/o/local-car.o",
+        "origin": "0x4D494E49",
+        "address": "0500-03bf-000c-2b05-2f05-0002-039f-05ff",
+        "car": "selector 0..3",
+        "cdr": "selector 4..7",
+        "cons": "pending",
+        "selector": "0..7",
+        "scope": "FS/GS/RS/US",
+        "integrity": "LOGOS/NOMOS/PATHOS pending",
+        "validation": "pending",
+        "receipt": "pending"
+      }
     },
     {
       "id": "omnicron",
@@ -52,7 +117,20 @@
       "y": 560,
       "width": 300,
       "height": 160,
-      "text": "## Omnicron\nRuntime resolver and cadence coordinator."
+      "text": "## Omnicron\nRuntime resolver and cadence coordinator.",
+      "omi": {
+        "source": "examples/o/clock-sync-pair.o",
+        "origin": "0x4D494E49",
+        "address": "0500-03bf-000c-2b05-2f05-0002-039f-05ff",
+        "car": "0x00000000",
+        "cdr": "0x00000000",
+        "cons": "pending",
+        "selector": null,
+        "scope": "FS/GS/RS/US",
+        "integrity": "LOGOS/NOMOS/PATHOS pending",
+        "validation": "pending",
+        "receipt": "pending"
+      }
     },
     {
       "id": "omicron-gauge",
@@ -61,7 +139,20 @@
       "y": 560,
       "width": 300,
       "height": 160,
-      "text": "## Omicron Gauge\nDial face, byte partitions, and tangent boundaries."
+      "text": "## Omicron Gauge\nDial face, byte partitions, and tangent boundaries.",
+      "omi": {
+        "source": "examples/o/local-car.o",
+        "origin": "0x4D494E49",
+        "address": "0500-03bf-000c-2b05-2f05-0002-039f-05ff",
+        "car": "0x00000000",
+        "cdr": "0x00000000",
+        "cons": "pending",
+        "selector": null,
+        "scope": "FS/GS/RS/US",
+        "integrity": "LOGOS/NOMOS/PATHOS pending",
+        "validation": "pending",
+        "receipt": "pending"
+      }
     },
     {
       "id": "tetragrammatron",
@@ -70,7 +161,20 @@
       "y": 560,
       "width": 320,
       "height": 160,
-      "text": "## Tetragrammatron\nEscapement lock. Checks closure before equivalence."
+      "text": "## Tetragrammatron\nEscapement lock. Checks closure before equivalence.",
+      "omi": {
+        "source": "examples/o/validated-equivalence.o",
+        "origin": "0x4D494E49",
+        "address": "0500-03bf-000c-2b05-2f05-0002-039f-05ff",
+        "car": "0x00000000",
+        "cdr": "0x00000000",
+        "cons": "pending",
+        "selector": null,
+        "scope": "FS/GS/RS/US",
+        "integrity": "LOGOS/NOMOS/PATHOS pending",
+        "validation": "requires witness",
+        "receipt": "pending"
+      }
     },
     {
       "id": "metatron",
@@ -79,7 +183,20 @@
       "y": 560,
       "width": 300,
       "height": 160,
-      "text": "## Metatron\nIncidence scribe and witness recorder."
+      "text": "## Metatron\nIncidence scribe and witness recorder.",
+      "omi": {
+        "source": "examples/o/validated-equivalence.o",
+        "origin": "0x4D494E49",
+        "address": "0500-03bf-000c-2b05-2f05-0002-039f-05ff",
+        "car": "0x00000000",
+        "cdr": "0x00000000",
+        "cons": "pending",
+        "selector": null,
+        "scope": "FS/GS/RS/US",
+        "integrity": "LOGOS/NOMOS/PATHOS pending",
+        "validation": "pending",
+        "receipt": "scribe pending"
+      }
     },
     {
       "id": "azimuth",
@@ -88,7 +205,20 @@
       "y": 560,
       "width": 300,
       "height": 160,
-      "text": "## Gnomonic Azimuth\nDisplay projection. Canvas is context, not receipt."
+      "text": "## Gnomonic Azimuth\nDisplay projection. Canvas is context, not receipt.",
+      "omi": {
+        "source": "examples/o/clock-sync-pair.o",
+        "origin": "0x4D494E49",
+        "address": "0500-03bf-000c-2b05-2f05-0002-039f-05ff",
+        "car": "0x00000000",
+        "cdr": "0x00000000",
+        "cons": "pending",
+        "selector": null,
+        "scope": "FS/GS/RS/US",
+        "integrity": "LOGOS/NOMOS/PATHOS pending",
+        "validation": "pending",
+        "receipt": "pending"
+      }
     },
     {
       "id": "dot-notation",
@@ -97,21 +227,82 @@
       "y": 860,
       "width": 520,
       "height": 220,
-      "text": "## Dot-Notation Surface\n(o . ((scope . (FS . (GS . (RS . US)))) (path . (LOGOS . (NOMOS . PATHOS))) (query . (REGISTER . STACK)) (close . (CAR . CDR))))"
+      "text": "## Dot-Notation Surface\n(o . ((scope . (FS . (GS . (RS . US)))) (path . (LOGOS . (NOMOS . PATHOS))) (query . (REGISTER . STACK)) (close . (CAR . CDR))))",
+      "omi": {
+        "source": "public/dot-notation.md",
+        "origin": "0x4D494E49",
+        "address": "0500-03bf-000c-2b05-2f05-0002-039f-05ff",
+        "car": "0x00000000",
+        "cdr": "0x00000000",
+        "cons": "pending",
+        "selector": null,
+        "scope": "FS/GS/RS/US",
+        "integrity": "LOGOS/NOMOS/PATHOS pending",
+        "validation": "pending",
+        "receipt": "pending"
+      }
     }
   ],
   "edges": [
-    {"id": "e1", "fromNode": "eal-root", "toNode": "scope"},
-    {"id": "e2", "fromNode": "eal-root", "toNode": "integrity"},
-    {"id": "e3", "fromNode": "integrity", "toNode": "cobs-cons"},
-    {"id": "e3b", "fromNode": "eal-root", "toNode": "triple-cube"},
-    {"id": "e3c", "fromNode": "triple-cube", "toNode": "cobs-cons"},
-    {"id": "e4", "fromNode": "scope", "toNode": "omnicron"},
-    {"id": "e5", "fromNode": "scope", "toNode": "omicron-gauge"},
-    {"id": "e6", "fromNode": "integrity", "toNode": "tetragrammatron"},
-    {"id": "e7", "fromNode": "cobs-cons", "toNode": "metatron"},
-    {"id": "e8", "fromNode": "cobs-cons", "toNode": "azimuth"},
-    {"id": "e9", "fromNode": "tetragrammatron", "toNode": "dot-notation"},
-    {"id": "e10", "fromNode": "metatron", "toNode": "dot-notation"}
+    {
+      "id": "e1",
+      "fromNode": "eal-root",
+      "toNode": "scope"
+    },
+    {
+      "id": "e2",
+      "fromNode": "eal-root",
+      "toNode": "integrity"
+    },
+    {
+      "id": "e3",
+      "fromNode": "integrity",
+      "toNode": "cobs-cons"
+    },
+    {
+      "id": "e3b",
+      "fromNode": "eal-root",
+      "toNode": "triple-cube"
+    },
+    {
+      "id": "e3c",
+      "fromNode": "triple-cube",
+      "toNode": "cobs-cons"
+    },
+    {
+      "id": "e4",
+      "fromNode": "scope",
+      "toNode": "omnicron"
+    },
+    {
+      "id": "e5",
+      "fromNode": "scope",
+      "toNode": "omicron-gauge"
+    },
+    {
+      "id": "e6",
+      "fromNode": "integrity",
+      "toNode": "tetragrammatron"
+    },
+    {
+      "id": "e7",
+      "fromNode": "cobs-cons",
+      "toNode": "metatron"
+    },
+    {
+      "id": "e8",
+      "fromNode": "cobs-cons",
+      "toNode": "azimuth"
+    },
+    {
+      "id": "e9",
+      "fromNode": "tetragrammatron",
+      "toNode": "dot-notation"
+    },
+    {
+      "id": "e10",
+      "fromNode": "metatron",
+      "toNode": "dot-notation"
+    }
   ]
 }
