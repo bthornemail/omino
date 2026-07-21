@@ -78,8 +78,14 @@ OMNICRON_EPISTEMIC_TEST := $(TEST_TMP_DIR)/omnicron_epistemic_core_test
 TCG_TARGET_HEADER := examples/tcg/tcg-target.h
 TCG_TARGET_IMPL := examples/tcg/tcg-target.c.inc
 RUNTIME_LOCK_TEST := $(TEST_TMP_DIR)/runtime_lock_conformance
+MEDIA_BRIDGE_EXAMPLE := examples/media/omi_media_bridge.c
+MEDIA_BRIDGE_TEST := $(TEST_TMP_DIR)/omi_media_bridge_test
+METATRON_PRECLOSURE_EXAMPLE := examples/metatron/metatron_preclosure.c
+METATRON_PRECLOSURE_TEST := $(TEST_TMP_DIR)/metatron_preclosure_test
+BASE_METRIC_EXAMPLE := examples/radix/base_metric_seed_model.c
+BASE_METRIC_TEST := $(TEST_TMP_DIR)/base_metric_seed_model_test
 
-.PHONY: all run test test-strict test-sanitize test-conformance test-golden test-recovery test-lambda-types test-octahedral-types test-canonical-types test-meta-compiler-types test-conformance-guardrail-types test-esp32 test-esp32-gossip test-boot-envelope test-omnicron-epistemic test-tcg-backend-spec test-runtime-lock views html canvas dot svg verilog-test octahedral-router-test metatron-scribe-test omnicron-bqf-test fano-slot-test meta-assembler-test backplane-monitor-test clock-crosscheck check view-path clean dist
+.PHONY: all run test test-strict test-sanitize test-conformance test-golden test-recovery test-lambda-types test-octahedral-types test-canonical-types test-meta-compiler-types test-conformance-guardrail-types test-esp32 test-esp32-gossip test-boot-envelope test-omnicron-epistemic test-tcg-backend-spec test-runtime-lock test-media-bridge test-metatron-preclosure test-base-metric views html canvas dot svg verilog-test octahedral-router-test metatron-scribe-test omnicron-bqf-test fano-slot-test meta-assembler-test backplane-monitor-test clock-crosscheck check view-path clean dist
 
 all: $(TARGET)
 
@@ -103,7 +109,7 @@ test-sanitize: $(SRC) | $(BUILD_DIR) $(TEST_TMP_DIR)
 	$(CC) $(CFLAGS) -fsanitize=address,undefined $(SRC) $(LDFLAGS) -o $(TEST_TMP_DIR)/omnicron-coproduct-partition-sanitize
 	ASAN_OPTIONS=detect_leaks=0 $(TEST_TMP_DIR)/omnicron-coproduct-partition-sanitize >/dev/null
 
-test-conformance: test-golden test-recovery test-lambda-types test-octahedral-types test-canonical-types test-meta-compiler-types test-conformance-guardrail-types test-esp32 test-esp32-gossip test-boot-envelope test-omnicron-epistemic test-tcg-backend-spec test-runtime-lock views canvas dot
+test-conformance: test-golden test-recovery test-lambda-types test-octahedral-types test-canonical-types test-meta-compiler-types test-conformance-guardrail-types test-esp32 test-esp32-gossip test-boot-envelope test-omnicron-epistemic test-tcg-backend-spec test-runtime-lock test-base-metric test-media-bridge test-metatron-preclosure views canvas dot
 
 test-golden: $(TARGET) $(GOLDEN_RUNTIME) | $(TEST_TMP_DIR)
 	./$(TARGET) > $(RUNTIME_ACTUAL)
@@ -246,6 +252,24 @@ $(RUNTIME_LOCK_TEST): tests/runtime-lock/runtime_lock_conformance.c $(SRC) | $(T
 
 test-runtime-lock: $(RUNTIME_LOCK_TEST)
 	$(RUNTIME_LOCK_TEST)
+
+$(MEDIA_BRIDGE_TEST): tests/media/omi_media_bridge_test.c $(MEDIA_BRIDGE_EXAMPLE) | $(TEST_TMP_DIR)
+	$(CC) $(CFLAGS) tests/media/omi_media_bridge_test.c -o $@
+
+test-media-bridge: $(MEDIA_BRIDGE_TEST)
+	$(MEDIA_BRIDGE_TEST)
+
+$(METATRON_PRECLOSURE_TEST): tests/metatron/metatron_preclosure_test.c $(METATRON_PRECLOSURE_EXAMPLE) | $(TEST_TMP_DIR)
+	$(CC) $(CFLAGS) tests/metatron/metatron_preclosure_test.c -o $@
+
+test-metatron-preclosure: $(METATRON_PRECLOSURE_TEST)
+	$(METATRON_PRECLOSURE_TEST)
+
+$(BASE_METRIC_TEST): tests/radix/base_metric_seed_model_test.c $(BASE_METRIC_EXAMPLE) | $(TEST_TMP_DIR)
+	$(CC) $(CFLAGS) tests/radix/base_metric_seed_model_test.c -o $@
+
+test-base-metric: $(BASE_METRIC_TEST)
+	$(BASE_METRIC_TEST)
 
 views: $(VIEW_FILES)
 	@for file in $(VIEW_FILES); do test -r $$file || exit 1; done

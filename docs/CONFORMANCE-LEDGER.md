@@ -37,6 +37,9 @@ This ledger maps the Section 40 checklist to executable targets and documented-m
 | 29 | ESP32 P2P gossip sync | PASS | `make test-esp32-gossip` |
 | 30 | TCG backend profile | PASS_SCOPED | `make test-tcg-backend-spec` static profile check |
 | 31 | eMMC-style boot envelope | PASS | `make test-boot-envelope` |
+| 32 | BASE(n) metric seed model | PASS | `make test-base-metric` |
+| 33 | P2P multimedia media bridge | PASS | `make test-media-bridge` |
+| 34 | Metatron pre-closure pipeline | PASS | `make test-metatron-preclosure` |
 
 ## External Proof Boundary
 

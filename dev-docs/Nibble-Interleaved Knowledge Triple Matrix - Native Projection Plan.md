@@ -1137,3 +1137,67 @@ make test-boot-envelope
 ```
 
 This profile stages boot candidates only. It does not validate relations, merge origins, or issue receipts.
+
+---
+
+## 26. BASE(n), Multimedia Bridge, and Metatron Pre-Closure Profiles
+
+Sections 46, 48, and 49 are integrated as bounded implementation profiles:
+
+```text
+examples/radix/base_metric_seed_model.c
+tests/radix/base_metric_seed_model_test.c
+docs/BASE-METRIC-SEED-MODEL.md
+
+examples/media/omi_media_bridge.c
+tests/media/omi_media_bridge_test.c
+docs/MULTIMEDIA-FEDERATED-SYNC.md
+
+examples/metatron/metatron_preclosure.c
+tests/metatron/metatron_preclosure_test.c
+docs/METATRON-PRECLOSURE.md
+```
+
+The BASE(n) model supports:
+
+```text
+BASE(2), BASE(8), BASE(10), BASE(16), BASE(58), BASE(64)
+```
+
+Power-of-two bases use shift shortcuts. Non-power-of-two bases use bounded
+multiply-add scaling. Digit injection rejects values outside the active base and
+fails before 32-bit accumulator overflow.
+
+The multimedia bridge recognizes:
+
+```text
+streaming -> 0x1A55 @ 0x18
+render    -> 0x1B55 @ 0x1C
+capture   -> 0x1C55 @ 0x20
+transcode -> 0x1D55 @ 0x24
+```
+
+The bridge authorizes hardware effect lanes only when the carrier is
+receipt-backed and has a nonzero carrier hash. Media data remains a carrier, not
+truth.
+
+The Metatron pre-closure profile models:
+
+```text
+0x0001 -> 0x0010 -> 0x0100 -> 0x1000 -> 0x10000 carry
+```
+
+Metatron confirms the `0x18` permutation witness before handoff. The
+Tetragrammatron closure harness remains separate and only grants closure when
+the witness is present and the supplied diagonal sum is `120`.
+
+Conformance targets:
+
+```sh
+make test-base-metric
+make test-media-bridge
+make test-metatron-preclosure
+```
+
+These profiles parse carrier notation, gate effects, and inscribe pre-closure
+paths. They do not validate relations, merge origins, or issue receipts.
