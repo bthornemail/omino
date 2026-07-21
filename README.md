@@ -808,8 +808,10 @@ visual spatial projection
 Lagrange fold/unfold projection
 ```
 
-The full Miquel `[8,4,4]` profile remains a defined model requiring a broader
-exhaustive conformance suite.
+The bounded Miquel `[8,4,4]` extended parity law is checked by mandatory
+algorithmic conformance. Broader physical or geometric interpretations remain
+outside that executable law unless separately lowered into deterministic
+vectors.
 
 ## 21. Summary Architecture
 

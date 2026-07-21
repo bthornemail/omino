@@ -931,12 +931,15 @@ docs/CONFORMANCE-LEDGER.md
 tests/conformance-guardrail-types/Omino/ConformanceGuardrail.hs
 ```
 
-The ledger maps the 27 checklist items to one of three statuses:
+The ledger maps checklist items to law, backend, proof, and physical-profile statuses:
 
 ```text
-PASS          executable guard runs under make check or a named target
-PASS_OPTIONAL executable guard runs when optional tools such as GHC or Icarus are installed
-DEFINED_MODEL documented architecture profile without repository-level proof
+PASS             canonical algorithm runs under make check
+PASS_SCOPED      deliberately bounded algorithm passes its stated domain
+BACKEND_OPTIONAL secondary implementation reproduces canonical vectors when available
+DEFINED_MODEL    documented profile not yet lowered into a complete algorithm
+EXTERNAL_PROOF   formal proof authority is outside this repository
+PHYSICAL_PROFILE connector, PCB, timing, or manufactured-hardware profile
 ```
 
 The Haskell guardrail harness models:

@@ -63,6 +63,8 @@ VISUAL_MATRIX_VECTORS := vectors/visual-matrix-projector.jsonl
 LAGRANGE_SPACE_VECTORS := vectors/lagrange-space-resolver.jsonl
 RECOVERY_VECTORS := vectors/quasigroup-recovery.jsonl
 RECOVERY_TEST := $(TEST_TMP_DIR)/recovery_conformance
+ALGORITHMIC_LAWS_TEST := $(TEST_TMP_DIR)/algorithmic_laws_conformance
+O_EXAMPLES := $(sort $(wildcard examples/o/*.o))
 LAMBDA_TYPES_DIR := tests/lambda-types
 LAMBDA_TYPES_BUILD_DIR := $(TEST_TMP_DIR)/lambda-types
 LAMBDA_TYPES_MAIN := $(LAMBDA_TYPES_DIR)/Main.hs
@@ -115,7 +117,7 @@ BASE_METRIC_TEST := $(TEST_TMP_DIR)/base_metric_seed_model_test
 BINARY_EXPORT_EXAMPLE := examples/compiler/binary_export_verifier.c
 BINARY_EXPORT_TEST := $(TEST_TMP_DIR)/binary_export_verifier_test
 
-.PHONY: all run test test-strict test-sanitize test-conformance test-golden test-recovery test-lambda-types test-octahedral-types test-canonical-types test-meta-compiler-types test-conformance-guardrail-types test-layer4-types test-metamorphic-types test-lagrange-types test-esp32 test-esp32-gossip test-boot-envelope test-omnicron-epistemic test-tcg-backend-spec test-runtime-lock test-media-bridge test-metatron-preclosure test-base-metric test-binary-export views html canvas dot svg verilog-test octahedral-router-test metatron-scribe-test omnicron-bqf-test fano-slot-test meta-assembler-test backplane-monitor-test layer4-multiplicity-test metamorphic-export-test visual-matrix-test lagrange-space-test clock-crosscheck check view-path clean dist
+.PHONY: all run test test-strict test-sanitize test-conformance test-golden test-recovery test-algorithmic-laws test-o-lifecycle test-lambda-types test-octahedral-types test-canonical-types test-meta-compiler-types test-conformance-guardrail-types test-layer4-types test-metamorphic-types test-lagrange-types test-esp32 test-esp32-gossip test-boot-envelope test-omnicron-epistemic test-tcg-backend-spec test-runtime-lock test-media-bridge test-metatron-preclosure test-base-metric test-binary-export views html canvas dot svg verilog-test octahedral-router-test metatron-scribe-test omnicron-bqf-test fano-slot-test meta-assembler-test backplane-monitor-test layer4-multiplicity-test metamorphic-export-test visual-matrix-test lagrange-space-test clock-crosscheck check view-path clean dist
 
 all: $(TARGET)
 
@@ -139,7 +141,7 @@ test-sanitize: $(SRC) | $(BUILD_DIR) $(TEST_TMP_DIR)
 	$(CC) $(CFLAGS) -fsanitize=address,undefined $(SRC) $(LDFLAGS) -o $(TEST_TMP_DIR)/omnicron-coproduct-partition-sanitize
 	ASAN_OPTIONS=detect_leaks=0 $(TEST_TMP_DIR)/omnicron-coproduct-partition-sanitize >/dev/null
 
-test-conformance: test-golden test-recovery test-lambda-types test-octahedral-types test-canonical-types test-meta-compiler-types test-conformance-guardrail-types test-layer4-types test-metamorphic-types test-lagrange-types test-esp32 test-esp32-gossip test-boot-envelope test-omnicron-epistemic test-tcg-backend-spec test-runtime-lock test-base-metric test-media-bridge test-metatron-preclosure test-binary-export views canvas dot
+test-conformance: test-golden test-recovery test-algorithmic-laws test-o-lifecycle test-lambda-types test-octahedral-types test-canonical-types test-meta-compiler-types test-conformance-guardrail-types test-layer4-types test-metamorphic-types test-lagrange-types test-esp32 test-esp32-gossip test-boot-envelope test-omnicron-epistemic test-tcg-backend-spec test-runtime-lock test-base-metric test-media-bridge test-metatron-preclosure test-binary-export views canvas dot
 
 test-golden: $(TARGET) $(GOLDEN_RUNTIME) | $(TEST_TMP_DIR)
 	./$(TARGET) > $(RUNTIME_ACTUAL)
@@ -151,6 +153,17 @@ $(RECOVERY_TEST): tests/recovery/recovery_conformance.c $(SRC) $(RECOVERY_VECTOR
 
 test-recovery: $(RECOVERY_TEST)
 	$(RECOVERY_TEST)
+
+$(ALGORITHMIC_LAWS_TEST): tests/algorithmic/algorithmic_laws_conformance.c | $(TEST_TMP_DIR)
+	$(CC) $(CFLAGS) tests/algorithmic/algorithmic_laws_conformance.c -o $@
+
+test-algorithmic-laws: $(ALGORITHMIC_LAWS_TEST)
+	$(ALGORITHMIC_LAWS_TEST)
+
+test-o-lifecycle: docs/O-SOURCE-LIFECYCLE.md $(O_EXAMPLES)
+	@rg -q 'attestation' docs/O-SOURCE-LIFECYCLE.md
+	@for file in $(O_EXAMPLES); do rg -q 'attestation pending' $$file || exit 1; done
+	@printf '%s\n' ".o source lifecycle examples verified"
 
 test-lambda-types: $(LAMBDA_TYPES_MAIN) $(LAMBDA_TYPES_CORE) | $(TEST_TMP_DIR)
 	@if command -v ghc >/dev/null 2>&1; then \
