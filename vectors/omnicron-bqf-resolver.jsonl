@@ -1,0 +1,7 @@
+{"name":"observer-query-q15-4","x_field":15,"y_unit":4,"stream_byte":"0x3F","address_energy":14524,"byte_band":1,"delineation_active":false,"null_boundary_trap":false}
+{"name":"null-boundary-trap","x_field":0,"y_unit":0,"stream_byte":"0x00","address_energy":0,"byte_band":0,"delineation_active":false,"null_boundary_trap":true}
+{"name":"control-us-edge","x_field":1,"y_unit":1,"stream_byte":"0x1F","address_energy":80,"byte_band":0,"delineation_active":false,"null_boundary_trap":false}
+{"name":"lazy-o-floor","x_field":15,"y_unit":4,"stream_byte":"0x80","address_energy":14524,"byte_band":3,"delineation_active":false,"null_boundary_trap":false}
+{"name":"lazy-o-ceiling","x_field":15,"y_unit":4,"stream_byte":"0xAF","address_energy":14524,"byte_band":3,"delineation_active":false,"null_boundary_trap":false}
+{"name":"high-delineation-floor","x_field":15,"y_unit":4,"stream_byte":"0xB0","address_energy":14524,"byte_band":2,"delineation_active":true,"null_boundary_trap":false}
+{"name":"max-field-high-delineation","x_field":255,"y_unit":255,"stream_byte":"0xFF","address_energy":5202000,"byte_band":2,"delineation_active":true,"null_boundary_trap":false}

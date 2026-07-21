@@ -43,3 +43,45 @@ Run:
 make octahedral-router-test
 make clock-crosscheck
 ```
+
+## Metatron Incidence Scribe
+
+`metatron_incidence_scribe.v` implements the optional Section 36 inscription block:
+
+```text
+i_step_cmd          -> gauge register <<= 4
+i_sector_prefix     -> 0x18 incidence witness when prefix is 00/20/40/60
+i_gauge_polarity    -> 24-bit pairwise plane flags
+o_gauge_carry       -> high when 0x1000 steps past the 16-bit register
+```
+
+The raw XOR expression cancels the sector prefix for any input, so the RTL also checks sector membership before committing `0x18`.
+
+Run:
+
+```sh
+make metatron-scribe-test
+make clock-crosscheck
+```
+
+## Omnicron BQF Resolver
+
+`omnicron_bqf_resolver.v` implements the optional Section 37 COBS-CONS/BQF projection:
+
+```text
+Q(x, y) = 60x^2 + 16xy + 4y^2
+0x00    -> null boundary trap
+0x00..0x1F -> control band
+0x20..0x7F -> readable observer band
+0x80..0xAF -> lazy .o carrier band
+0xB0..0xFF -> high-bit sparse lazy band, high-nibble delineation active
+```
+
+The BQF output is a diagnostic place-value metric. The resolver does not validate relations, merge origins, or issue receipts.
+
+Run:
+
+```sh
+make omnicron-bqf-test
+make clock-crosscheck
+```

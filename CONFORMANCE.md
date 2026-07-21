@@ -17,8 +17,11 @@ Conforming Omino implementations must preserve the existing `.o` source-carrier 
 - Type-level octahedral checks, when built, enforce modeled selector-to-face and face-to-interface assignments only for the Haskell reference surface.
 - Type-level canonical authority checks, when built, keep relation closure, route inscription, display orientation, and byte-plane classification witnesses in separate namespaces.
 - ESP32 example conformance uses fixed buffers, bounded parsing, COBS zero-leak rejection, and the diagnostic parabolic tracking form without becoming a new authority.
+- Omnicron epistemic conformance uses fixed buffers, BQF place-value evaluation, local 240-field boundary rejection, COBS-CONS `0x00` boundary trapping, and byte-band classification without becoming validation authority.
 - Runtime lock conformance preserves greedy clock advancement, exact centroid-relative sync, lazy projection, and atomic injection rollback.
 - Optional octahedral RTL routing must match the canonical selector law and remain projection-only.
+- Optional Metatron RTL inscription must keep place stepping and incidence logging isolated from Tetragrammatron validation.
+- Optional Omnicron BQF RTL must match the COBS-CONS byte-band law and diagnostic BQF energy calculation without accepting relations or issuing receipts.
 - Receipt remains separate from projection.
 
 ## Required Projection Behavior
@@ -35,6 +38,6 @@ Conforming Omino implementations must preserve the existing `.o` source-carrier 
 
 `make test-recovery` verifies the CONS recovery vectors. `make test-lambda-types` type-checks a valid five-level Lambda Canon Block and requires GHC to reject invalid mux and observer-boundary examples when GHC is installed. `make test-octahedral-types` type-checks valid selector-face/interface examples and requires GHC to reject invalid face/interface assignments. `make test-canonical-types` type-checks valid authority envelopes and requires GHC to reject cross-authority witness assignments and out-of-range byte planes.
 
-`make test-esp32` compiles the fixed-memory ESP32-style engine example as host C and verifies bounded parsing/reconciliation behavior. `make test-runtime-lock` checks the reconciled architectural lock without changing the golden runtime fixture.
+`make test-esp32` compiles the fixed-memory ESP32-style engine example as host C and verifies bounded parsing/reconciliation behavior. `make test-omnicron-epistemic` compiles the Section 37 Omnicron COBS-CONS/BQF layer as host C and verifies byte-band and local-field containment. `make test-runtime-lock` checks the reconciled architectural lock without changing the golden runtime fixture.
 
-`make octahedral-router-test` verifies the optional RTL face router when Verilog tools are installed. `make clock-crosscheck` validates both Lambda Canon and octahedral router vector shapes when `jq` is available.
+`make octahedral-router-test` verifies the optional RTL face router when Verilog tools are installed. `make metatron-scribe-test` verifies the optional RTL Metatron scribe. `make omnicron-bqf-test` verifies the optional RTL Omnicron BQF resolver. `make clock-crosscheck` validates Lambda Canon, octahedral router, Metatron scribe, and Omnicron BQF vector shapes when `jq` is available.

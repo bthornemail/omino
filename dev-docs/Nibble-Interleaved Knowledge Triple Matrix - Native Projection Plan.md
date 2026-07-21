@@ -764,3 +764,96 @@ address plane 0x100
 ```
 
 These are namespace/category checks for the Haskell reference surface. They do not replace runtime validation, receipts, or source provenance.
+
+---
+
+## 18. Metatron Incidence Scribe RTL
+
+Section 36 is integrated as an isolated optional RTL block:
+
+```text
+verilog/metatron_incidence_scribe.v
+verilog/tb_metatron_incidence_scribe.v
+vectors/metatron-incidence-scribe.jsonl
+```
+
+The block owns inscription, not validation:
+
+```text
+i_step_cmd       -> o_gauge_register <<= 4
+i_sector_prefix  -> sector-gated 0x18 incidence witness
+i_gauge_polarity -> 24-bit pairwise plane flags
+```
+
+The raw witness expression:
+
+```text
+B XOR (B XOR 0x1B) XOR (B XOR 0x1C) XOR (B XOR 0x1F) = 0x18
+```
+
+cancels `B` for every input. Therefore the RTL also checks that `B` is one of the valid sector prefixes:
+
+```text
+0x00, 0x20, 0x40, 0x60
+```
+
+Malformed prefixes such as `0x15` are rejected to `0x00` even though the raw XOR expression still algebraically yields `0x18`.
+
+Conformance target:
+
+```sh
+make metatron-scribe-test
+make clock-crosscheck
+```
+
+This block is separated from Tetragrammatron closure. It logs route/place state and carries, but it does not accept relations or issue receipts.
+
+---
+
+## 19. Omnicron COBS-CONS BQF Runtime Layer
+
+Section 37 is integrated as a bounded Omnicron runtime and optional RTL projection:
+
+```text
+examples/esp32/omnicron_epistemic_core.c
+tests/esp32/omnicron_epistemic_core_test.c
+verilog/omnicron_bqf_resolver.v
+verilog/tb_omnicron_bqf_resolver.v
+vectors/omnicron-bqf-resolver.jsonl
+```
+
+The C layer implements the stream-surface law:
+
+```text
+0x00       -> preserved boundary / zero-leak error
+0x01..0x1F -> control, separator, delta-operation band
+0x20..0x7F -> readable observer surface
+0x80..0xAF -> lazy .o carrier band
+0xB0..0xFF -> high-bit sparse lazy surface
+```
+
+The `11 + 5` split is encoded as a high-nibble delineation flag:
+
+```text
+high nibble 0x0..0xA -> declared local field
+high nibble 0xB..0xF -> delineation / escape / frame field
+```
+
+The BQF energy metric is:
+
+```text
+Q(x,y) = 60x^2 + 16xy + 4y^2
+       = 4(15x^2 + 4xy + y^2)
+```
+
+The host conformance test also rejects `local_field_x >= 240`, preserving the local `15 x 16` sparse field boundary.
+
+Conformance targets:
+
+```sh
+make test-omnicron-epistemic
+make omnicron-bqf-test
+make clock-crosscheck
+```
+
+This layer is transport and diagnostic routing support. It does not replace `.o`, does not validate relations, does not merge coproduct origins, and does not issue receipts.

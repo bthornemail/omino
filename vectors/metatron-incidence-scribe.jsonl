@@ -1,0 +1,6 @@
+{"name":"valid-sector-open-planes","step_cmd":false,"sector_prefix":"0x20","gauge_polarity":"0xF0","gauge_register":"0x0001","incidence_witness":"0x18","plane_flags":"0xFC0000","gauge_carry":false}
+{"name":"step-fs-to-gs","step_cmd":true,"sector_prefix":"0x20","gauge_polarity":"0xF0","gauge_register":"0x0010","incidence_witness":"0x18","plane_flags":"0xFC0000","gauge_carry":false}
+{"name":"step-gs-to-rs-sealed-planes","step_cmd":true,"sector_prefix":"0x40","gauge_polarity":"0x0F","gauge_register":"0x0100","incidence_witness":"0x18","plane_flags":"0x03F000","gauge_carry":false}
+{"name":"step-rs-to-us-all-planes","step_cmd":true,"sector_prefix":"0x60","gauge_polarity":"0xFF","gauge_register":"0x1000","incidence_witness":"0x18","plane_flags":"0xFFF000","gauge_carry":false}
+{"name":"step-us-to-carry","step_cmd":true,"sector_prefix":"0x00","gauge_polarity":"0x00","gauge_register":"0x0000","incidence_witness":"0x18","plane_flags":"0x000000","gauge_carry":true}
+{"name":"invalid-sector-rejected","step_cmd":false,"sector_prefix":"0x15","gauge_polarity":"0xF0","gauge_register":"0x0000","incidence_witness":"0x00","plane_flags":"0xFC0000","gauge_carry":false}

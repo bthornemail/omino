@@ -26,3 +26,6 @@
 | Octahedral face router RTL | implemented | Optional Verilog router and vectors added; `make octahedral-router-test` verifies selector-face routing when simulator tools are available. |
 | Octahedral type-level face checks | implemented | Optional GHC harness validates selector-to-face and face-to-interface assignments, including rejection of the incorrect `0xA080 -> Face4` mapping. |
 | Canonical authority type-level checks | implemented | Optional GHC harness validates authority/witness namespace separation and rejects cross-authority witness assignments. |
+| Metatron incidence scribe RTL | implemented | Optional Verilog block and vectors added; `make metatron-scribe-test` verifies place stepping, carry, sector-gated `0x18` witness, and pairwise plane flags. |
+| Omnicron epistemic COBS-CONS/BQF layer | implemented | `make test-omnicron-epistemic` verifies `0x00` trapping, `0x00..0x1F`/`0x20..0x7F`/`0x80..0xAF`/`0xB0..0xFF` classification, local 240-field rejection, and BQF `Q(x,y)=60x^2+16xy+4y^2` evaluation. |
+| Omnicron BQF resolver RTL | implemented | Optional Verilog block and vectors added; `make omnicron-bqf-test` verifies diagnostic energy, byte-band routing, high-nibble delineation, and null-boundary trap behavior. |
