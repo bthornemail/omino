@@ -23,3 +23,6 @@
 | Backplane connector profile | defined_model | Pinout and signal-integrity targets documented; no fabricated board, timing closure, or EMC validation claimed. |
 | ESP32 fixed-buffer execution example | implemented | `make test-esp32` verifies bounded parse, COBS zero-leak rejection, mux-band rejection, centroid, and parabolic tracking behavior as host C. |
 | Reconciled runtime lock | implemented | `make test-runtime-lock` verifies fixed centroid, greedy/exact/lazy separation, exact sync rejection, and atomic preflight rollback. |
+| Octahedral face router RTL | implemented | Optional Verilog router and vectors added; `make octahedral-router-test` verifies selector-face routing when simulator tools are available. |
+| Octahedral type-level face checks | implemented | Optional GHC harness validates selector-to-face and face-to-interface assignments, including rejection of the incorrect `0xA080 -> Face4` mapping. |
+| Canonical authority type-level checks | implemented | Optional GHC harness validates authority/witness namespace separation and rejects cross-authority witness assignments. |

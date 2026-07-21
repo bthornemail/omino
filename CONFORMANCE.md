@@ -14,8 +14,11 @@ Conforming Omino implementations must preserve the existing `.o` source-carrier 
 - LOGOS/NOMOS/PATHOS are derived from FS/GS/RS/US.
 - Integrity checks do not accept state.
 - Type-level Lambda Canon checks, when built, enforce modeled block completeness and boundary guards only for the Haskell reference surface.
+- Type-level octahedral checks, when built, enforce modeled selector-to-face and face-to-interface assignments only for the Haskell reference surface.
+- Type-level canonical authority checks, when built, keep relation closure, route inscription, display orientation, and byte-plane classification witnesses in separate namespaces.
 - ESP32 example conformance uses fixed buffers, bounded parsing, COBS zero-leak rejection, and the diagnostic parabolic tracking form without becoming a new authority.
 - Runtime lock conformance preserves greedy clock advancement, exact centroid-relative sync, lazy projection, and atomic injection rollback.
+- Optional octahedral RTL routing must match the canonical selector law and remain projection-only.
 - Receipt remains separate from projection.
 
 ## Required Projection Behavior
@@ -30,6 +33,8 @@ Conforming Omino implementations must preserve the existing `.o` source-carrier 
 
 `tests/golden/c-runtime-output.txt` captures the current native C output. `make test-golden` compares the runtime output byte-for-byte against the fixture.
 
-`make test-recovery` verifies the CONS recovery vectors. `make test-lambda-types` type-checks a valid five-level Lambda Canon Block and requires GHC to reject invalid mux and observer-boundary examples when GHC is installed.
+`make test-recovery` verifies the CONS recovery vectors. `make test-lambda-types` type-checks a valid five-level Lambda Canon Block and requires GHC to reject invalid mux and observer-boundary examples when GHC is installed. `make test-octahedral-types` type-checks valid selector-face/interface examples and requires GHC to reject invalid face/interface assignments. `make test-canonical-types` type-checks valid authority envelopes and requires GHC to reject cross-authority witness assignments and out-of-range byte planes.
 
 `make test-esp32` compiles the fixed-memory ESP32-style engine example as host C and verifies bounded parsing/reconciliation behavior. `make test-runtime-lock` checks the reconciled architectural lock without changing the golden runtime fixture.
+
+`make octahedral-router-test` verifies the optional RTL face router when Verilog tools are installed. `make clock-crosscheck` validates both Lambda Canon and octahedral router vector shapes when `jq` is available.

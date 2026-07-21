@@ -1,0 +1,10 @@
+{"name":"face-0-centroid","cons_address":"0x0000","active_face":0,"interface_6_4":true,"interface_8_3":false,"centroid_lock":true,"selector_code":["0x00","0x07","0x37","0x30"]}
+{"name":"face-0-top-right","cons_address":"0x0070","active_face":0,"interface_6_4":true,"interface_8_3":false,"centroid_lock":false,"selector_code":["0x00","0x07","0x37","0x30"]}
+{"name":"face-1-left-edge","cons_address":"0x0080","active_face":1,"interface_6_4":true,"interface_8_3":false,"centroid_lock":false,"selector_code":["0x08","0x0F","0x3F","0x38"]}
+{"name":"face-2-low-high-left","cons_address":"0x4070","active_face":2,"interface_6_4":true,"interface_8_3":false,"centroid_lock":false,"selector_code":["0x40","0x47","0x77","0x70"]}
+{"name":"face-3-hinge-limit","cons_address":"0x4080","active_face":3,"interface_6_4":true,"interface_8_3":false,"centroid_lock":false,"selector_code":["0x48","0x4F","0x7F","0x78"]}
+{"name":"face-4-remote-logos","cons_address":"0x8070","active_face":4,"interface_6_4":false,"interface_8_3":true,"centroid_lock":false,"selector_code":["0x80","0x87","0xB7","0xB0"],"mirror_of":0}
+{"name":"face-5-remote-nomos","cons_address":"0x8080","active_face":5,"interface_6_4":false,"interface_8_3":true,"centroid_lock":false,"selector_code":["0x88","0x8F","0xBF","0xB8"],"mirror_of":1}
+{"name":"face-6-remote-pathos","cons_address":"0xC070","active_face":6,"interface_6_4":false,"interface_8_3":true,"centroid_lock":false,"selector_code":["0xC0","0xC7","0xF7","0xF0"],"mirror_of":2}
+{"name":"face-7-remote-hinge","cons_address":"0xC080","active_face":7,"interface_6_4":false,"interface_8_3":true,"centroid_lock":false,"selector_code":["0xC8","0xCF","0xFF","0xF8"],"mirror_of":3}
+{"name":"interior-router-sample","cons_address":"0xA28B","active_face":5,"interface_6_4":false,"interface_8_3":true,"centroid_lock":false}

@@ -1,7 +1,7 @@
 {"name":"void-centroid","x_omi":"0x0000","y_imo":"0x0000","character_token":"0x00","received_omnion":0,"parabolic_eval":"0x00000000","is_void_centroid":true,"observer_boundary":false,"is_admissible":true}
-{"name":"space-x-step","x_omi":"0x0001","y_imo":"0x0000","character_token":"0x20","received_omnion":1,"parabolic_eval":"0x00000010","is_void_centroid":false,"observer_boundary":false,"is_admissible":true}
-{"name":"space-y-step","x_omi":"0x0000","y_imo":"0x0001","character_token":"0x20","received_omnion":1,"parabolic_eval":"0x00000004","is_void_centroid":false,"observer_boundary":false,"is_admissible":true}
+{"name":"space-x-step","x_omi":"0x0001","y_imo":"0x0000","character_token":"0x20","received_omnion":0,"parabolic_eval":"0x00000010","is_void_centroid":false,"observer_boundary":false,"is_admissible":true}
+{"name":"space-y-step","x_omi":"0x0000","y_imo":"0x0001","character_token":"0x20","received_omnion":0,"parabolic_eval":"0x00000004","is_void_centroid":false,"observer_boundary":false,"is_admissible":true}
 {"name":"space-square","x_omi":"0x0001","y_imo":"0x0001","character_token":"0x20","received_omnion":1,"parabolic_eval":"0x00000024","is_void_centroid":false,"observer_boundary":false,"is_admissible":true}
-{"name":"declaration-ceiling","x_omi":"0x0002","y_imo":"0x0003","character_token":"0x7F","received_omnion":1,"parabolic_eval":"0x000000C4","is_void_centroid":false,"observer_boundary":false,"is_admissible":true}
+{"name":"declaration-ceiling","x_omi":"0x0002","y_imo":"0x0003","character_token":"0x7F","received_omnion":0,"parabolic_eval":"0x000000C4","is_void_centroid":false,"observer_boundary":false,"is_admissible":true}
 {"name":"observer-boundary-rejected","x_omi":"0x0002","y_imo":"0x0003","character_token":"0x80","received_omnion":0,"parabolic_eval":"0x00000000","is_void_centroid":false,"observer_boundary":true,"is_admissible":false}
-{"name":"bad-omnion-rejected","x_omi":"0x0002","y_imo":"0x0003","character_token":"0x20","received_omnion":0,"parabolic_eval":"0x00000000","is_void_centroid":false,"observer_boundary":false,"is_admissible":false}
+{"name":"bad-omnion-rejected","x_omi":"0x0002","y_imo":"0x0003","character_token":"0x20","received_omnion":1,"parabolic_eval":"0x00000000","is_void_centroid":false,"observer_boundary":false,"is_admissible":false}

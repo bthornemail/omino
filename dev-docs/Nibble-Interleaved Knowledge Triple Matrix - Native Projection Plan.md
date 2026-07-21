@@ -675,3 +675,92 @@ make test-runtime-lock
 ```
 
 These targets preserve the golden C runtime output while adding focused regression coverage for the new profiles.
+
+---
+
+## 16. Octahedral Face Router Projection
+
+Section 33 maps the canonical 8-selector table onto an octahedral face projection:
+
+```text
+faces 0..3 = Local/CAR  = User-Local 6:4 interface
+faces 4..7 = Remote/CDR = User-Remote 8:3 interface
+```
+
+The projection is another view of the same selector law:
+
+```text
+compressed = {address[15:12], address[7:4]}
+face[2:1] = compressed[7:6]
+face[0]   = compressed[3]
+```
+
+The `XOR 0x80` mirror remains the local/remote pairing witness:
+
+```text
+face 0 <-> face 4
+face 1 <-> face 5
+face 2 <-> face 6
+face 3 <-> face 7
+```
+
+Implementation artifacts:
+
+```text
+docs/OCTAHEDRAL-FACE-ROUTER.md
+verilog/eal_octahedral_face_router.v
+verilog/tb_eal_octahedral_face_router.v
+vectors/octahedral-face-router.jsonl
+```
+
+Conformance target:
+
+```sh
+make octahedral-router-test
+make clock-crosscheck
+make test-octahedral-types
+```
+
+This router is projection and routing support. It does not validate, receipt, merge origins, or change the C runtime selector authority.
+
+The Haskell type-level octahedral harness mirrors the same law under `tests/octahedral-types`. It intentionally rejects `0xA080 -> Face4`: `0xA080` compresses to row nibble `0xA`, column nibble `0x8`, and therefore resolves to Face 5.
+
+---
+
+## 17. Canonical Authority Namespace Guard
+
+Section 35 is implemented as a separate Haskell type-level harness under `tests/canonical-types`. It keeps the principal authority namespaces disjoint:
+
+```text
+TetragrammatronGovernor -> relation closure witnesses
+MetatronScribe          -> route/place inscription witnesses
+GnomonicAzimuth         -> projection orientation witnesses
+OmicronGauge            -> bounded gauge namespace
+OmnicronResolver        -> 256-position runtime namespace
+```
+
+The accepted witness families are:
+
+```text
+Tetragrammatron: 0x1E, 0x3C, 0x78
+Metatron:        0x18, 0x0001, 0x0010, 0x0100, 0x1000, 0x10000
+Gnomonic:        0xAA55, 0x55AA
+```
+
+The byte-plane classifier covers `0x00..0xFF` only. Values outside that range are rejected by the type-level harness.
+
+Conformance target:
+
+```sh
+make test-canonical-types
+```
+
+This target compiles valid authority envelopes, then requires GHC to reject:
+
+```text
+Tetragrammatron owning 0xAA55
+Metatron owning 0x3C
+address plane 0x100
+```
+
+These are namespace/category checks for the Haskell reference surface. They do not replace runtime validation, receipts, or source provenance.

@@ -20,18 +20,30 @@ VERILOG_DIR := verilog
 VERILOG_CORE := $(VERILOG_DIR)/eal_lambda_canon_core.v
 VERILOG_TB := $(VERILOG_DIR)/tb_eal_lambda_canon_core.v
 VERILOG_OUT := $(TEST_TMP_DIR)/eal_lambda_canon_core.vvp
+OCTAHEDRAL_ROUTER := $(VERILOG_DIR)/eal_octahedral_face_router.v
+OCTAHEDRAL_ROUTER_TB := $(VERILOG_DIR)/tb_eal_octahedral_face_router.v
+OCTAHEDRAL_ROUTER_OUT := $(TEST_TMP_DIR)/eal_octahedral_face_router.vvp
 LAMBDA_CORE_VECTORS := vectors/eal-lambda-canon-core.jsonl
+OCTAHEDRAL_ROUTER_VECTORS := vectors/octahedral-face-router.jsonl
 RECOVERY_VECTORS := vectors/quasigroup-recovery.jsonl
 RECOVERY_TEST := $(TEST_TMP_DIR)/recovery_conformance
 LAMBDA_TYPES_DIR := tests/lambda-types
 LAMBDA_TYPES_BUILD_DIR := $(TEST_TMP_DIR)/lambda-types
 LAMBDA_TYPES_MAIN := $(LAMBDA_TYPES_DIR)/Main.hs
 LAMBDA_TYPES_CORE := $(LAMBDA_TYPES_DIR)/EmergentAxialLisp/LambdaCanonTypeCore.hs
+OCTAHEDRAL_TYPES_DIR := tests/octahedral-types
+OCTAHEDRAL_TYPES_BUILD_DIR := $(TEST_TMP_DIR)/octahedral-types
+OCTAHEDRAL_TYPES_MAIN := $(OCTAHEDRAL_TYPES_DIR)/Main.hs
+OCTAHEDRAL_TYPES_CORE := $(OCTAHEDRAL_TYPES_DIR)/EmergentAxialLisp/OctahedralTypeCore.hs
+CANONICAL_TYPES_DIR := tests/canonical-types
+CANONICAL_TYPES_BUILD_DIR := $(TEST_TMP_DIR)/canonical-types
+CANONICAL_TYPES_MAIN := $(CANONICAL_TYPES_DIR)/Main.hs
+CANONICAL_TYPES_CORE := $(CANONICAL_TYPES_DIR)/OmiImo/CanonicalResolverAuthorities.hs
 ESP32_EXAMPLE := examples/esp32/esp32_omi_core.c
 ESP32_TEST := $(TEST_TMP_DIR)/esp32_omi_core_test
 RUNTIME_LOCK_TEST := $(TEST_TMP_DIR)/runtime_lock_conformance
 
-.PHONY: all run test test-strict test-sanitize test-conformance test-golden test-recovery test-lambda-types test-esp32 test-runtime-lock views html canvas dot svg verilog-test clock-crosscheck check view-path clean dist
+.PHONY: all run test test-strict test-sanitize test-conformance test-golden test-recovery test-lambda-types test-octahedral-types test-canonical-types test-esp32 test-runtime-lock views html canvas dot svg verilog-test octahedral-router-test clock-crosscheck check view-path clean dist
 
 all: $(TARGET)
 
@@ -55,7 +67,7 @@ test-sanitize: $(SRC) | $(BUILD_DIR) $(TEST_TMP_DIR)
 	$(CC) $(CFLAGS) -fsanitize=address,undefined $(SRC) $(LDFLAGS) -o $(TEST_TMP_DIR)/omnicron-coproduct-partition-sanitize
 	ASAN_OPTIONS=detect_leaks=0 $(TEST_TMP_DIR)/omnicron-coproduct-partition-sanitize >/dev/null
 
-test-conformance: test-golden test-recovery test-lambda-types test-esp32 test-runtime-lock views canvas dot
+test-conformance: test-golden test-recovery test-lambda-types test-octahedral-types test-canonical-types test-esp32 test-runtime-lock views canvas dot
 
 test-golden: $(TARGET) $(GOLDEN_RUNTIME) | $(TEST_TMP_DIR)
 	./$(TARGET) > $(RUNTIME_ACTUAL)
@@ -82,6 +94,41 @@ test-lambda-types: $(LAMBDA_TYPES_MAIN) $(LAMBDA_TYPES_CORE) | $(TEST_TMP_DIR)
 		printf '%s\n' "Lambda Canon type-level rejection checks passed"; \
 	else \
 		printf '%s\n' "SKIP: ghc not available for Lambda Canon type-level checks"; \
+	fi
+
+test-octahedral-types: $(OCTAHEDRAL_TYPES_MAIN) $(OCTAHEDRAL_TYPES_CORE) | $(TEST_TMP_DIR)
+	@if command -v ghc >/dev/null 2>&1; then \
+		mkdir -p $(OCTAHEDRAL_TYPES_BUILD_DIR); \
+		ghc -fforce-recomp -i$(OCTAHEDRAL_TYPES_DIR) -outputdir $(OCTAHEDRAL_TYPES_BUILD_DIR) -o $(OCTAHEDRAL_TYPES_BUILD_DIR)/octahedral-types $(OCTAHEDRAL_TYPES_MAIN) >/dev/null; \
+		$(OCTAHEDRAL_TYPES_BUILD_DIR)/octahedral-types; \
+		if ghc -fforce-recomp -fno-code -i$(OCTAHEDRAL_TYPES_DIR) -outputdir $(OCTAHEDRAL_TYPES_BUILD_DIR) $(OCTAHEDRAL_TYPES_DIR)/InvalidA080Face4.hs >/dev/null 2>$(OCTAHEDRAL_TYPES_BUILD_DIR)/invalid-a080-face4.err; then \
+			printf '%s\n' "FAIL: invalid 0xA080 Face4 assignment compiled unexpectedly"; exit 1; \
+		fi; \
+		if ghc -fforce-recomp -fno-code -i$(OCTAHEDRAL_TYPES_DIR) -outputdir $(OCTAHEDRAL_TYPES_BUILD_DIR) $(OCTAHEDRAL_TYPES_DIR)/InvalidRemoteInterface.hs >/dev/null 2>$(OCTAHEDRAL_TYPES_BUILD_DIR)/invalid-remote-interface.err; then \
+			printf '%s\n' "FAIL: invalid remote interface assignment compiled unexpectedly"; exit 1; \
+		fi; \
+		printf '%s\n' "Octahedral type-level rejection checks passed"; \
+	else \
+		printf '%s\n' "SKIP: ghc not available for octahedral type-level checks"; \
+	fi
+
+test-canonical-types: $(CANONICAL_TYPES_MAIN) $(CANONICAL_TYPES_CORE) | $(TEST_TMP_DIR)
+	@if command -v ghc >/dev/null 2>&1; then \
+		mkdir -p $(CANONICAL_TYPES_BUILD_DIR); \
+		ghc -fforce-recomp -i$(CANONICAL_TYPES_DIR) -outputdir $(CANONICAL_TYPES_BUILD_DIR) -o $(CANONICAL_TYPES_BUILD_DIR)/canonical-types $(CANONICAL_TYPES_MAIN) >/dev/null; \
+		$(CANONICAL_TYPES_BUILD_DIR)/canonical-types; \
+		if ghc -fforce-recomp -fno-code -i$(CANONICAL_TYPES_DIR) -outputdir $(CANONICAL_TYPES_BUILD_DIR) $(CANONICAL_TYPES_DIR)/InvalidTetragrammatronGnomonic.hs >/dev/null 2>$(CANONICAL_TYPES_BUILD_DIR)/invalid-tetragrammatron-gnomonic.err; then \
+			printf '%s\n' "FAIL: invalid Tetragrammatron/Gnomonic witness compiled unexpectedly"; exit 1; \
+		fi; \
+		if ghc -fforce-recomp -fno-code -i$(CANONICAL_TYPES_DIR) -outputdir $(CANONICAL_TYPES_BUILD_DIR) $(CANONICAL_TYPES_DIR)/InvalidMetatronFold.hs >/dev/null 2>$(CANONICAL_TYPES_BUILD_DIR)/invalid-metatron-fold.err; then \
+			printf '%s\n' "FAIL: invalid Metatron fold witness compiled unexpectedly"; exit 1; \
+		fi; \
+		if ghc -fforce-recomp -fno-code -i$(CANONICAL_TYPES_DIR) -outputdir $(CANONICAL_TYPES_BUILD_DIR) $(CANONICAL_TYPES_DIR)/InvalidAddressPlane.hs >/dev/null 2>$(CANONICAL_TYPES_BUILD_DIR)/invalid-address-plane.err; then \
+			printf '%s\n' "FAIL: invalid address plane compiled unexpectedly"; exit 1; \
+		fi; \
+		printf '%s\n' "Canonical authority type-level rejection checks passed"; \
+	else \
+		printf '%s\n' "SKIP: ghc not available for canonical authority type-level checks"; \
 	fi
 
 $(ESP32_TEST): tests/esp32/esp32_omi_core_test.c $(ESP32_EXAMPLE) | $(TEST_TMP_DIR)
@@ -136,10 +183,20 @@ verilog-test: $(VERILOG_CORE) $(VERILOG_TB) | $(TEST_TMP_DIR)
 		printf '%s\n' "SKIP: iverilog/vvp not available for optional Verilog backend"; \
 	fi
 
-clock-crosscheck: $(LAMBDA_CORE_VECTORS) verilog-test
+octahedral-router-test: $(OCTAHEDRAL_ROUTER) $(OCTAHEDRAL_ROUTER_TB) | $(TEST_TMP_DIR)
+	@if command -v iverilog >/dev/null 2>&1 && command -v vvp >/dev/null 2>&1; then \
+		iverilog -g2012 -Wall -o $(OCTAHEDRAL_ROUTER_OUT) $(OCTAHEDRAL_ROUTER) $(OCTAHEDRAL_ROUTER_TB); \
+		vvp $(OCTAHEDRAL_ROUTER_OUT); \
+	else \
+		printf '%s\n' "SKIP: iverilog/vvp not available for optional octahedral router backend"; \
+	fi
+
+clock-crosscheck: $(LAMBDA_CORE_VECTORS) $(OCTAHEDRAL_ROUTER_VECTORS) verilog-test octahedral-router-test
 	@if command -v jq >/dev/null 2>&1; then \
 		while IFS= read -r line; do printf '%s\n' "$$line" | jq -e '.name and .x_omi and .y_imo and .character_token and has("received_omnion") and .parabolic_eval and has("is_void_centroid") and has("observer_boundary") and has("is_admissible")' >/dev/null || exit 1; done < $(LAMBDA_CORE_VECTORS); \
 		printf '%s\n' "Lambda Canon core vectors verified: $(LAMBDA_CORE_VECTORS)"; \
+		while IFS= read -r line; do printf '%s\n' "$$line" | jq -e '.name and .cons_address and has("active_face") and has("interface_6_4") and has("interface_8_3") and has("centroid_lock")' >/dev/null || exit 1; done < $(OCTAHEDRAL_ROUTER_VECTORS); \
+		printf '%s\n' "Octahedral face router vectors verified: $(OCTAHEDRAL_ROUTER_VECTORS)"; \
 	else \
 		printf '%s\n' "SKIP: jq not available for vector validation"; \
 	fi

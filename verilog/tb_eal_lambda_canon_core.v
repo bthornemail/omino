@@ -76,19 +76,18 @@ module tb_eal_lambda_canon_core;
         rst_n = 1'b1;
 
         apply_vector(16'h0000, 16'h0000, 8'h00, 1'b0, 32'h00000000, 1'b1, 1'b0, 1'b1);
-        apply_vector(16'h0001, 16'h0000, 8'h20, 1'b1, 32'h00000010, 1'b0, 1'b0, 1'b1);
-        apply_vector(16'h0000, 16'h0001, 8'h20, 1'b1, 32'h00000004, 1'b0, 1'b0, 1'b1);
+        apply_vector(16'h0001, 16'h0000, 8'h20, 1'b0, 32'h00000010, 1'b0, 1'b0, 1'b1);
+        apply_vector(16'h0000, 16'h0001, 8'h20, 1'b0, 32'h00000004, 1'b0, 1'b0, 1'b1);
         apply_vector(16'h0001, 16'h0001, 8'h20, 1'b1, 32'h00000024, 1'b0, 1'b0, 1'b1);
-        apply_vector(16'h0002, 16'h0003, 8'h7F, 1'b1, 32'h000000C4, 1'b0, 1'b0, 1'b1);
+        apply_vector(16'h0002, 16'h0003, 8'h7F, 1'b0, 32'h000000C4, 1'b0, 1'b0, 1'b1);
         apply_vector(16'h0002, 16'h0003, 8'h80, 1'b0, 32'h00000000, 1'b0, 1'b1, 1'b0);
-        apply_vector(16'h0002, 16'h0003, 8'h20, 1'b0, 32'h00000000, 1'b0, 1'b0, 1'b0);
+        apply_vector(16'h0002, 16'h0003, 8'h20, 1'b1, 32'h00000000, 1'b0, 1'b0, 1'b0);
 
         if (failures == 0) begin
             $display("PASS eal_lambda_canon_core vectors");
             $finish;
         end
 
-        $display("FAIL eal_lambda_canon_core failures=%0d", failures);
-        $finish;
+        $fatal(1, "FAIL eal_lambda_canon_core failures=%0d", failures);
     end
 endmodule
