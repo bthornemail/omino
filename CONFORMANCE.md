@@ -9,9 +9,13 @@ Conforming Omino implementations must preserve the existing `.o` source-carrier 
 - Overlap is recorded as conflict and is not destructive.
 - Union-Find only maintains equivalence after validation.
 - CONS composition remains ordered and non-commutative.
+- Quasigroup recovery may reconstruct a missing CAR/CDR/CONS coordinate, but it does not validate or merge origins.
 - Nibble interleave and selector decoding match the canonical selector table.
 - LOGOS/NOMOS/PATHOS are derived from FS/GS/RS/US.
 - Integrity checks do not accept state.
+- Type-level Lambda Canon checks, when built, enforce modeled block completeness and boundary guards only for the Haskell reference surface.
+- ESP32 example conformance uses fixed buffers, bounded parsing, COBS zero-leak rejection, and the diagnostic parabolic tracking form without becoming a new authority.
+- Runtime lock conformance preserves greedy clock advancement, exact centroid-relative sync, lazy projection, and atomic injection rollback.
 - Receipt remains separate from projection.
 
 ## Required Projection Behavior
@@ -25,3 +29,7 @@ Conforming Omino implementations must preserve the existing `.o` source-carrier 
 ## Current Conformance Guardrail
 
 `tests/golden/c-runtime-output.txt` captures the current native C output. `make test-golden` compares the runtime output byte-for-byte against the fixture.
+
+`make test-recovery` verifies the CONS recovery vectors. `make test-lambda-types` type-checks a valid five-level Lambda Canon Block and requires GHC to reject invalid mux and observer-boundary examples when GHC is installed.
+
+`make test-esp32` compiles the fixed-memory ESP32-style engine example as host C and verifies bounded parsing/reconciliation behavior. `make test-runtime-lock` checks the reconciled architectural lock without changing the golden runtime fixture.

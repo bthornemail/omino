@@ -462,12 +462,43 @@ static inline uint32_t omi_rotl32(uint32_t v, uint32_t shift) {
     return (v << shift) | (v >> ((32u - shift) & 31u));
 }
 
+static inline uint32_t omi_rotr32(uint32_t v, uint32_t shift) {
+    shift &= 31u;
+    return (v >> shift) | (v << ((32u - shift) & 31u));
+}
+
+static inline uint32_t omi_cons_profile_salt(uint16_t resolver_profile) {
+    return ((uint32_t)resolver_profile << 16) | resolver_profile;
+}
+
 /* deterministic, order-sensitive CAR/CDR fold -- CONS(car, cdr) */
 static uint32_t omi_cons_fold(uint32_t car, uint32_t cdr, uint16_t resolver_profile) {
     uint32_t r1 = omi_rotl32(car, 1);
     uint32_t r3 = omi_rotl32(cdr, 3);
-    uint32_t profile_salt = ((uint32_t)resolver_profile << 16) | resolver_profile;
-    return r1 ^ r3 ^ profile_salt;
+    return r1 ^ r3 ^ omi_cons_profile_salt(resolver_profile);
+}
+
+/* lawful inverse recovery under the same resolver profile as omi_cons_fold */
+static uint32_t omi_cons_recover_car(uint32_t cons, uint32_t cdr, uint16_t resolver_profile) {
+    return omi_rotr32(cons ^ omi_rotl32(cdr, 3) ^ omi_cons_profile_salt(resolver_profile), 1);
+}
+
+static uint32_t omi_cons_recover_cdr(uint32_t car, uint32_t cons, uint16_t resolver_profile) {
+    return omi_rotr32(cons ^ omi_rotl32(car, 1) ^ omi_cons_profile_salt(resolver_profile), 3);
+}
+
+/* diagnostic witness only: squaring modulo 2^16 is not uniquely invertible */
+static uint16_t omi_cons_tracking_square16(uint16_t car16, uint16_t cdr16) {
+    uint32_t linear = ((uint32_t)car16 * 4u) + ((uint32_t)cdr16 * 2u);
+    return (uint16_t)((linear * linear) & 0xFFFFu);
+}
+
+static bool omi_verify_cons_recovery_law(uint32_t car, uint32_t cdr, uint16_t resolver_profile) {
+    uint32_t cons = omi_cons_fold(car, cdr, resolver_profile);
+    uint16_t square = omi_cons_tracking_square16((uint16_t)car, (uint16_t)cdr);
+    (void)square; /* diagnostic witness; not recovery authority */
+    return omi_cons_recover_car(cons, cdr, resolver_profile) == car &&
+           omi_cons_recover_cdr(car, cons, resolver_profile) == cdr;
 }
 
 static omi_status omi_blackboard_cons(OmiCoproductBlackboard *bb,
@@ -1093,6 +1124,8 @@ static OmiBoardContribution omi_make_contribution(uint32_t source_id,
 }
 
 int main(void) {
+    (void)omi_verify_cons_recovery_law(0x12345678u, 0x55667788u, 0x0001u);
+
     printf("====================================================================\n");
     printf("OMNICRON COPRODUCT PARTITION: VERIFICATION ARTIFACT\n");
     printf("====================================================================\n\n");

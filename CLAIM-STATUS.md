@@ -16,3 +16,10 @@
 | `.o` as source carrier | defined_model | Required authority boundary; parser integration pending. |
 | COBS frame validation | pending | Boundary documented; implementation suite pending. |
 | Projection determinism | pending | Static view exists; generator determinism suite pending. |
+| Lambda Canon RTL interlock | implemented | Optional Verilog module and vectors added; simulator run depends on `iverilog`/`vvp`. |
+| Lambda Canon RTL conformance | pending | Full C/RTL cross-check awaits simulator availability and broader vectors. |
+| Quasigroup CONS recovery | implemented | `make test-recovery` verifies rotate/XOR inverses, resolver salt behavior, diagnostic-only square tracking, and non-collapse boundaries. |
+| Lambda Canon type-level block checks | implemented | Optional GHC harness validates the modeled five-level block and expected compile-time rejections; this is a Haskell reference-surface guarantee, not whole-system hardware proof. |
+| Backplane connector profile | defined_model | Pinout and signal-integrity targets documented; no fabricated board, timing closure, or EMC validation claimed. |
+| ESP32 fixed-buffer execution example | implemented | `make test-esp32` verifies bounded parse, COBS zero-leak rejection, mux-band rejection, centroid, and parabolic tracking behavior as host C. |
+| Reconciled runtime lock | implemented | `make test-runtime-lock` verifies fixed centroid, greedy/exact/lazy separation, exact sync rejection, and atomic preflight rollback. |
