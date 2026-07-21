@@ -29,6 +29,10 @@
 | BASE(n) metric seed model | implemented | `make test-base-metric` verifies supported radix profiles, power-of-two shift shortcuts, non-power-of-two scaling, digit bounds, and overflow rejection. |
 | Multimedia federated sync media bridge | implemented | `make test-media-bridge` verifies receipt-backed/nonzero carrier gating for streaming, render, capture, and transcode bridge words while rejecting unreceipted or out-of-band effects. |
 | Metatron pre-closure inscription pipeline | implemented | `make test-metatron-preclosure` verifies `<< 4` place stepping, `0x10000` carry, `0x18` witness gating, and separate Tetragrammatron `120` closure adjudication. |
+| Pascal Layer-4 multiplicity mapping | implemented | `make test-layer4-types`, `make layer4-multiplicity-test`, and `make clock-crosscheck` verify nibble bounds, compact/extended branch flags, and Pascal weight mapping as entrainment metrics only. |
+| Binary export invariance profile | implemented | `make test-binary-export`, `make test-metamorphic-types`, `make metamorphic-export-test`, and `make clock-crosscheck` verify centroid export identity, active-coordinate drift rejection, and sticky byte-mismatch interlock behavior. |
+| Visual spatial projection profiles | implemented | `make visual-matrix-test` and `make clock-crosscheck` verify inert 4x4 nibble-to-display coordinate projection. |
+| Lagrange fold/unfold space profile | implemented | `make test-lagrange-types`, `make lagrange-space-test`, and `make clock-crosscheck` verify 7-bit fold/unfold bounds and projection-only canvas coordinates. |
 | Octahedral face router RTL | implemented | Optional Verilog router and vectors added; `make octahedral-router-test` verifies selector-face routing when simulator tools are available. |
 | Octahedral type-level face checks | implemented | Optional GHC harness validates selector-to-face and face-to-interface assignments, including rejection of the incorrect `0xA080 -> Face4` mapping. |
 | Canonical authority type-level checks | implemented | Optional GHC harness validates authority/witness namespace separation and rejects cross-authority witness assignments. |

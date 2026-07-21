@@ -1,0 +1,7 @@
+{"name":"band0-origin","stream_byte":"0x00","manual_slot":0,"manual_band":0,"trigger_fold":false,"unfolded_band":0,"unfolded_slot":0,"folded_byte":"0x00","canvas_x":0,"canvas_y":0,"byte_bounds_fault":false}
+{"name":"band0-ceiling","stream_byte":"0x1F","manual_slot":0,"manual_band":0,"trigger_fold":false,"unfolded_band":0,"unfolded_slot":31,"folded_byte":"0x1F","canvas_x":0,"canvas_y":496,"byte_bounds_fault":false}
+{"name":"band1-slot26","stream_byte":"0x3A","manual_slot":0,"manual_band":0,"trigger_fold":false,"unfolded_band":1,"unfolded_slot":26,"folded_byte":"0x3A","canvas_x":416,"canvas_y":0,"byte_bounds_fault":false}
+{"name":"band2-ceiling","stream_byte":"0x5F","manual_slot":0,"manual_band":0,"trigger_fold":false,"unfolded_band":2,"unfolded_slot":31,"folded_byte":"0x5F","canvas_x":512,"canvas_y":496,"byte_bounds_fault":false}
+{"name":"band3-ceiling","stream_byte":"0x7F","manual_slot":0,"manual_band":0,"trigger_fold":false,"unfolded_band":3,"unfolded_slot":31,"folded_byte":"0x7F","canvas_x":496,"canvas_y":512,"byte_bounds_fault":false}
+{"name":"manual-fold","stream_byte":"0x12","manual_slot":21,"manual_band":3,"trigger_fold":true,"unfolded_band":0,"unfolded_slot":18,"folded_byte":"0x75","canvas_x":0,"canvas_y":288,"byte_bounds_fault":false}
+{"name":"invalid-8bit","stream_byte":"0x80","manual_slot":0,"manual_band":0,"trigger_fold":false,"unfolded_band":0,"unfolded_slot":0,"folded_byte":"0x00","canvas_x":0,"canvas_y":0,"byte_bounds_fault":true}

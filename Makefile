@@ -38,6 +38,18 @@ META_ASSEMBLER_OUT := $(TEST_TMP_DIR)/eal_meta_assembler.vvp
 BACKPLANE_MONITOR := $(VERILOG_DIR)/backplane_interlock_monitor.v
 BACKPLANE_MONITOR_TB := $(VERILOG_DIR)/tb_backplane_interlock_monitor.v
 BACKPLANE_MONITOR_OUT := $(TEST_TMP_DIR)/backplane_interlock_monitor.vvp
+LAYER4_MULTIPLICITY := $(VERILOG_DIR)/eal_layer4_multiplicity_calc.v
+LAYER4_MULTIPLICITY_TB := $(VERILOG_DIR)/tb_eal_layer4_multiplicity_calc.v
+LAYER4_MULTIPLICITY_OUT := $(TEST_TMP_DIR)/eal_layer4_multiplicity_calc.vvp
+METAMORPHIC_EXPORT_VALIDATOR := $(VERILOG_DIR)/eal_metamorphic_export_validator.v
+METAMORPHIC_EXPORT_VALIDATOR_TB := $(VERILOG_DIR)/tb_eal_metamorphic_export_validator.v
+METAMORPHIC_EXPORT_VALIDATOR_OUT := $(TEST_TMP_DIR)/eal_metamorphic_export_validator.vvp
+VISUAL_MATRIX_PROJECTOR := $(VERILOG_DIR)/omino_visual_matrix_projector.v
+VISUAL_MATRIX_PROJECTOR_TB := $(VERILOG_DIR)/tb_omino_visual_matrix_projector.v
+VISUAL_MATRIX_PROJECTOR_OUT := $(TEST_TMP_DIR)/omino_visual_matrix_projector.vvp
+LAGRANGE_SPACE_RESOLVER := $(VERILOG_DIR)/eal_lagrange_space_resolver.v
+LAGRANGE_SPACE_RESOLVER_TB := $(VERILOG_DIR)/tb_eal_lagrange_space_resolver.v
+LAGRANGE_SPACE_RESOLVER_OUT := $(TEST_TMP_DIR)/eal_lagrange_space_resolver.vvp
 LAMBDA_CORE_VECTORS := vectors/eal-lambda-canon-core.jsonl
 OCTAHEDRAL_ROUTER_VECTORS := vectors/octahedral-face-router.jsonl
 METATRON_SCRIBE_VECTORS := vectors/metatron-incidence-scribe.jsonl
@@ -45,6 +57,10 @@ OMNICRON_BQF_RESOLVER_VECTORS := vectors/omnicron-bqf-resolver.jsonl
 FANO_SLOT_SCHEDULER_VECTORS := vectors/fano-slot-scheduler.jsonl
 META_ASSEMBLER_VECTORS := vectors/eal-meta-assembler.jsonl
 BACKPLANE_MONITOR_VECTORS := vectors/backplane-interlock-monitor.jsonl
+LAYER4_MULTIPLICITY_VECTORS := vectors/layer4-multiplicity-calc.jsonl
+METAMORPHIC_EXPORT_VECTORS := vectors/metamorphic-export-validator.jsonl
+VISUAL_MATRIX_VECTORS := vectors/visual-matrix-projector.jsonl
+LAGRANGE_SPACE_VECTORS := vectors/lagrange-space-resolver.jsonl
 RECOVERY_VECTORS := vectors/quasigroup-recovery.jsonl
 RECOVERY_TEST := $(TEST_TMP_DIR)/recovery_conformance
 LAMBDA_TYPES_DIR := tests/lambda-types
@@ -67,6 +83,18 @@ CONFORMANCE_GUARDRAIL_TYPES_DIR := tests/conformance-guardrail-types
 CONFORMANCE_GUARDRAIL_TYPES_BUILD_DIR := $(TEST_TMP_DIR)/conformance-guardrail-types
 CONFORMANCE_GUARDRAIL_TYPES_MAIN := $(CONFORMANCE_GUARDRAIL_TYPES_DIR)/Main.hs
 CONFORMANCE_GUARDRAIL_TYPES_CORE := $(CONFORMANCE_GUARDRAIL_TYPES_DIR)/Omino/ConformanceGuardrail.hs
+LAYER4_TYPES_DIR := tests/layer4-types
+LAYER4_TYPES_BUILD_DIR := $(TEST_TMP_DIR)/layer4-types
+LAYER4_TYPES_MAIN := $(LAYER4_TYPES_DIR)/Main.hs
+LAYER4_TYPES_CORE := $(LAYER4_TYPES_DIR)/EmergentAxialLisp/Layer4TetrahedronCore.hs
+METAMORPHIC_TYPES_DIR := tests/metamorphic-types
+METAMORPHIC_TYPES_BUILD_DIR := $(TEST_TMP_DIR)/metamorphic-types
+METAMORPHIC_TYPES_MAIN := $(METAMORPHIC_TYPES_DIR)/Main.hs
+METAMORPHIC_TYPES_CORE := $(METAMORPHIC_TYPES_DIR)/EmergentAxialLisp/MetamorphicCompilerCore.hs
+LAGRANGE_TYPES_DIR := tests/lagrange-types
+LAGRANGE_TYPES_BUILD_DIR := $(TEST_TMP_DIR)/lagrange-types
+LAGRANGE_TYPES_MAIN := $(LAGRANGE_TYPES_DIR)/Main.hs
+LAGRANGE_TYPES_CORE := $(LAGRANGE_TYPES_DIR)/EmergentAxialLisp/LagrangeSpaceTypeCore.hs
 ESP32_EXAMPLE := examples/esp32/esp32_omi_core.c
 ESP32_TEST := $(TEST_TMP_DIR)/esp32_omi_core_test
 ESP32_GOSSIP_EXAMPLE := examples/esp32/esp32_p2p_gossip.c
@@ -84,8 +112,10 @@ METATRON_PRECLOSURE_EXAMPLE := examples/metatron/metatron_preclosure.c
 METATRON_PRECLOSURE_TEST := $(TEST_TMP_DIR)/metatron_preclosure_test
 BASE_METRIC_EXAMPLE := examples/radix/base_metric_seed_model.c
 BASE_METRIC_TEST := $(TEST_TMP_DIR)/base_metric_seed_model_test
+BINARY_EXPORT_EXAMPLE := examples/compiler/binary_export_verifier.c
+BINARY_EXPORT_TEST := $(TEST_TMP_DIR)/binary_export_verifier_test
 
-.PHONY: all run test test-strict test-sanitize test-conformance test-golden test-recovery test-lambda-types test-octahedral-types test-canonical-types test-meta-compiler-types test-conformance-guardrail-types test-esp32 test-esp32-gossip test-boot-envelope test-omnicron-epistemic test-tcg-backend-spec test-runtime-lock test-media-bridge test-metatron-preclosure test-base-metric views html canvas dot svg verilog-test octahedral-router-test metatron-scribe-test omnicron-bqf-test fano-slot-test meta-assembler-test backplane-monitor-test clock-crosscheck check view-path clean dist
+.PHONY: all run test test-strict test-sanitize test-conformance test-golden test-recovery test-lambda-types test-octahedral-types test-canonical-types test-meta-compiler-types test-conformance-guardrail-types test-layer4-types test-metamorphic-types test-lagrange-types test-esp32 test-esp32-gossip test-boot-envelope test-omnicron-epistemic test-tcg-backend-spec test-runtime-lock test-media-bridge test-metatron-preclosure test-base-metric test-binary-export views html canvas dot svg verilog-test octahedral-router-test metatron-scribe-test omnicron-bqf-test fano-slot-test meta-assembler-test backplane-monitor-test layer4-multiplicity-test metamorphic-export-test visual-matrix-test lagrange-space-test clock-crosscheck check view-path clean dist
 
 all: $(TARGET)
 
@@ -109,7 +139,7 @@ test-sanitize: $(SRC) | $(BUILD_DIR) $(TEST_TMP_DIR)
 	$(CC) $(CFLAGS) -fsanitize=address,undefined $(SRC) $(LDFLAGS) -o $(TEST_TMP_DIR)/omnicron-coproduct-partition-sanitize
 	ASAN_OPTIONS=detect_leaks=0 $(TEST_TMP_DIR)/omnicron-coproduct-partition-sanitize >/dev/null
 
-test-conformance: test-golden test-recovery test-lambda-types test-octahedral-types test-canonical-types test-meta-compiler-types test-conformance-guardrail-types test-esp32 test-esp32-gossip test-boot-envelope test-omnicron-epistemic test-tcg-backend-spec test-runtime-lock test-base-metric test-media-bridge test-metatron-preclosure views canvas dot
+test-conformance: test-golden test-recovery test-lambda-types test-octahedral-types test-canonical-types test-meta-compiler-types test-conformance-guardrail-types test-layer4-types test-metamorphic-types test-lagrange-types test-esp32 test-esp32-gossip test-boot-envelope test-omnicron-epistemic test-tcg-backend-spec test-runtime-lock test-base-metric test-media-bridge test-metatron-preclosure test-binary-export views canvas dot
 
 test-golden: $(TARGET) $(GOLDEN_RUNTIME) | $(TEST_TMP_DIR)
 	./$(TARGET) > $(RUNTIME_ACTUAL)
@@ -214,6 +244,54 @@ test-conformance-guardrail-types: $(CONFORMANCE_GUARDRAIL_TYPES_MAIN) $(CONFORMA
 		printf '%s\n' "SKIP: ghc not available for conformance guardrail type-level checks"; \
 	fi
 
+test-layer4-types: $(LAYER4_TYPES_MAIN) $(LAYER4_TYPES_CORE) | $(TEST_TMP_DIR)
+	@if command -v ghc >/dev/null 2>&1; then \
+		mkdir -p $(LAYER4_TYPES_BUILD_DIR); \
+		ghc -fforce-recomp -i$(LAYER4_TYPES_DIR) -outputdir $(LAYER4_TYPES_BUILD_DIR) -o $(LAYER4_TYPES_BUILD_DIR)/layer4-types $(LAYER4_TYPES_MAIN) >/dev/null || exit 1; \
+		$(LAYER4_TYPES_BUILD_DIR)/layer4-types; \
+		if ghc -fforce-recomp -fno-code -i$(LAYER4_TYPES_DIR) -outputdir $(LAYER4_TYPES_BUILD_DIR) $(LAYER4_TYPES_DIR)/InvalidWeight.hs >/dev/null 2>$(LAYER4_TYPES_BUILD_DIR)/invalid-weight.err; then \
+			printf '%s\n' "FAIL: invalid Layer-4 weight compiled unexpectedly"; exit 1; \
+		fi; \
+		if ghc -fforce-recomp -fno-code -i$(LAYER4_TYPES_DIR) -outputdir $(LAYER4_TYPES_BUILD_DIR) $(LAYER4_TYPES_DIR)/InvalidNibble.hs >/dev/null 2>$(LAYER4_TYPES_BUILD_DIR)/invalid-nibble.err; then \
+			printf '%s\n' "FAIL: invalid Layer-4 nibble compiled unexpectedly"; exit 1; \
+		fi; \
+		printf '%s\n' "Layer-4 Pascal type-level rejection checks passed"; \
+	else \
+		printf '%s\n' "SKIP: ghc not available for Layer-4 type-level checks"; \
+	fi
+
+test-metamorphic-types: $(METAMORPHIC_TYPES_MAIN) $(METAMORPHIC_TYPES_CORE) | $(TEST_TMP_DIR)
+	@if command -v ghc >/dev/null 2>&1; then \
+		mkdir -p $(METAMORPHIC_TYPES_BUILD_DIR); \
+		ghc -fforce-recomp -i$(METAMORPHIC_TYPES_DIR) -outputdir $(METAMORPHIC_TYPES_BUILD_DIR) -o $(METAMORPHIC_TYPES_BUILD_DIR)/metamorphic-types $(METAMORPHIC_TYPES_MAIN) >/dev/null || exit 1; \
+		$(METAMORPHIC_TYPES_BUILD_DIR)/metamorphic-types; \
+		if ghc -fforce-recomp -fno-code -i$(METAMORPHIC_TYPES_DIR) -outputdir $(METAMORPHIC_TYPES_BUILD_DIR) $(METAMORPHIC_TYPES_DIR)/InvalidActiveIdentity.hs >/dev/null 2>$(METAMORPHIC_TYPES_BUILD_DIR)/invalid-active-identity.err; then \
+			printf '%s\n' "FAIL: invalid active metamorphic identity compiled unexpectedly"; exit 1; \
+		fi; \
+		printf '%s\n' "Metamorphic export type-level rejection checks passed"; \
+	else \
+		printf '%s\n' "SKIP: ghc not available for metamorphic export type-level checks"; \
+	fi
+
+test-lagrange-types: $(LAGRANGE_TYPES_MAIN) $(LAGRANGE_TYPES_CORE) | $(TEST_TMP_DIR)
+	@if command -v ghc >/dev/null 2>&1; then \
+		mkdir -p $(LAGRANGE_TYPES_BUILD_DIR); \
+		ghc -fforce-recomp -i$(LAGRANGE_TYPES_DIR) -outputdir $(LAGRANGE_TYPES_BUILD_DIR) -o $(LAGRANGE_TYPES_BUILD_DIR)/lagrange-types $(LAGRANGE_TYPES_MAIN) >/dev/null || exit 1; \
+		$(LAGRANGE_TYPES_BUILD_DIR)/lagrange-types; \
+		if ghc -fforce-recomp -fno-code -i$(LAGRANGE_TYPES_DIR) -outputdir $(LAGRANGE_TYPES_BUILD_DIR) $(LAGRANGE_TYPES_DIR)/InvalidByte.hs >/dev/null 2>$(LAGRANGE_TYPES_BUILD_DIR)/invalid-byte.err; then \
+			printf '%s\n' "FAIL: invalid Lagrange byte compiled unexpectedly"; exit 1; \
+		fi; \
+		if ghc -fforce-recomp -fno-code -i$(LAGRANGE_TYPES_DIR) -outputdir $(LAGRANGE_TYPES_BUILD_DIR) $(LAGRANGE_TYPES_DIR)/InvalidFoldBand.hs >/dev/null 2>$(LAGRANGE_TYPES_BUILD_DIR)/invalid-fold-band.err; then \
+			printf '%s\n' "FAIL: invalid Lagrange fold band compiled unexpectedly"; exit 1; \
+		fi; \
+		if ghc -fforce-recomp -fno-code -i$(LAGRANGE_TYPES_DIR) -outputdir $(LAGRANGE_TYPES_BUILD_DIR) $(LAGRANGE_TYPES_DIR)/InvalidFoldSlot.hs >/dev/null 2>$(LAGRANGE_TYPES_BUILD_DIR)/invalid-fold-slot.err; then \
+			printf '%s\n' "FAIL: invalid Lagrange fold slot compiled unexpectedly"; exit 1; \
+		fi; \
+		printf '%s\n' "Lagrange space type-level rejection checks passed"; \
+	else \
+		printf '%s\n' "SKIP: ghc not available for Lagrange space type-level checks"; \
+	fi
+
 $(ESP32_TEST): tests/esp32/esp32_omi_core_test.c $(ESP32_EXAMPLE) | $(TEST_TMP_DIR)
 	$(CC) $(CFLAGS) tests/esp32/esp32_omi_core_test.c -o $@
 
@@ -270,6 +348,12 @@ $(BASE_METRIC_TEST): tests/radix/base_metric_seed_model_test.c $(BASE_METRIC_EXA
 
 test-base-metric: $(BASE_METRIC_TEST)
 	$(BASE_METRIC_TEST)
+
+$(BINARY_EXPORT_TEST): tests/compiler/binary_export_verifier_test.c $(BINARY_EXPORT_EXAMPLE) | $(TEST_TMP_DIR)
+	$(CC) $(CFLAGS) tests/compiler/binary_export_verifier_test.c -o $@
+
+test-binary-export: $(BINARY_EXPORT_TEST)
+	$(BINARY_EXPORT_TEST)
 
 views: $(VIEW_FILES)
 	@for file in $(VIEW_FILES); do test -r $$file || exit 1; done
@@ -359,7 +443,39 @@ backplane-monitor-test: $(BACKPLANE_MONITOR) $(BACKPLANE_MONITOR_TB) | $(TEST_TM
 		printf '%s\n' "SKIP: iverilog/vvp not available for optional backplane monitor backend"; \
 	fi
 
-clock-crosscheck: $(LAMBDA_CORE_VECTORS) $(OCTAHEDRAL_ROUTER_VECTORS) $(METATRON_SCRIBE_VECTORS) $(OMNICRON_BQF_RESOLVER_VECTORS) $(FANO_SLOT_SCHEDULER_VECTORS) $(META_ASSEMBLER_VECTORS) $(BACKPLANE_MONITOR_VECTORS) verilog-test octahedral-router-test metatron-scribe-test omnicron-bqf-test fano-slot-test meta-assembler-test backplane-monitor-test
+layer4-multiplicity-test: $(LAYER4_MULTIPLICITY) $(LAYER4_MULTIPLICITY_TB) | $(TEST_TMP_DIR)
+	@if command -v iverilog >/dev/null 2>&1 && command -v vvp >/dev/null 2>&1; then \
+		iverilog -g2012 -Wall -o $(LAYER4_MULTIPLICITY_OUT) $(LAYER4_MULTIPLICITY) $(LAYER4_MULTIPLICITY_TB); \
+		vvp $(LAYER4_MULTIPLICITY_OUT); \
+	else \
+		printf '%s\n' "SKIP: iverilog/vvp not available for optional Layer-4 multiplicity backend"; \
+	fi
+
+metamorphic-export-test: $(METAMORPHIC_EXPORT_VALIDATOR) $(METAMORPHIC_EXPORT_VALIDATOR_TB) | $(TEST_TMP_DIR)
+	@if command -v iverilog >/dev/null 2>&1 && command -v vvp >/dev/null 2>&1; then \
+		iverilog -g2012 -Wall -o $(METAMORPHIC_EXPORT_VALIDATOR_OUT) $(METAMORPHIC_EXPORT_VALIDATOR) $(METAMORPHIC_EXPORT_VALIDATOR_TB); \
+		vvp $(METAMORPHIC_EXPORT_VALIDATOR_OUT); \
+	else \
+		printf '%s\n' "SKIP: iverilog/vvp not available for optional metamorphic export backend"; \
+	fi
+
+visual-matrix-test: $(VISUAL_MATRIX_PROJECTOR) $(VISUAL_MATRIX_PROJECTOR_TB) | $(TEST_TMP_DIR)
+	@if command -v iverilog >/dev/null 2>&1 && command -v vvp >/dev/null 2>&1; then \
+		iverilog -g2012 -Wall -o $(VISUAL_MATRIX_PROJECTOR_OUT) $(VISUAL_MATRIX_PROJECTOR) $(VISUAL_MATRIX_PROJECTOR_TB); \
+		vvp $(VISUAL_MATRIX_PROJECTOR_OUT); \
+	else \
+		printf '%s\n' "SKIP: iverilog/vvp not available for optional visual matrix backend"; \
+	fi
+
+lagrange-space-test: $(LAGRANGE_SPACE_RESOLVER) $(LAGRANGE_SPACE_RESOLVER_TB) | $(TEST_TMP_DIR)
+	@if command -v iverilog >/dev/null 2>&1 && command -v vvp >/dev/null 2>&1; then \
+		iverilog -g2012 -Wall -o $(LAGRANGE_SPACE_RESOLVER_OUT) $(LAGRANGE_SPACE_RESOLVER) $(LAGRANGE_SPACE_RESOLVER_TB); \
+		vvp $(LAGRANGE_SPACE_RESOLVER_OUT); \
+	else \
+		printf '%s\n' "SKIP: iverilog/vvp not available for optional Lagrange space backend"; \
+	fi
+
+clock-crosscheck: $(LAMBDA_CORE_VECTORS) $(OCTAHEDRAL_ROUTER_VECTORS) $(METATRON_SCRIBE_VECTORS) $(OMNICRON_BQF_RESOLVER_VECTORS) $(FANO_SLOT_SCHEDULER_VECTORS) $(META_ASSEMBLER_VECTORS) $(BACKPLANE_MONITOR_VECTORS) $(LAYER4_MULTIPLICITY_VECTORS) $(METAMORPHIC_EXPORT_VECTORS) $(VISUAL_MATRIX_VECTORS) $(LAGRANGE_SPACE_VECTORS) verilog-test octahedral-router-test metatron-scribe-test omnicron-bqf-test fano-slot-test meta-assembler-test backplane-monitor-test layer4-multiplicity-test metamorphic-export-test visual-matrix-test lagrange-space-test
 	@if command -v jq >/dev/null 2>&1; then \
 		while IFS= read -r line; do printf '%s\n' "$$line" | jq -e '.name and .x_omi and .y_imo and .character_token and has("received_omnion") and .parabolic_eval and has("is_void_centroid") and has("observer_boundary") and has("is_admissible")' >/dev/null || exit 1; done < $(LAMBDA_CORE_VECTORS); \
 		printf '%s\n' "Lambda Canon core vectors verified: $(LAMBDA_CORE_VECTORS)"; \
@@ -375,6 +491,14 @@ clock-crosscheck: $(LAMBDA_CORE_VECTORS) $(OCTAHEDRAL_ROUTER_VECTORS) $(METATRON
 		printf '%s\n' "EAL meta-assembler vectors verified: $(META_ASSEMBLER_VECTORS)"; \
 		while IFS= read -r line; do printf '%s\n' "$$line" | jq -e '.name and .local_azimuth and .remote_azimuth and has("tetra_sum") and has("hamming_double_err") and has("lockout_n") and has("diagnose_fault_id")' >/dev/null || exit 1; done < $(BACKPLANE_MONITOR_VECTORS); \
 		printf '%s\n' "Backplane interlock monitor vectors verified: $(BACKPLANE_MONITOR_VECTORS)"; \
+		while IFS= read -r line; do printf '%s\n' "$$line" | jq -e '.name and .local_nibble and has("tetra_weight") and has("compact_branch") and has("extended_branch")' >/dev/null || exit 1; done < $(LAYER4_MULTIPLICITY_VECTORS); \
+		printf '%s\n' "Layer-4 multiplicity vectors verified: $(LAYER4_MULTIPLICITY_VECTORS)"; \
+		while IFS= read -r line; do printf '%s\n' "$$line" | jq -e '.name and .eal_byte and has("eal_valid") and .void_byte and has("void_valid") and has("export_identity_ok") and has("bus_interlock_lock")' >/dev/null || exit 1; done < $(METAMORPHIC_EXPORT_VECTORS); \
+		printf '%s\n' "Metamorphic export vectors verified: $(METAMORPHIC_EXPORT_VECTORS)"; \
+		while IFS= read -r line; do printf '%s\n' "$$line" | jq -e '.name and .local_nibble and has("matrix_row_x") and has("matrix_col_y") and has("view_is_inert")' >/dev/null || exit 1; done < $(VISUAL_MATRIX_VECTORS); \
+		printf '%s\n' "Visual matrix vectors verified: $(VISUAL_MATRIX_VECTORS)"; \
+		while IFS= read -r line; do printf '%s\n' "$$line" | jq -e '.name and .stream_byte and has("manual_slot") and has("manual_band") and has("trigger_fold") and has("unfolded_band") and has("unfolded_slot") and .folded_byte and has("canvas_x") and has("canvas_y") and has("byte_bounds_fault")' >/dev/null || exit 1; done < $(LAGRANGE_SPACE_VECTORS); \
+		printf '%s\n' "Lagrange space vectors verified: $(LAGRANGE_SPACE_VECTORS)"; \
 	else \
 		printf '%s\n' "SKIP: jq not available for vector validation"; \
 	fi

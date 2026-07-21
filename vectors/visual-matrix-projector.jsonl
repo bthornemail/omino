@@ -1,0 +1,6 @@
+{"name":"centroid","local_nibble":"0x0","matrix_row_x":0,"matrix_col_y":0,"view_is_inert":true}
+{"name":"compact-1","local_nibble":"0x1","matrix_row_x":0,"matrix_col_y":1,"view_is_inert":true}
+{"name":"compact-7","local_nibble":"0x7","matrix_row_x":1,"matrix_col_y":3,"view_is_inert":true}
+{"name":"extended-8","local_nibble":"0x8","matrix_row_x":2,"matrix_col_y":0,"view_is_inert":true}
+{"name":"extended-b","local_nibble":"0xB","matrix_row_x":2,"matrix_col_y":3,"view_is_inert":true}
+{"name":"extended-f","local_nibble":"0xF","matrix_row_x":3,"matrix_col_y":3,"view_is_inert":true}

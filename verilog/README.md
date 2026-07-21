@@ -143,3 +143,90 @@ Run:
 make backplane-monitor-test
 make clock-crosscheck
 ```
+
+## Layer-4 Multiplicity Calculator
+
+`eal_layer4_multiplicity_calc.v` implements the optional Section 50 nibble
+multiplicity projection:
+
+```text
+0x0..0x7 -> compact Hamming [7,4,3] branch
+0x8..0xF -> extended Miquel [8,4,4] branch
+0x0      -> weight 0
+0x1,0x7,0xF -> weight 1
+0x4,0xA,0xE -> weight 6
+0xB      -> weight 12
+all other non-root nibbles -> weight 4
+```
+
+The weight is an entrainment metric. It does not validate relations, merge
+origins, or issue receipts.
+
+Run:
+
+```sh
+make layer4-multiplicity-test
+make clock-crosscheck
+```
+
+## Metamorphic Export Validator
+
+`eal_metamorphic_export_validator.v` implements the optional Sections 51-52
+byte-stream comparator:
+
+```text
+compare only when both streams are valid
+matching bytes keep identity_ok high
+mismatched valid bytes drive identity_ok low and latch bus_interlock_lock high
+reset clears the sticky interlock
+```
+
+This interlock detects export drift. It does not prove compiler correctness,
+validate relations, merge origins, or issue receipts.
+
+Run:
+
+```sh
+make metamorphic-export-test
+make clock-crosscheck
+```
+
+## Visual Matrix Projector
+
+`omino_visual_matrix_projector.v` implements the optional Section 53 flat
+projection:
+
+```text
+row = nibble[3:2]
+col = nibble[1:0]
+o_view_is_inert = 1
+```
+
+This is an inert display mapper only.
+
+Run:
+
+```sh
+make visual-matrix-test
+make clock-crosscheck
+```
+
+## Lagrange Space Resolver
+
+`eal_lagrange_space_resolver.v` implements the optional Section 54 fold/unfold
+layout profile:
+
+```text
+UNFOLD(x) = (x[6:5], x[4:0])
+FOLD(b,s) = {0,b,s}
+```
+
+Bytes above `0x7F` assert `o_byte_bounds_fault`. Canvas coordinates are
+projection-only.
+
+Run:
+
+```sh
+make lagrange-space-test
+make clock-crosscheck
+```

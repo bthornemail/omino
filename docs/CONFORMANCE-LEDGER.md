@@ -40,6 +40,10 @@ This ledger maps the Section 40 checklist to executable targets and documented-m
 | 32 | BASE(n) metric seed model | PASS | `make test-base-metric` |
 | 33 | P2P multimedia media bridge | PASS | `make test-media-bridge` |
 | 34 | Metatron pre-closure pipeline | PASS | `make test-metatron-preclosure` |
+| 35 | Pascal Layer-4 multiplicity | PASS_OPTIONAL | `make test-layer4-types`, `make layer4-multiplicity-test`, `make clock-crosscheck` |
+| 36 | Binary export invariance | PASS_OPTIONAL | `make test-binary-export`, `make test-metamorphic-types`, `make metamorphic-export-test`, `make clock-crosscheck` |
+| 37 | Visual spatial projection | PASS_OPTIONAL | `make visual-matrix-test`, `make clock-crosscheck` |
+| 38 | Lagrange fold/unfold space | PASS_OPTIONAL | `make test-lagrange-types`, `make lagrange-space-test`, `make clock-crosscheck` |
 
 ## External Proof Boundary
 

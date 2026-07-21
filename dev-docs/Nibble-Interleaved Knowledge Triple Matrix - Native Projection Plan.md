@@ -1201,3 +1201,146 @@ make test-metatron-preclosure
 
 These profiles parse carrier notation, gate effects, and inscribe pre-closure
 paths. They do not validate relations, merge origins, or issue receipts.
+
+---
+
+## 27. Pascal Layer-4 Multiplicity and Bifurcated Hamming Clock Address
+
+Section 50 is integrated as an optional RTL and Haskell reference-surface
+profile:
+
+```text
+verilog/eal_layer4_multiplicity_calc.v
+verilog/tb_eal_layer4_multiplicity_calc.v
+vectors/layer4-multiplicity-calc.jsonl
+tests/layer4-types/EmergentAxialLisp/Layer4TetrahedronCore.hs
+tests/layer4-types/Main.hs
+docs/LAYER4-MULTIPLICITY.md
+```
+
+The digital branch split is:
+
+```text
+0x0..0x7 -> compact Hamming [7,4,3] branch
+0x8..0xF -> extended Miquel [8,4,4] branch
+```
+
+The Layer-4 Pascal weight map is:
+
+```text
+0x0             -> 0
+0x1,0x7,0xF     -> 1
+0x2,0x3,0x5,0x6 -> 4
+0x8,0x9,0xC,0xD -> 4
+0x4,0xA,0xE     -> 6
+0xB             -> 12
+```
+
+Conformance targets:
+
+```sh
+make test-layer4-types
+make layer4-multiplicity-test
+make clock-crosscheck
+```
+
+The nibble remains the exact digital routing coordinate. The Pascal coefficient
+is an entrainment metric only; it must not override identity, validation,
+receipt, or origin-preserving coproduct state.
+
+---
+
+## 28. Binary Export Invariance and Metamorphic Lowering
+
+Sections 51-52 are integrated as bounded export verification profiles:
+
+```text
+examples/compiler/binary_export_verifier.c
+tests/compiler/binary_export_verifier_test.c
+tests/metamorphic-types/EmergentAxialLisp/MetamorphicCompilerCore.hs
+tests/metamorphic-types/Main.hs
+verilog/eal_metamorphic_export_validator.v
+verilog/tb_eal_metamorphic_export_validator.v
+vectors/metamorphic-export-validator.jsonl
+docs/BINARY-EXPORT-INVARIANCE.md
+```
+
+The C export image is:
+
+```text
+F8 00 1C 1D 1E 1F 20 F8 <linear-root-u32>
+```
+
+where:
+
+```text
+linear-root = 4x + 2y
+```
+
+First Form Void is the same export function evaluated at `(0,0)`. Therefore
+binary identity is a centroid property. Active coordinates, such as `(15,30)`,
+must not be accepted as identical to the void form; they are expected drift
+cases for the comparator.
+
+Conformance targets:
+
+```sh
+make test-binary-export
+make test-metamorphic-types
+make metamorphic-export-test
+make clock-crosscheck
+```
+
+This profile checks deterministic byte streams and interlocks on mismatches. It
+does not validate relations, merge origins, issue receipts, or prove universal
+compiler correctness across platforms.
+
+---
+
+## 29. Inert Visual Projection and Lagrange Space Layout Profiles
+
+Sections 53-54 are integrated as projection-only layout profiles:
+
+```text
+verilog/omino_visual_matrix_projector.v
+verilog/tb_omino_visual_matrix_projector.v
+vectors/visual-matrix-projector.jsonl
+docs/VISUAL-SPATIAL-PROFILES.md
+
+verilog/eal_lagrange_space_resolver.v
+verilog/tb_eal_lagrange_space_resolver.v
+vectors/lagrange-space-resolver.jsonl
+tests/lagrange-types/EmergentAxialLisp/LagrangeSpaceTypeCore.hs
+tests/lagrange-types/Main.hs
+docs/LAGRANGE-SPACE.md
+```
+
+The visual matrix maps:
+
+```text
+row = nibble[3:2]
+col = nibble[1:0]
+```
+
+and keeps `o_view_is_inert` high.
+
+The Lagrange profile uses:
+
+```text
+UNFOLD(x) = ((x >> 5) & 3, x & 0x1F)
+FOLD(b,s) = (b << 5) | s
+```
+
+with an explicit bounds fault for input bytes above `0x7F`.
+
+Conformance targets:
+
+```sh
+make visual-matrix-test
+make test-lagrange-types
+make lagrange-space-test
+make clock-crosscheck
+```
+
+These layouts are display/projection surfaces only. They must not collapse
+nodes, validate relations, mutate memory, merge origins, or issue receipts.

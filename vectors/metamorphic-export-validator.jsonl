@@ -1,0 +1,6 @@
+{"name":"idle","eal_byte":"0x00","eal_valid":false,"void_byte":"0xFF","void_valid":false,"export_identity_ok":true,"bus_interlock_lock":false}
+{"name":"preheader-match","eal_byte":"0xF8","eal_valid":true,"void_byte":"0xF8","void_valid":true,"export_identity_ok":true,"bus_interlock_lock":false}
+{"name":"separator-match","eal_byte":"0x1C","eal_valid":true,"void_byte":"0x1C","void_valid":true,"export_identity_ok":true,"bus_interlock_lock":false}
+{"name":"active-drift","eal_byte":"0x45","eal_valid":true,"void_byte":"0x00","void_valid":true,"export_identity_ok":false,"bus_interlock_lock":true}
+{"name":"sticky-lock-match-after-drift","eal_byte":"0x20","eal_valid":true,"void_byte":"0x20","void_valid":true,"export_identity_ok":true,"bus_interlock_lock":true}
+{"name":"one-sided-valid-ignored","eal_byte":"0xAA","eal_valid":true,"void_byte":"0x55","void_valid":false,"export_identity_ok":true,"bus_interlock_lock":true}

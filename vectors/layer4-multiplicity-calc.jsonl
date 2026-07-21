@@ -1,0 +1,16 @@
+{"name":"centroid","local_nibble":"0x0","tetra_weight":0,"compact_branch":true,"extended_branch":false}
+{"name":"outer-1","local_nibble":"0x1","tetra_weight":1,"compact_branch":true,"extended_branch":false}
+{"name":"reinforced-2","local_nibble":"0x2","tetra_weight":4,"compact_branch":true,"extended_branch":false}
+{"name":"reinforced-3","local_nibble":"0x3","tetra_weight":4,"compact_branch":true,"extended_branch":false}
+{"name":"internal-4","local_nibble":"0x4","tetra_weight":6,"compact_branch":true,"extended_branch":false}
+{"name":"reinforced-5","local_nibble":"0x5","tetra_weight":4,"compact_branch":true,"extended_branch":false}
+{"name":"reinforced-6","local_nibble":"0x6","tetra_weight":4,"compact_branch":true,"extended_branch":false}
+{"name":"outer-7","local_nibble":"0x7","tetra_weight":1,"compact_branch":true,"extended_branch":false}
+{"name":"extended-8","local_nibble":"0x8","tetra_weight":4,"compact_branch":false,"extended_branch":true}
+{"name":"extended-9","local_nibble":"0x9","tetra_weight":4,"compact_branch":false,"extended_branch":true}
+{"name":"extended-a","local_nibble":"0xA","tetra_weight":6,"compact_branch":false,"extended_branch":true}
+{"name":"central-b","local_nibble":"0xB","tetra_weight":12,"compact_branch":false,"extended_branch":true}
+{"name":"extended-c","local_nibble":"0xC","tetra_weight":4,"compact_branch":false,"extended_branch":true}
+{"name":"extended-d","local_nibble":"0xD","tetra_weight":4,"compact_branch":false,"extended_branch":true}
+{"name":"extended-e","local_nibble":"0xE","tetra_weight":6,"compact_branch":false,"extended_branch":true}
+{"name":"outer-f","local_nibble":"0xF","tetra_weight":1,"compact_branch":false,"extended_branch":true}
