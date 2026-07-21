@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Emergent Axial Lisp Native Views</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18201c;
+      --muted: #5b665f;
+      --line: #ccd7d1;
+      --surface: #f7faf8;
+      --panel: #ffffff;
+      --control: #204e4a;
+      --scope: #8a4b2f;
+      --integrity: #5a527d;
+      --carrier: #2f6339;
+      --accent: #b88a20;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--surface);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: end;
+      padding: 28px 32px 18px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 720;
+      letter-spacing: 0;
+    }
+
+    .subhead {
+      margin-top: 6px;
+      color: var(--muted);
+      max-width: 760px;
+      font-size: 14px;
+    }
+
+    .receipt {
+      border: 1px solid var(--line);
+      background: #f9fbfa;
+      padding: 8px 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      min-height: calc(100vh - 92px);
+    }
+
+    nav {
+      border-right: 1px solid var(--line);
+      background: #fbfdfc;
+      padding: 18px;
+    }
+
+    nav a {
+      display: block;
+      color: var(--ink);
+      text-decoration: none;
+      padding: 9px 10px;
+      border-left: 3px solid transparent;
+      font-size: 14px;
+    }
+
+    nav a:hover {
+      border-left-color: var(--accent);
+      background: #f0f5f2;
+    }
+
+    .content {
+      padding: 24px 28px 40px;
+    }
+
+    section {
+      padding: 20px 0 30px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    section:first-child {
+      padding-top: 0;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .unit {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      padding: 12px;
+      min-height: 110px;
+    }
+
+    .unit strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .unit p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .codeword {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(44px, 1fr));
+      gap: 8px;
+      max-width: 620px;
+    }
+
+    .bit {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      min-height: 72px;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .bit .label {
+      display: block;
+      font-weight: 720;
+      font-size: 15px;
+    }
+
+    .bit .role {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .check {
+      border-color: color-mix(in srgb, var(--integrity) 42%, var(--line));
+    }
+
+    .data {
+      border-color: color-mix(in srgb, var(--scope) 42%, var(--line));
+    }
+
+    pre {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #101916;
+      color: #e9f2ee;
+      padding: 14px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .diagram {
+      width: 100%;
+      min-height: 420px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .canvas-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .json-panel {
+      max-height: 420px;
+    }
+
+    omi-node,
+    imo-node {
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      padding: 12px;
+    }
+
+    omi-node {
+      border-left: 4px solid var(--control);
+    }
+
+    imo-node {
+      margin-top: 10px;
+      border-left: 4px solid var(--accent);
+    }
+
+    canvas {
+      width: 100%;
+      height: 360px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfdfc;
+    }
+
+    @media (max-width: 860px) {
+      header,
+      main,
+      .canvas-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .codeword {
+        grid-template-columns: repeat(4, minmax(44px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Emergent Axial Lisp Native Views</h1>
+      <div class="subhead">HTML carrier, JSON Canvas graph, and OMI dot-notation projection for LOGOS/NOMOS/PATHOS Hamming-Coded COBS-CONS.</div>
+    </div>
+    <div class="receipt">data-receipt="pending"</div>
+  </header>
+
+  <main>
+    <nav aria-label="Native view sections">
+      <a href="#dom">DOM Carrier</a>
+      <a href="#hamming">Hamming Code</a>
+      <a href="#cobs">COBS-CONS Frame</a>
+      <a href="#cube">Triple Cube</a>
+      <a href="#canvas">JSON Canvas</a>
+      <a href="#dot">Dot-Notation</a>
+      <a href="#clock">Algorithmic Clock</a>
+    </nav>
+
+    <div class="content">
+      <section id="dom">
+        <h2>DOM Carrier</h2>
+        <omi-node
+          id="omi-0500-03bf-000c-2b05-2f05-0002-039f-05ff"
+          data-omi="0500-03bf-000c-2b05-2f05-0002-039f-05ff"
+          data-projection="native-view"
+          data-receipt="pending">
+          <div class="grid">
+            <div class="unit">
+              <strong>omi- opens</strong>
+              <p>The address after the prefix is the item. The body is context.</p>
+            </div>
+            <div class="unit">
+              <strong>Segments triangulate</strong>
+              <p>S0-S7 are shown as the 128-bit frame surface below.</p>
+            </div>
+            <div class="unit">
+              <strong>Receipt accepts</strong>
+              <p>Render, canvas, and innerHTML do not establish authority.</p>
+            </div>
+          </div>
+          <imo-node
+            id="imo-0500-03bf-000c-2b05-2f05-0002-039f-05ff"
+            data-imo="0500-03bf-000c-2b05-2f05-0002-039f-05ff"
+            data-receipt="pending">
+            imo- closes the same addressed frame.
+          </imo-node>
+        </omi-node>
+      </section>
+
+      <section id="hamming">
+        <h2>LOGOS/NOMOS/PATHOS Hamming Code</h2>
+        <div class="codeword" aria-label="Hamming codeword positions">
+          <div class="bit check"><span class="label">L</span><span class="role">1 LOGOS</span></div>
+          <div class="bit check"><span class="label">N</span><span class="role">2 NOMOS</span></div>
+          <div class="bit data"><span class="label">FS</span><span class="role">3 scope</span></div>
+          <div class="bit check"><span class="label">P</span><span class="role">4 PATHOS</span></div>
+          <div class="bit data"><span class="label">GS</span><span class="role">5 scope</span></div>
+          <div class="bit data"><span class="label">RS</span><span class="role">6 scope</span></div>
+          <div class="bit data"><span class="label">US</span><span class="role">7 scope</span></div>
+        </div>
+        <pre>LOGOS  = FS XOR GS XOR US
+NOMOS  = FS XOR RS XOR US
+PATHOS = GS XOR RS XOR US</pre>
+      </section>
+
+      <section id="cobs">
+        <h2>COBS-CONS Frame</h2>
+        <div class="grid" id="segments"></div>
+        <template type="application/omi+json" id="omi-json">
+{
+  "address": "0500-03bf-000c-2b05-2f05-0002-039f-05ff",
+  "frame": ["0500", "03bf", "000c", "2b05", "2f05", "0002", "039f", "05ff"],
+  "codeword": ["LOGOS", "NOMOS", "FS", "PATHOS", "GS", "RS", "US"],
+  "receipt": "pending"
+}
+        </template>
+      </section>
+
+      <section id="cube">
+        <h2>3D Knowledge Triple Cube</h2>
+        <canvas id="cube-canvas" width="1100" height="620" aria-label="Knowledge triple cube with 8 selector corners"></canvas>
+        <div class="grid" id="selector-table"></div>
+      </section>
+
+      <section id="canvas">
+        <h2>JSON Canvas</h2>
+        <div class="canvas-wrap">
+          <canvas id="native-canvas" width="1200" height="720" aria-label="Native view graph"></canvas>
+          <pre class="json-panel" id="canvas-json"></pre>
+        </div>
+      </section>
+
+      <section id="dot">
+        <h2>Dot-Notation CONS Surface</h2>
+        <pre>(o
+ . ((scope . (FS . (GS . (RS . US))))
+    (path . (LOGOS . (NOMOS . PATHOS)))
+    (query . (REGISTER . STACK))
+    (close . (CAR . CDR)))))</pre>
+      </section>
+
+      <section id="clock">
+        <h2>Algorithmic Clock Native View</h2>
+        <canvas id="clock-canvas" width="760" height="360" aria-label="Algorithmic clock rings"></canvas>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const frame = ["0500", "03bf", "000c", "2b05", "2f05", "0002", "039f", "05ff"];
+    const selectors = [
+      {q: 0, route: "Local/CAR", row: "Low", bank: "Left", corners: ["0x00", "0x07", "0x37", "0x30"]},
+      {q: 1, route: "Local/CAR", row: "Low", bank: "Right", corners: ["0x08", "0x0F", "0x3F", "0x38"]},
+      {q: 2, route: "Local/CAR", row: "High", bank: "Left", corners: ["0x40", "0x47", "0x77", "0x70"]},
+      {q: 3, route: "Local/CAR", row: "High", bank: "Right", corners: ["0x48", "0x4F", "0x7F", "0x78"]},
+      {q: 4, route: "Remote/CDR", row: "Low", bank: "Left", corners: ["0x80", "0x87", "0xB7", "0xB0"]},
+      {q: 5, route: "Remote/CDR", row: "Low", bank: "Right", corners: ["0x88", "0x8F", "0xBF", "0xB8"]},
+      {q: 6, route: "Remote/CDR", row: "High", bank: "Left", corners: ["0xC0", "0xC7", "0xF7", "0xF0"]},
+      {q: 7, route: "Remote/CDR", row: "High", bank: "Right", corners: ["0xC8", "0xCF", "0xFF", "0xF8"]}
+    ];
+
+    const segments = document.getElementById("segments");
+    frame.forEach((segment, index) => {
+      const el = document.createElement("div");
+      el.className = "unit";
+      el.innerHTML = `<strong>S${index}</strong><p>0x${segment}</p>`;
+      segments.appendChild(el);
+    });
+
+    const selectorTable = document.getElementById("selector-table");
+    selectors.forEach(selector => {
+      const el = document.createElement("div");
+      el.className = "unit";
+      el.innerHTML = `<strong>Quadrant ${selector.q}: ${selector.route}</strong><p>${selector.row} / ${selector.bank}<br>${selector.corners.join(" ")}</p>`;
+      selectorTable.appendChild(el);
+    });
+
+    const canvasData = {
+      nodes: [
+        {id: "eal", label: "Emergent Axial Lisp", x: 600, y: 70, color: "#204e4a"},
+        {id: "scope", label: "FS/GS/RS/US", x: 240, y: 230, color: "#8a4b2f"},
+        {id: "integrity", label: "LOGOS/NOMOS/PATHOS", x: 600, y: 230, color: "#5a527d"},
+        {id: "frame", label: "COBS-CONS Frame", x: 960, y: 230, color: "#2f6339"},
+        {id: "tetra", label: "Tetragrammatron", x: 420, y: 430, color: "#204e4a"},
+        {id: "meta", label: "Metatron", x: 780, y: 430, color: "#b88a20"},
+        {id: "azimuth", label: "Gnomonic Azimuth", x: 600, y: 610, color: "#5b665f"}
+      ],
+      edges: [
+        ["eal", "scope"],
+        ["eal", "integrity"],
+        ["integrity", "frame"],
+        ["scope", "tetra"],
+        ["integrity", "tetra"],
+        ["frame", "meta"],
+        ["tetra", "azimuth"],
+        ["meta", "azimuth"]
+      ]
+    };
+
+    document.getElementById("canvas-json").textContent = JSON.stringify(canvasData, null, 2);
+
+    function drawGraph() {
+      const c = document.getElementById("native-canvas");
+      const ctx = c.getContext("2d");
+      ctx.clearRect(0, 0, c.width, c.height);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#ccd7d1";
+      canvasData.edges.forEach(([from, to]) => {
+        const a = canvasData.nodes.find(n => n.id === from);
+        const b = canvasData.nodes.find(n => n.id === to);
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      });
+      canvasData.nodes.forEach(node => {
+        ctx.fillStyle = node.color;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 42, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "700 18px system-ui";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        wrapText(ctx, node.label, node.x, node.y, 116, 20);
+      });
+    }
+
+    function drawClock() {
+      const c = document.getElementById("clock-canvas");
+      const ctx = c.getContext("2d");
+      const cx = c.width / 2;
+      const cy = c.height / 2;
+      ctx.clearRect(0, 0, c.width, c.height);
+      const colors = ["#204e4a", "#8a4b2f", "#5a527d", "#2f6339"];
+      for (let ring = 0; ring < 4; ring++) {
+        const r = 48 + ring * 34;
+        ctx.strokeStyle = colors[ring];
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.stroke();
+        for (let tick = 0; tick < 60; tick += 5) {
+          const a = (tick / 60) * Math.PI * 2 - Math.PI / 2;
+          const x1 = cx + Math.cos(a) * (r - 7);
+          const y1 = cy + Math.sin(a) * (r - 7);
+          const x2 = cx + Math.cos(a) * (r + 7);
+          const y2 = cy + Math.sin(a) * (r + 7);
+          ctx.strokeStyle = "#5b665f";
+          ctx.lineWidth = tick % 15 === 0 ? 2 : 1;
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+        }
+      }
+      ctx.fillStyle = "#18201c";
+      ctx.font = "14px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("240 active marks / 16 reserved control rail", cx, 330);
+    }
+
+    function drawCube() {
+      const c = document.getElementById("cube-canvas");
+      const ctx = c.getContext("2d");
+      ctx.clearRect(0, 0, c.width, c.height);
+
+      const points = [
+        {q: 0, x: 330, y: 155, label: "Q0", detail: "Local / Low / Left", color: "#204e4a"},
+        {q: 1, x: 625, y: 155, label: "Q1", detail: "Local / Low / Right", color: "#204e4a"},
+        {q: 2, x: 330, y: 375, label: "Q2", detail: "Local / High / Left", color: "#2f6339"},
+        {q: 3, x: 625, y: 375, label: "Q3", detail: "Local / High / Right", color: "#2f6339"},
+        {q: 4, x: 470, y: 255, label: "Q4", detail: "Remote / Low / Left", color: "#8a4b2f"},
+        {q: 5, x: 765, y: 255, label: "Q5", detail: "Remote / Low / Right", color: "#8a4b2f"},
+        {q: 6, x: 470, y: 475, label: "Q6", detail: "Remote / High / Left", color: "#5a527d"},
+        {q: 7, x: 765, y: 475, label: "Q7", detail: "Remote / High / Right", color: "#5a527d"}
+      ];
+      const byQ = Object.fromEntries(points.map(p => [p.q, p]));
+      const edges = [
+        [0, 1], [0, 2], [1, 3], [2, 3],
+        [4, 5], [4, 6], [5, 7], [6, 7],
+        [0, 4], [1, 5], [2, 6], [3, 7]
+      ];
+
+      ctx.lineWidth = 3;
+      edges.forEach(([a, b]) => {
+        ctx.strokeStyle = a < 4 && b < 4 ? "#204e4a" : a >= 4 && b >= 4 ? "#8a4b2f" : "#b88a20";
+        ctx.beginPath();
+        ctx.moveTo(byQ[a].x, byQ[a].y);
+        ctx.lineTo(byQ[b].x, byQ[b].y);
+        ctx.stroke();
+      });
+
+      points.forEach(point => {
+        const selector = selectors[point.q];
+        ctx.fillStyle = point.color;
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 38, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "800 18px system-ui";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(point.label, point.x, point.y - 6);
+        ctx.font = "11px ui-monospace, monospace";
+        ctx.fillText(selector.corners[0], point.x, point.y + 14);
+
+        ctx.fillStyle = "#18201c";
+        ctx.font = "12px system-ui";
+        ctx.fillText(point.detail, point.x, point.y + 58);
+      });
+
+      ctx.fillStyle = "#18201c";
+      ctx.font = "700 15px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText("Axis A: Left-Bank -> Right-Bank", 40, 70);
+      ctx.fillText("Axis B: Low-range -> High-range", 40, 96);
+      ctx.fillText("Axis C: Local/CAR -> Remote/CDR", 40, 122);
+      ctx.font = "13px ui-monospace, monospace";
+      ctx.fillText("f(0xYX) = ((V & 0xF0) << 8) | ((V & 0x0F) << 4)", 40, 560);
+    }
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(" ");
+      const lines = [];
+      let line = "";
+      words.forEach(word => {
+        const test = line ? `${line} ${word}` : word;
+        if (ctx.measureText(test).width > maxWidth && line) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = test;
+        }
+      });
+      lines.push(line);
+      const startY = y - ((lines.length - 1) * lineHeight) / 2;
+      lines.forEach((part, i) => ctx.fillText(part, x, startY + i * lineHeight));
+    }
+
+    drawGraph();
+    drawCube();
+    drawClock();
+  </script>
+</body>
+</html>

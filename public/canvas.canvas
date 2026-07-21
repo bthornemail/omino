@@ -1,0 +1,117 @@
+{
+  "nodes": [
+    {
+      "id": "eal-root",
+      "type": "text",
+      "x": 0,
+      "y": 0,
+      "width": 360,
+      "height": 160,
+      "text": "# Emergent Axial Lisp\nNative view root for LOGOS/NOMOS/PATHOS Hamming-Coded COBS-CONS."
+    },
+    {
+      "id": "scope",
+      "type": "text",
+      "x": -460,
+      "y": 240,
+      "width": 320,
+      "height": 180,
+      "text": "## Scope Axis\nFS / GS / RS / US carry the four data positions."
+    },
+    {
+      "id": "integrity",
+      "type": "text",
+      "x": 0,
+      "y": 240,
+      "width": 340,
+      "height": 180,
+      "text": "## Integrity Axis\nLOGOS / NOMOS / PATHOS are Hamming parity checks over scope."
+    },
+    {
+      "id": "cobs-cons",
+      "type": "text",
+      "x": 460,
+      "y": 240,
+      "width": 360,
+      "height": 180,
+      "text": "## COBS-CONS Frame\nAddressed declaration lowers into a framed relation without making projection authoritative."
+    },
+    {
+      "id": "triple-cube",
+      "type": "text",
+      "x": 900,
+      "y": -10,
+      "width": 360,
+      "height": 210,
+      "text": "## 3D Knowledge Triple Cube\n8 state-corners: Left/Right bank, Low/High elevation, Local/CAR or Remote/CDR routing."
+    },
+    {
+      "id": "omnicron",
+      "type": "text",
+      "x": -700,
+      "y": 560,
+      "width": 300,
+      "height": 160,
+      "text": "## Omnicron\nRuntime resolver and cadence coordinator."
+    },
+    {
+      "id": "omicron-gauge",
+      "type": "text",
+      "x": -350,
+      "y": 560,
+      "width": 300,
+      "height": 160,
+      "text": "## Omicron Gauge\nDial face, byte partitions, and tangent boundaries."
+    },
+    {
+      "id": "tetragrammatron",
+      "type": "text",
+      "x": 0,
+      "y": 560,
+      "width": 320,
+      "height": 160,
+      "text": "## Tetragrammatron\nEscapement lock. Checks closure before equivalence."
+    },
+    {
+      "id": "metatron",
+      "type": "text",
+      "x": 380,
+      "y": 560,
+      "width": 300,
+      "height": 160,
+      "text": "## Metatron\nIncidence scribe and witness recorder."
+    },
+    {
+      "id": "azimuth",
+      "type": "text",
+      "x": 730,
+      "y": 560,
+      "width": 300,
+      "height": 160,
+      "text": "## Gnomonic Azimuth\nDisplay projection. Canvas is context, not receipt."
+    },
+    {
+      "id": "dot-notation",
+      "type": "text",
+      "x": -240,
+      "y": 860,
+      "width": 520,
+      "height": 220,
+      "text": "## Dot-Notation Surface\n(o . ((scope . (FS . (GS . (RS . US)))) (path . (LOGOS . (NOMOS . PATHOS))) (query . (REGISTER . STACK)) (close . (CAR . CDR))))"
+    }
+  ],
+  "edges": [
+    {"id": "e1", "fromNode": "eal-root", "toNode": "scope"},
+    {"id": "e2", "fromNode": "eal-root", "toNode": "integrity"},
+    {"id": "e3", "fromNode": "integrity", "toNode": "cobs-cons"},
+    {"id": "e3b", "fromNode": "eal-root", "toNode": "triple-cube"},
+    {"id": "e3c", "fromNode": "triple-cube", "toNode": "cobs-cons"},
+    {"id": "e4", "fromNode": "scope", "toNode": "omnicron"},
+    {"id": "e5", "fromNode": "scope", "toNode": "omicron-gauge"},
+    {"id": "e6", "fromNode": "integrity", "toNode": "tetragrammatron"},
+    {"id": "e7", "fromNode": "cobs-cons", "toNode": "metatron"},
+    {"id": "e8", "fromNode": "cobs-cons", "toNode": "azimuth"},
+    {"id": "e9", "fromNode": "tetragrammatron", "toNode": "dot-notation"},
+    {"id": "e10", "fromNode": "metatron", "toNode": "dot-notation"}
+  ]
+}
