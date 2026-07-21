@@ -1,0 +1,14 @@
+omino.o/1
+origin CLKA 0x434C4B41
+clock seed 0x0000
+omnion 0
+ticks 3
+
+origin CLKB 0x434C4B42
+clock seed 0x0000
+omnion 0
+ticks 3
+
+expect centroid 0x0000
+expect sync match
+receipt pending

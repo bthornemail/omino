@@ -1,0 +1,8 @@
+omino.o/1
+origin HAM2 0x48414D32
+scope quartet FS=1 GS=0 RS=1 US=1
+integrity miquel844
+corruption double positions=3,5
+expect detected
+expect not_corrected_as_single
+receipt pending

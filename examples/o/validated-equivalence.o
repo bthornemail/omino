@@ -1,0 +1,18 @@
+omino.o/1
+origin COMB 0x434F4D42
+scope GS
+resolver 0x0002
+car 0xAAAAAAAA
+cdr 0x55555555
+board 0x10
+
+origin CLOS 0x434C4F53
+scope GS
+resolver 0x0002
+car 0xAAAAAAAA
+cdr 0x55555555
+board 0x10
+
+validation witness resolved_match
+expect union accepted
+receipt pending

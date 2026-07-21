@@ -1,0 +1,10 @@
+omino.o/1
+origin MINIMAL 0x4D494E49
+scope FS
+resolver 0x0001
+car 0x00000000
+cdr 0x00000000
+board 0x00
+expect selector 0
+expect route Local/CAR
+receipt pending

@@ -1,0 +1,10 @@
+omino.o/1
+origin REMOTECDR 0x52434452
+scope RS
+resolver 0x0001
+car 0x80000000
+cdr 0xA28B0000
+board 0xC8
+expect selector 7
+expect route Remote/CDR
+receipt pending

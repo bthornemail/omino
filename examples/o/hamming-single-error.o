@@ -1,0 +1,9 @@
+omino.o/1
+origin HAM1 0x48414D31
+scope quartet FS=1 GS=0 RS=1 US=1
+integrity hamming743
+codeword clean 0100011
+corruption single position=5
+expect syndrome 5
+expect correction accepted_by_integrity_only
+receipt pending

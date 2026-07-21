@@ -1,0 +1,18 @@
+omino.o/1
+origin RULE 0x52554C45
+scope FS
+resolver 0x0001
+car 0x12345678
+cdr 0x89ABCDEF
+board 0x48
+
+origin FACT 0x46414354
+scope FS
+resolver 0x0001
+car 0x11223344
+cdr 0x55667788
+board 0x48
+
+expect overlap non_destructive
+expect union rejected_without_validation
+receipt pending
