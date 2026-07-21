@@ -1,0 +1,16 @@
+digraph algorithmic_clock {
+  graph [rankdir=LR];
+  node [shape=box];
+  reset [label="reset"];
+  tick [label="deterministic tick"];
+  state [label="clock state"];
+  band [label="band fingerprint"];
+  centroid [label="OMNION centroid"];
+  sync [label="sync compare"];
+  reset -> state;
+  state -> tick;
+  tick -> state;
+  state -> band;
+  state -> centroid;
+  centroid -> sync;
+}

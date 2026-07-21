@@ -1,0 +1,30 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install validation tools
+        run: sudo apt-get update && sudo apt-get install -y jq graphviz
+
+      - name: Check
+        run: make check CC=${{ matrix.compiler }}
+
+      - name: Optional Verilog availability
+        run: |
+          if command -v iverilog >/dev/null 2>&1; then
+            make verilog-test clock-crosscheck CC=${{ matrix.compiler }}
+          else
+            echo "SKIP: iverilog not available"
+          fi

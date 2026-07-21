@@ -1,0 +1,15 @@
+digraph coproduct_blackboard {
+  graph [rankdir=LR];
+  node [shape=box];
+  source_a [label=".o origin A"];
+  source_b [label=".o origin B"];
+  fiber [label="blackboard fiber"];
+  conflict [label="non-destructive overlap"];
+  validation [label="validation witness"];
+  equivalence [label="Union-Find equivalence"];
+  source_a -> fiber;
+  source_b -> fiber;
+  fiber -> conflict;
+  conflict -> validation;
+  validation -> equivalence;
+}

@@ -1,0 +1,24 @@
+digraph knowledge_triple_cube {
+  graph [rankdir=LR];
+  node [shape=box];
+  q0 [label="Q0 Local / Low / Left"];
+  q1 [label="Q1 Local / Low / Right"];
+  q2 [label="Q2 Local / High / Left"];
+  q3 [label="Q3 Local / High / Right"];
+  q4 [label="Q4 Remote / Low / Left"];
+  q5 [label="Q5 Remote / Low / Right"];
+  q6 [label="Q6 Remote / High / Left"];
+  q7 [label="Q7 Remote / High / Right"];
+  q0 -> q1 [label="bank"];
+  q0 -> q2 [label="elevation"];
+  q0 -> q4 [label="route"];
+  q1 -> q3 [label="elevation"];
+  q1 -> q5 [label="route"];
+  q2 -> q3 [label="bank"];
+  q2 -> q6 [label="route"];
+  q3 -> q7 [label="route"];
+  q4 -> q5 [label="bank"];
+  q4 -> q6 [label="elevation"];
+  q5 -> q7 [label="elevation"];
+  q6 -> q7 [label="bank"];
+}

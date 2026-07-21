@@ -1,0 +1,13 @@
+digraph lambda_canon_block {
+  graph [rankdir=LR];
+  node [shape=box];
+  subject [label="subject . notation"];
+  predicate [label="predicate . citation"];
+  object [label="object . attestation"];
+  ontology [label="computational_ontology . annotation"];
+  epistemology [label="systematic_epistemology . interpretation"];
+  subject -> predicate;
+  predicate -> object;
+  object -> ontology;
+  ontology -> epistemology;
+}

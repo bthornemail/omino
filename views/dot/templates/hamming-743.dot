@@ -1,0 +1,20 @@
+digraph hamming_743 {
+  graph [rankdir=LR];
+  node [shape=circle];
+  logos [label="LOGOS"];
+  nomos [label="NOMOS"];
+  fs [label="FS"];
+  pathos [label="PATHOS"];
+  gs [label="GS"];
+  rs [label="RS"];
+  us [label="US"];
+  logos -> fs;
+  logos -> gs;
+  logos -> us;
+  nomos -> fs;
+  nomos -> rs;
+  nomos -> us;
+  pathos -> gs;
+  pathos -> rs;
+  pathos -> us;
+}

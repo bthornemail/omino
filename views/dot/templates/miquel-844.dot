@@ -1,0 +1,19 @@
+digraph miquel_844 {
+  graph [rankdir=LR];
+  node [shape=circle];
+  omnion [label="OMNION"];
+  logos [label="LOGOS"];
+  nomos [label="NOMOS"];
+  pathos [label="PATHOS"];
+  fs [label="FS"];
+  gs [label="GS"];
+  rs [label="RS"];
+  us [label="US"];
+  omnion -> logos;
+  omnion -> nomos;
+  omnion -> pathos;
+  omnion -> fs;
+  omnion -> gs;
+  omnion -> rs;
+  omnion -> us;
+}

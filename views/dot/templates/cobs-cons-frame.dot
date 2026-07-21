@@ -1,0 +1,13 @@
+digraph cobs_cons_frame {
+  graph [rankdir=LR];
+  node [shape=box];
+  declaration [label=".o declaration"];
+  cobs [label="COBS frame"];
+  cons [label="CONS continuation"];
+  validation [label="validation"];
+  receipt [label="receipt"];
+  declaration -> cobs;
+  cobs -> cons;
+  cons -> validation;
+  validation -> receipt;
+}

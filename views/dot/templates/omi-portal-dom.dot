@@ -1,0 +1,11 @@
+digraph omi_portal_dom {
+  graph [rankdir=LR];
+  node [shape=box];
+  omi [label="omi-node"];
+  content [label="projection context"];
+  imo [label="imo-node"];
+  receipt [label="external receipt"];
+  omi -> content;
+  content -> imo;
+  imo -> receipt;
+}
