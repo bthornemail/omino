@@ -1,0 +1,39 @@
+#ifndef TCG_TARGET_OMI_H
+#define TCG_TARGET_OMI_H
+
+#define TCG_TARGET_REG_BITS 64
+#define TCG_TARGET_NB_REGS 16
+
+typedef enum {
+    TCG_REG_R0 = 0,
+    TCG_REG_R1,
+    TCG_REG_R2,
+    TCG_REG_R3,
+    TCG_REG_R4,
+    TCG_REG_R5,
+    TCG_REG_R6,
+    TCG_REG_R7,
+    TCG_REG_R8,
+    TCG_REG_R9,
+    TCG_REG_R10,
+    TCG_REG_R11,
+    TCG_REG_R12,
+    TCG_REG_R13,
+    TCG_REG_R14,
+    TCG_REG_R15,
+
+    TCG_REG_ZERO = TCG_REG_R0,
+    TCG_REG_TMP = TCG_REG_R15
+} TCGReg;
+
+#define TCG_TARGET_HAS_extrl_i64_i32 0
+#define TCG_TARGET_HAS_extrh_i64_i32 0
+#define TCG_TARGET_HAS_div_i32 0
+#define TCG_TARGET_HAS_div_i64 0
+#define TCG_TARGET_HAS_v64 0
+#define TCG_TARGET_HAS_v128 0
+
+#define TCG_TARGET_STACK_ALIGN 16
+#define TCG_TARGET_CALL_STACK_OFFSET 0
+
+#endif

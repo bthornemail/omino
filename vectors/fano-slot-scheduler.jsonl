@@ -1,0 +1,6 @@
+{"name":"origin-slot","fano7":0,"role3":0,"local240":0,"slot5040":0,"bounds_fault":false}
+{"name":"intermediate-slot","fano7":2,"role3":1,"local240":100,"slot5040":1780,"bounds_fault":false}
+{"name":"max-slot","fano7":6,"role3":2,"local240":239,"slot5040":5039,"bounds_fault":false}
+{"name":"invalid-fano","fano7":7,"role3":0,"local240":0,"slot5040":0,"bounds_fault":true}
+{"name":"invalid-role","fano7":4,"role3":3,"local240":0,"slot5040":0,"bounds_fault":true}
+{"name":"invalid-local240","fano7":4,"role3":1,"local240":250,"slot5040":0,"bounds_fault":true}

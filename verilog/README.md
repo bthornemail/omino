@@ -85,3 +85,61 @@ Run:
 make omnicron-bqf-test
 make clock-crosscheck
 ```
+
+## Fano Slot Scheduler
+
+`fano_slot_scheduler.v` implements the optional Section 38 scheduler projection:
+
+```text
+slot5040 = fano7 * 720 + role3 * 240 + local240
+fano7    = 0..6
+role3    = 0..2
+local240 = 0..239
+```
+
+Out-of-range inputs assert `o_bounds_fault` and force `o_slot5040` to zero.
+
+Run:
+
+```sh
+make fano-slot-test
+make clock-crosscheck
+```
+
+## EAL Meta Assembler
+
+`eal_meta_assembler.v` implements the optional Section 39 assembler projection:
+
+```text
+machine word = opcode[15:12] || slot5040[11:0]
+ready        = slot5040 < 5040 and character_token <= 0x7F
+```
+
+Invalid slots or tokens force the output to the `0x0000` centroid word. This is a lowering interlock, not validation or receipt authority.
+
+Run:
+
+```sh
+make meta-assembler-test
+make clock-crosscheck
+```
+
+## Backplane Interlock Monitor
+
+`backplane_interlock_monitor.v` implements the optional backplane monitor:
+
+```text
+phase mirror = local_azimuth XOR remote_azimuth == 0x80
+tetra sum    = i_tetra_sum == 120
+lockout      = active-low on phase, tetra, or Hamming double-error fault
+priority     = Hamming > Tetragrammatron > phase
+```
+
+`o_lockout_n` is an interlock signal. It does not validate relations, merge origins, or issue receipts.
+
+Run:
+
+```sh
+make backplane-monitor-test
+make clock-crosscheck
+```

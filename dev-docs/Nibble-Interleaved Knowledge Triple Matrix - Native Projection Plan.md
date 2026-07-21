@@ -857,3 +857,283 @@ make clock-crosscheck
 ```
 
 This layer is transport and diagnostic routing support. It does not replace `.o`, does not validate relations, does not merge coproduct origins, and does not issue receipts.
+
+---
+
+## 20. Fano 5040 Scheduler and Meta-Compiler Reference Layer
+
+Sections 38-39 are integrated as optional RTL blocks plus a Haskell reference harness:
+
+```text
+verilog/fano_slot_scheduler.v
+verilog/tb_fano_slot_scheduler.v
+vectors/fano-slot-scheduler.jsonl
+
+verilog/eal_meta_assembler.v
+verilog/tb_eal_meta_assembler.v
+vectors/eal-meta-assembler.jsonl
+
+tests/meta-compiler-types/EmergentAxialLisp/MetaCompilerCore.hs
+```
+
+The Fano scheduler implements:
+
+```text
+slot5040 = fano7 * 720 + role3 * 240 + local240
+```
+
+with hard bounds:
+
+```text
+fano7    <= 6
+role3    <= 2
+local240 <= 239
+slot5040 <= 5039
+```
+
+The meta-assembler packs modeled Core IR fields into a 16-bit instruction word:
+
+```text
+machine_instruction = opcode[15:12] || slot5040[11:0]
+ready = slot5040 < 5040 AND character_token <= 0x7F
+```
+
+Invalid slots or character tokens force the output word to the `0x0000` centroid and deassert readiness.
+
+The Haskell reference surface models:
+
+```text
+Surface  -> Parsed
+Resolved -> Lowered
+```
+
+and uses type families to reject invalid Fano/local slot bounds and invalid assembler token bounds.
+
+Conformance targets:
+
+```sh
+make fano-slot-test
+make meta-assembler-test
+make test-meta-compiler-types
+make clock-crosscheck
+```
+
+These layers schedule and lower modeled instruction coordinates. They do not replace `.o`, do not validate relations, do not merge coproduct origins, and do not issue receipts.
+
+---
+
+## 21. Absolute System Conformance Ledger
+
+Section 40 is integrated as an aggregate guardrail ledger plus a Haskell reference harness:
+
+```text
+docs/CONFORMANCE-LEDGER.md
+tests/conformance-guardrail-types/Omino/ConformanceGuardrail.hs
+```
+
+The ledger maps the 27 checklist items to one of three statuses:
+
+```text
+PASS          executable guard runs under make check or a named target
+PASS_OPTIONAL executable guard runs when optional tools such as GHC or Icarus are installed
+DEFINED_MODEL documented architecture profile without repository-level proof
+```
+
+The Haskell guardrail harness models:
+
+```text
+MirrorAxis(selector) = selector + 128
+ComputeSlot(fano, role, local) = fano * 720 + role * 240 + local
+```
+
+and rejects:
+
+```text
+local240 > 239
+fano7 > 6
+non-matching XOR-0x80 mirror assignments
+assembler token > 0x7F
+```
+
+Conformance target:
+
+```sh
+make test-conformance-guardrail-types
+```
+
+This is an aggregate reference-surface check. It does not turn documented backplane profiles, projection inertness, or optional RTL simulations into validation authority.
+
+---
+
+## 22. Externalized Proof Complex Bibliography
+
+Section 41 is integrated as a proof-boundary document:
+
+```text
+docs/EXTERNAL-PROOF-COMPLEX.md
+```
+
+Omino remains the runtime/projection/conformance repository. Formal proof authority is external:
+
+```text
+repo:   bthornemail/axiomatic-sovereignty
+path:   /home/main/omi/axiomatic-sovereignty
+commit: 12ad1d4f860c400c2b6304a68dd6c45469ed41d9
+```
+
+The external repository owns the five admission gates:
+
+```text
+LOGIC_PROOFS
+STRUCTURAL_TYPES
+PROCEDURAL_SEQUENCES
+CANONICAL_AXIOMS
+SOCIAL_CONTRACTS
+```
+
+The proof bibliography maps active external Coq modules to Omino concerns, including earned control bands, Miquel incidence, closure, BQF projection, deterministic replay, and authority preservation.
+
+Proof checks are run from outside Omino:
+
+```sh
+make -C /home/main/omi/axiomatic-sovereignty/LOGIC_PROOFS -f coq/Makefile proof
+```
+
+Omino `make check` intentionally does not require Coq, the sibling proof repository, or generated proof artifacts. The bibliography does not replace runtime validation, `.o` provenance, or receipt authority.
+
+---
+
+## 23. Backplane Interlock Monitor RTL
+
+The backplane interlock monitor is integrated as an optional RTL block:
+
+```text
+verilog/backplane_interlock_monitor.v
+verilog/tb_backplane_interlock_monitor.v
+vectors/backplane-interlock-monitor.jsonl
+```
+
+The monitor checks three signatures:
+
+```text
+phase mirror  -> local_azimuth XOR remote_azimuth == 0x80
+tetra sum     -> i_tetra_sum == 120
+hamming fault -> i_hamming_double_err asserted
+```
+
+Fault priority is deterministic:
+
+```text
+11 Hamming double-error
+10 Tetragrammatron sum drift
+01 phase mirror drift
+00 no fault
+```
+
+Any fault drives `o_lockout_n` low. This is a hardware interlock monitor only; it does not validate relations, merge origins, or issue receipts.
+
+Conformance targets:
+
+```sh
+make backplane-monitor-test
+make clock-crosscheck
+```
+
+---
+
+## 24. ESP32 P2P Gossip and TCG Backend Profiles
+
+Sections 43-44 are integrated as bounded implementation profiles:
+
+```text
+examples/esp32/esp32_p2p_gossip.c
+tests/esp32/esp32_p2p_gossip_test.c
+docs/TCG-BACKEND-SPEC.md
+examples/tcg/tcg-target.h
+examples/tcg/tcg-target.c.inc
+```
+
+The gossip layer uses:
+
+```text
+UDP port profile: 5040
+raw frame:        64 bytes
+COBS wire cap:    66 bytes
+board payload:    32 bytes
+metadata:         16 bytes
+```
+
+The raw frame is fixed at 64 bytes. The COBS wire cap is `raw + 2` because an arbitrary nonzero 64-byte payload requires one leading code byte plus one trailing `0x00` delimiter.
+
+The decoder verifies the step accumulator before committing to the caller output packet, preserving preflight rollback on sync mismatch.
+
+The TCG profile is static specification only:
+
+```text
+64-bit target registers
+16 target registers
+R0 zero register alias
+R15 scratch register
+division disabled
+unsupported operations abort translation
+```
+
+Conformance targets:
+
+```sh
+make test-esp32-gossip
+make test-tcg-backend-spec
+```
+
+The gossip layer transports sparse board contributions; the TCG profile records a virtualization lowering surface. Neither layer validates relations, merges origins, or issues receipts.
+
+---
+
+## 25. eMMC-Style Boot Envelope and Tetrahedral Carrier Profile
+
+Section 45 is integrated as a bounded flash boot-envelope parser:
+
+```text
+examples/esp32/omi_boot_envelope.c
+tests/esp32/omi_boot_envelope_test.c
+docs/BOOT-ENVELOPE.md
+```
+
+The carrier envelope is exactly 64 bytes:
+
+```text
+0x00..0x1F -> gauge / orientation prefix
+0x20..0x3F -> first OMI---IMO bootstrap frame
+```
+
+The canonical gauge pre-header is:
+
+```text
+FF 00 1C 1D 1E 1F 20 FF
+```
+
+The bootstrap half parses:
+
+```text
+8 x 16-bit big-endian scopes
+4 x 32-bit big-endian words: REGISTER, STACK, CAR, CDR
+```
+
+The tetrahedral storage face map is:
+
+```text
+0 BOOT0
+1 BOOT1
+2 SECURE / RPMB
+3 USER
+```
+
+Boot read is not acceptance. Header match is not acceptance. Frame parse is not acceptance. The candidate resolution API returns `BOOT_ERROR_SECURE_REJECTION` unless an explicit secure receipt flag is supplied.
+
+Conformance target:
+
+```sh
+make test-boot-envelope
+```
+
+This profile stages boot candidates only. It does not validate relations, merge origins, or issue receipts.

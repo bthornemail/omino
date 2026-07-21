@@ -1,0 +1,7 @@
+{"name":"lawful-origin-mirror","local_azimuth":"0x00","remote_azimuth":"0x80","tetra_sum":120,"hamming_double_err":false,"lockout_n":true,"diagnose_fault_id":0}
+{"name":"lawful-shifted-mirror","local_azimuth":"0x20","remote_azimuth":"0xA0","tetra_sum":120,"hamming_double_err":false,"lockout_n":true,"diagnose_fault_id":0}
+{"name":"phase-fault","local_azimuth":"0x00","remote_azimuth":"0x00","tetra_sum":120,"hamming_double_err":false,"lockout_n":false,"diagnose_fault_id":1}
+{"name":"tetra-fault","local_azimuth":"0x00","remote_azimuth":"0x80","tetra_sum":119,"hamming_double_err":false,"lockout_n":false,"diagnose_fault_id":2}
+{"name":"tetra-priority-over-phase","local_azimuth":"0x00","remote_azimuth":"0x00","tetra_sum":119,"hamming_double_err":false,"lockout_n":false,"diagnose_fault_id":2}
+{"name":"hamming-fault","local_azimuth":"0x00","remote_azimuth":"0x80","tetra_sum":120,"hamming_double_err":true,"lockout_n":false,"diagnose_fault_id":3}
+{"name":"hamming-priority-over-all","local_azimuth":"0x00","remote_azimuth":"0x00","tetra_sum":119,"hamming_double_err":true,"lockout_n":false,"diagnose_fault_id":3}

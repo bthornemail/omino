@@ -1,0 +1,5 @@
+{"name":"nil-centroid","core_opcode":"0x0","slot5040":0,"character_token":"0x00","machine_instruction":"0x0000","is_centroid_core":true,"assembler_ready":true}
+{"name":"pair-intermediate","core_opcode":"0x2","slot5040":1780,"character_token":"0x3F","machine_instruction":"0x26F4","is_centroid_core":false,"assembler_ready":true}
+{"name":"scope-ceiling","core_opcode":"0x9","slot5040":5039,"character_token":"0x7F","machine_instruction":"0x93AF","is_centroid_core":false,"assembler_ready":true}
+{"name":"slot-out-of-range","core_opcode":"0x2","slot5040":5040,"character_token":"0x3F","machine_instruction":"0x0000","is_centroid_core":true,"assembler_ready":false}
+{"name":"token-out-of-range","core_opcode":"0x2","slot5040":1,"character_token":"0x80","machine_instruction":"0x0000","is_centroid_core":true,"assembler_ready":false}
