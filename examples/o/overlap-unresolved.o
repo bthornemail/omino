@@ -15,4 +15,4 @@ board 0x48
 
 expect overlap non_destructive
 expect union rejected_without_validation
-receipt pending
+attestation pending

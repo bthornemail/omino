@@ -5,4 +5,4 @@ integrity miquel844
 corruption double positions=3,5
 expect detected
 expect not_corrected_as_single
-receipt pending
+attestation pending

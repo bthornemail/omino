@@ -6,7 +6,7 @@
  * Isolated RTL block for place-value inscription and gauge-plane tracking.
  *
  * This module records route/place information. It is not the Tetragrammatron
- * validation gate and does not accept relations or emit receipts.
+ * validation gate and does not accept relations or emit attestations.
  */
 module metatron_incidence_scribe (
     input  wire        clk,

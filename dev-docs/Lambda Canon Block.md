@@ -26,7 +26,7 @@ Omi Object Model
 
 The Lambda Canon Block does not validate by itself.
 
-It does not receipt by itself.
+It does not attestation by itself.
 
 It does not make projection authoritative.
 
@@ -89,7 +89,7 @@ Each pair is a local declaration.
 
 The block is the agreement candidate.
 
-Validation and receipt remain downstream.
+Validation and attestation remain downstream.
 
 ---
 
@@ -371,12 +371,12 @@ The Lambda Canon Block prepares this condition.
 
 It does not complete it.
 
-Completion still requires validation and receipt.
+Completion still requires validation and attestation.
 
 ```text
 Declaration prepares.
 Validation accepts.
-Receipt records.
+Attestation records.
 Projection displays.
 ```
 
@@ -461,7 +461,7 @@ hypergraph incidence
 spherical coordination
 ```
 
-Its purpose is to define the predicate for canonical agreement from a declared subject without confusing classification, validation, receipt, projection, or interpretation.
+Its purpose is to define the predicate for canonical agreement from a declared subject without confusing classification, validation, attestation, projection, or interpretation.
 
 ---
 

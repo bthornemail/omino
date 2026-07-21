@@ -13,7 +13,7 @@ typedef struct {
     uint32_t chunk_sequence_id;
     uint32_t media_carrier_hash;
     uint8_t  requested_effect;
-    bool     is_receipt_backed;
+    bool     is_attestation_locked;
 } MediaStreamChunk;
 
 typedef struct {
@@ -35,8 +35,8 @@ static MediaHardwareGate omi_arbitrate_media_bus(const MediaStreamChunk *chunk) 
         gate.action_log = "REJECT_NULL_CHUNK";
         return gate;
     }
-    if (!chunk->is_receipt_backed) {
-        gate.action_log = "REJECT_UNRECEIPTED_CARRIER";
+    if (!chunk->is_attestation_locked) {
+        gate.action_log = "REJECT_UNATTESTED_CARRIER";
         return gate;
     }
     if (chunk->media_carrier_hash == 0u) {

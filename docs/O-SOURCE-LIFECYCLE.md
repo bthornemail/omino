@@ -8,7 +8,7 @@ source .o
 -> integrity check
 -> CONS recovery when one coordinate is missing and resolver profile is known
 -> validation decision
--> receipt
+-> attestation
 -> projection
 ```
 
@@ -20,5 +20,5 @@ source .o
 - Integrity checks whether encoded scope remains coherent.
 - Recovery reconstructs missing CAR/CDR/CONS coordinates under the CONS resolver profile. It is not validation.
 - Validation decides whether a candidate relation may be accepted.
-- Receipt records acceptance.
+- Attestation records acceptance.
 - Projection renders context for inspection.

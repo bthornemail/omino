@@ -3073,7 +3073,7 @@ omi-log
  readable addressed declaration log
 
 omi-isa
- executable instruction / receipt test rail
+ executable instruction / attestation test rail
 
 omi-vault
  Obsidian workbook

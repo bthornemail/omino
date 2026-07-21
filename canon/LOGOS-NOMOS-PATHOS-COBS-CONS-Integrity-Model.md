@@ -55,7 +55,7 @@ COBS
 validation
   decides acceptance
 
-receipt
+attestation
   records accepted state
 ```
 
@@ -258,7 +258,7 @@ if syndrome != 0:
 
 After correction, all three parity equations MUST be recomputed.
 
-The compact profile MUST also use a frame-level length, checksum, hash, receipt witness, or equivalent integrity mechanism to reject unrecognized multi-bit corruption.
+The compact profile MUST also use a frame-level length, checksum, hash, attestation witness, or equivalent integrity mechanism to reject unrecognized multi-bit corruption.
 
 ---
 
@@ -672,7 +672,7 @@ interpretation
 ↓
 validation
 ↓
-receipt
+attestation
 ```
 
 COBS MUST be applied after integrity encoding has been packed into bytes.
@@ -834,7 +834,7 @@ ternary activation
 ↓
 validation
 ↓
-receipt
+attestation
 ```
 
 It is a deterministic coded perceptron.
@@ -866,7 +866,7 @@ Canonical interpretation:
 ```text
 -1 = invalid, contradicted, malformed, or uncorrectable
  0 = lawful but unresolved candidate
-+1 = validated and receipted state
++1 = validated and attested state
 ```
 
 Integrity correction alone MUST NOT produce `+1`.
@@ -879,7 +879,7 @@ integrity
 → interpretation
 → validation
 → activation
-→ receipt
+→ attestation
 ```
 
 A corrected but not yet validated candidate remains:
@@ -894,7 +894,7 @@ An uncorrectable frame becomes:
 -1
 ```
 
-A fully validated and receipted frame becomes:
+A fully validated and attested frame becomes:
 
 ```text
 +1
@@ -959,7 +959,7 @@ M_p < θ−        → -1
 M_p ≥ θ+        → +1
 ```
 
-However, the final positive activation still requires validation and receipt.
+However, the final positive activation still requires validation and attestation.
 
 ---
 
@@ -994,7 +994,7 @@ resolve
 interpret
 validate
 activate
-receipt
+attestation
 ```
 
 ---
@@ -1046,7 +1046,7 @@ create new scope
 change address authority
 accept a declaration
 invent missing payload
-emit an accepted receipt without validation
+emit an accepted attestation without validation
 ```
 
 ---
@@ -1140,7 +1140,7 @@ ternary activation
 validation
   authority decision
 
-receipt
+attestation
   durable accepted-state witness
 ```
 
@@ -1167,11 +1167,11 @@ COBS preserves frame boundaries.
 CONS preserves relational continuation.
 Miquel incidence preserves extended-code integrity.
 Weighted aggregation may determine candidate activation magnitude.
-Validation and receipt alone accept state.
+Validation and attestation alone accept state.
 ```
 
 ---
 
 ## 24. One-Sentence Summary
 
-The Omnicron-Epistemic-Model encodes the four FS/GS/RS/US scope features through either a compact Hamming `[7,4,3]` cell or a canonical Miquel-presented extended Hamming `[8,4,4]` cell, transports those cells through COBS-CONS, classifies their integrity through LOGOS/NOMOS/PATHOS incidence, and only after correction, interpretation, validation, and receipt lowers the recovered state into a ternary epistemic activation.
+The Omnicron-Epistemic-Model encodes the four FS/GS/RS/US scope features through either a compact Hamming `[7,4,3]` cell or a canonical Miquel-presented extended Hamming `[8,4,4]` cell, transports those cells through COBS-CONS, classifies their integrity through LOGOS/NOMOS/PATHOS incidence, and only after correction, interpretation, validation, and attestation lowers the recovered state into a ternary epistemic activation.

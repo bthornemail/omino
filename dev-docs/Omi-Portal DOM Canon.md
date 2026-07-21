@@ -28,7 +28,7 @@ imo- closes.
 The address begins after the hyphen.
 The prefix is not the address.
 The tag is not the authority.
-Receipt accepts.
+Attestation accepts.
 ```
 
 ---
@@ -85,7 +85,7 @@ Short doctrine:
 Prefix gates.
 Address names.
 Frame resolves.
-Receipt accepts.
+Attestation accepts.
 ```
 
 ## 1. Canonical Replacement
@@ -347,7 +347,7 @@ This gives the DOM a bounded agreement shape:
 omi opens.
 content declares.
 imo closes.
-receipt accepts.
+attestation accepts.
 ```
 
 Example:
@@ -370,7 +370,7 @@ The innerHTML is context.
 
 The address is identity.
 
-The receipt is authority.
+The attestation is authority.
 
 Short doctrine:
 
@@ -378,7 +378,7 @@ Short doctrine:
 innerHTML gives context.
 id gives address.
 data-* repeats the item.
-receipt gives authority.
+attestation gives authority.
 ```
 
 ---
@@ -423,7 +423,7 @@ Example:
  <imo
  id="imo-0500-03bf-000c-2b05-2f05-0002-039f-05ff"
  data-imo="0500-03bf-000c-2b05-2f05-0002-039f-05ff"
- data-receipt="pending">
+ data-attestation="pending">
  </imo>
 </omi>
 ```
@@ -436,7 +436,7 @@ data-clause
 data-ll
 data-nn
 data-mm
-data-receipt
+data-attestation
 ```
 
 The role is not placed into the address prefix.
@@ -447,7 +447,7 @@ Short doctrine:
 ID is address.
 data-edge is role.
 DOM nesting is clause structure.
-Receipt accepts.
+Attestation accepts.
 ```
 
 ---
@@ -551,7 +551,7 @@ Canonical rule:
 innerHTML may describe.
 innerHTML may project.
 innerHTML may not accept itself.
-Receipt accepts.
+Attestation accepts.
 ```
 
 ---
@@ -586,7 +586,7 @@ Iframe rule:
 ```text
 iframe is a projected context.
 Parent OMI address scopes it.
-Child content must not become authority without receipt.
+Child content must not become authority without attestation.
 ```
 
 Short doctrine:
@@ -594,7 +594,7 @@ Short doctrine:
 ```text
 Iframe contains.
 OMI scopes.
-Receipt accepts.
+Attestation accepts.
 ```
 
 ---
@@ -658,7 +658,7 @@ id prefix must be omi- or imo-
 data-omi/data-imo must match the address
 normalized address must be 32 hex chars for a full 128-bit frame
 segments must validate as S0-S7
-receipt state must not be inferred from display alone
+attestation state must not be inferred from display alone
 ```
 
 ---
@@ -690,7 +690,7 @@ SVG rule:
 ```text
 SVG geometry is projection.
 SVG id/data-* carries address.
-Receipt remains external or embedded as data-receipt.
+Attestation remains external or embedded as data-attestation.
 ```
 
 ---
@@ -702,7 +702,7 @@ Receipt remains external or embedded as data-receipt.
  id="omi-0500-03bf-000c-2b05-2f05-0002-039f-05ff"
  data-omi="0500-03bf-000c-2b05-2f05-0002-039f-05ff"
  data-clause="oo"
- data-receipt="pending">
+ data-attestation="pending">
 
  <template type="application/omi+json">
  {
@@ -717,7 +717,7 @@ Receipt remains external or embedded as data-receipt.
  "039f",
  "05ff"
  ],
- "receipt": "pending"
+ "attestation": "pending"
  }
  </template>
 
@@ -728,7 +728,7 @@ Receipt remains external or embedded as data-receipt.
  <imo
  id="imo-0500-03bf-000c-2b05-2f05-0002-039f-05ff"
  data-imo="0500-03bf-000c-2b05-2f05-0002-039f-05ff"
- data-receipt="pending">
+ data-attestation="pending">
  </imo>
 </omi>
 ```
@@ -742,7 +742,7 @@ address normalizes to 128-bit hex
 segments recover S0-S7
 LOGOS, NOMOS, PATHOS are extracted from the segments
 content remains contextual
-receipt remains explicit
+attestation remains explicit
 ```
 
 ---
@@ -753,12 +753,12 @@ receipt remains explicit
 tag name != address
 prefix != address
 innerHTML != authority
-iframe != receipt
+iframe != attestation
 SVG != truth
 Canvas != acceptance
 DOM render != belief
 data-* != proof by itself
-receipt accepts
+attestation accepts
 ```
 
 Canonical warning:
@@ -801,7 +801,7 @@ The hyphenated address delineates the eight 16-bit segments.
 
 The body/innerHTML may contain user-defined reference context, browser projections, iframes, SVG, Canvas, or A-Frame content.
 
-But no projection is authority until receipt accepts.
+But no projection is authority until attestation accepts.
 
 Final doctrine:
 
@@ -813,11 +813,11 @@ Hyphens delineate.
 Segments triangulate.
 DOM nests.
 Horn proves.
-Receipt accepts.
+Attestation accepts.
 ```
 
 One-line canon:
 
 ```text
-In Omi-Portal, floating `<omi>` and `<imo>` carrier elements, or their registered custom-element forms `<omi-node>` and `<imo-node>`, bind browser content to canonical OMI addresses by using only `id="omi-<address>"`, `data-omi="<address>"`, `id="imo-<address>"`, and `data-imo="<address>"`; the prefix is only the gate, the hexadecimal hyphen-delineated address is the item, DOM nesting expresses Horn-clause triangulation, and receipt alone turns the rendered context into accepted state.
+In Omi-Portal, floating `<omi>` and `<imo>` carrier elements, or their registered custom-element forms `<omi-node>` and `<imo-node>`, bind browser content to canonical OMI addresses by using only `id="omi-<address>"`, `data-omi="<address>"`, `id="imo-<address>"`, and `data-imo="<address>"`; the prefix is only the gate, the hexadecimal hyphen-delineated address is the item, DOM nesting expresses Horn-clause triangulation, and attestation alone turns the rendered context into accepted state.
 ```

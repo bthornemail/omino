@@ -28,5 +28,5 @@ make clock-crosscheck
 ```
 
 The export verifier compares deterministic byte streams. It does not validate
-relations, merge origins, issue receipts, or prove platform-wide compiler
+relations, merge origins, issue attestations, or prove platform-wide compiler
 correctness.

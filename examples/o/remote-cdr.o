@@ -7,4 +7,4 @@ cdr 0xA28B0000
 board 0xC8
 expect selector 7
 expect route Remote/CDR
-receipt pending
+attestation pending

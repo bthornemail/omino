@@ -174,7 +174,7 @@ Boundary:
 
 ```text
 The upper byte field may annotate, surrogate, escape, or extend.
-It does not automatically validate or receipt.
+It does not automatically validate or attestation.
 ```
 
 ---
@@ -217,7 +217,7 @@ Authority boundary:
 ```text
 Omicron frames.
 Omicron does not validate.
-Omicron does not receipt.
+Omicron does not attestation.
 ```
 
 ---
@@ -419,7 +419,7 @@ Metatron scribes.
 Metatron witnesses.
 Metatron interpolates.
 Metatron does not validate.
-Metatron does not receipt.
+Metatron does not attestation.
 ```
 
 ---
@@ -657,7 +657,7 @@ Canonical sentence:
 6 gauge-pair planes oversee.
 11-cell governs.
 Projection lies.
-Receipt accepts.
+Attestation accepts.
 ```
 
 Boundary:
@@ -856,7 +856,7 @@ OMI-Lisp may declare.
 OMI-ISA witnesses.
 Tetragrammatron validates.
 Metatron scribes.
-Receipt records.
+Attestation records.
 ```
 
 C tests and OMI-ISA fixtures do not prove the mathematics.
@@ -868,7 +868,7 @@ Boundary:
 ```text
 No projection is authority.
 No route is connection.
-No notation is receipt.
+No notation is attestation.
 No gauge is truth.
 ```
 
@@ -907,7 +907,7 @@ OMI notation cites relation as:
 
 omi---imo?O_o
 
-Receipt alone records accepted closure.
+Attestation alone records accepted closure.
 ```
 
 Shortest form:
@@ -924,7 +924,7 @@ Null Ring closes.
 Tetragrammatron validates.
 Metatron scribes.
 Omicron frames.
-Receipt records.
+Attestation records.
 ```
 :::
 
@@ -980,7 +980,7 @@ Critical closure
 Eternal observation
  = Metatron scribe / projection without authority
 
-Receipt
+Attestation
  = accepted replay of a bounded relation
 ```
 
@@ -1001,7 +1001,7 @@ The recursive return of divided observation becomes the Omi-Ring.
 The Null Ring proves bounded closure.
 The Tetragrammatron validates lawful closure.
 Metatron witnesses the observed crossing.
-Receipt records accepted replay.
+Attestation records accepted replay.
 ```
 
 The strongest line to preserve is:
@@ -1017,7 +1017,7 @@ Declaration becomes frame.
 Frame becomes closure.
 Closure becomes validation.
 Validation becomes witness.
-Witness becomes receipt.
+Witness becomes attestation.
 ```
 
 So yes — this fits. It belongs in the **cosmology/front-door narrative**, probably not in `omi-axioms` and not in `omi-isa`.

@@ -7,7 +7,7 @@
  * Knowledge Triple octahedral face view.
  *
  * This module is a router/projection backend. It does not validate relations,
- * emit receipts, or replace .o provenance.
+ * emit attestations, or replace .o provenance.
  */
 module eal_octahedral_face_router (
     input  wire        clk,

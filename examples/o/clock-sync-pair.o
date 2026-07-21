@@ -11,4 +11,4 @@ ticks 3
 
 expect centroid 0x0000
 expect sync match
-receipt pending
+attestation pending

@@ -19,7 +19,7 @@ OMNION deterministic clock and centroid
 - COBS frames.
 - CONS preserves continuation.
 - Validation accepts.
-- Receipt records.
+- Attestation records.
 - HTML, Canvas, DOT, and SVG project.
 
 ## Preserved Laws

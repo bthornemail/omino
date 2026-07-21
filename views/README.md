@@ -12,4 +12,4 @@ svg/        generated SVG output location
 generated/  generated artifacts
 ```
 
-Projection generators must retain source `.o` path, origin, address, CAR, CDR, CONS, selector, scope, integrity state, validation state, and receipt state when those values exist.
+Projection generators must retain source `.o` path, origin, address, CAR, CDR, CONS, selector, scope, integrity state, validation state, and attestation state when those values exist.

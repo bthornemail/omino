@@ -44,4 +44,4 @@ examples/tcg/tcg-target.c.inc
 
 ## Boundary
 
-The TCG profile is a virtualization/backend specification. It does not validate relations, merge origins, issue receipts, or replace the native C runtime.
+The TCG profile is a virtualization/backend specification. It does not validate relations, merge origins, issue attestations, or replace the native C runtime.

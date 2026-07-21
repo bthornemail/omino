@@ -49,4 +49,4 @@ This ledger maps the Section 40 checklist to executable targets and documented-m
 
 Section 41 proof authority is external to this ledger. Omino records the bibliography in `docs/EXTERNAL-PROOF-COMPLEX.md`; Coq checks are run from `bthornemail/axiomatic-sovereignty`, not from Omino `make check`.
 
-The ledger does not grant validation authority. Runtime validation, receipt records, and `.o` provenance remain separate from projections, optional RTL checks, and Haskell reference-surface checks.
+The ledger does not grant validation authority. Runtime validation, attestation records, and `.o` provenance remain separate from projections, optional RTL checks, and Haskell reference-surface checks.

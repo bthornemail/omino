@@ -86,7 +86,7 @@ int main(void) {
     }
     if (omi_boot_resolve_candidate(OMI_BOOT_FACE_BOOT0, 15u, 0u, false, &res) !=
         BOOT_ERROR_SECURE_REJECTION) {
-        return fail("missing secure receipt accepted");
+        return fail("missing secure attestation accepted");
     }
     if (omi_boot_resolve_candidate(OMI_BOOT_FACE_COUNT, 15u, 0u, true, &res) !=
         BOOT_ERROR_BQF_OUT_OF_BOUNDS) {

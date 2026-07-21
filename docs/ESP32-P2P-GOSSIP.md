@@ -31,4 +31,4 @@ Conformance target:
 make test-esp32-gossip
 ```
 
-This profile is transport only. It does not validate relations, merge origins, or issue receipts.
+This profile is transport only. It does not validate relations, merge origins, or issue attestations.

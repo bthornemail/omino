@@ -31,7 +31,7 @@ The external repository owns the five admission gates described by its protocol:
 | Canonical | `CANONICAL_AXIOMS/` | Omino records architectural alignment only. |
 | Social | `SOCIAL_CONTRACTS/` | Omino does not enforce community admission. |
 
-All five gates are separate from Omino runtime validation and receipt records.
+All five gates are separate from Omino runtime validation and attestation records.
 
 ## Proof Bibliography
 
@@ -68,4 +68,4 @@ make -C /home/main/omi/axiomatic-sovereignty/LOGIC_PROOFS -f coq/Makefile proof-
 
 ## Non-Authority
 
-This bibliography does not accept relations, merge origins, issue receipts, or alter runtime memory. Omino remains responsible for executable behavior; the external proof repository remains responsible for formal logic.
+This bibliography does not accept relations, merge origins, issue attestations, or alter runtime memory. Omino remains responsible for executable behavior; the external proof repository remains responsible for formal logic.

@@ -11,7 +11,7 @@ These rules preserve Omino authority boundaries.
 7. COBS frames but does not validate.
 8. CONS preserves ordered relational continuation.
 9. Validation accepts.
-10. Receipt records.
+10. Attestation records.
 11. HTML, Canvas, DOT, and SVG are projections only.
 12. Verilog is an optional implementation of the deterministic clock law.
 

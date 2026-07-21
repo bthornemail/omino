@@ -8,13 +8,13 @@ static int fail(const char *message) {
 }
 
 static int expect_gate(uint8_t effect,
-                       bool receipt,
+                       bool attestation,
                        uint32_t hash,
                        bool allow,
                        uint16_t bridge_word,
                        uint8_t offset,
                        const char *signature) {
-    MediaStreamChunk chunk = {101u, hash, effect, receipt};
+    MediaStreamChunk chunk = {101u, hash, effect, attestation};
     MediaHardwareGate gate = omi_arbitrate_media_bus(&chunk);
 
     if (gate.allow_hardware_bus != allow ||
@@ -33,7 +33,7 @@ int main(void) {
     }
 
     if (expect_gate(EFFECT_STREAMING, false, 0xDEADBEEFu, false, 0x0000u, 0x00u,
-                    "REJECT_UNRECEIPTED_CARRIER") != 0) return 1;
+                    "REJECT_UNATTESTED_CARRIER") != 0) return 1;
     if (expect_gate(EFFECT_STREAMING, true, 0u, false, 0x0000u, 0x00u,
                     "REJECT_EMPTY_CARRIER_HASH") != 0) return 1;
     if (expect_gate(EFFECT_STREAMING, true, 0xDEADBEEFu, true, 0x1A55u, 0x18u,

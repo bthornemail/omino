@@ -33,16 +33,16 @@ All bootstrap fields are parsed big-endian from the 64-byte envelope.
 | --- | --- | --- |
 | 0 | BOOT0 | Primary boot candidate |
 | 1 | BOOT1 | Fallback / recovery candidate |
-| 2 | SECURE / RPMB | Receipt and rollback witness |
+| 2 | SECURE / RPMB | Attestation and rollback witness |
 | 3 | USER | Carrier content |
 
-BOOT0 and BOOT1 stage candidates. SECURE/RPMB holds receipt and rollback witnesses. USER carries ordinary data.
+BOOT0 and BOOT1 stage candidates. SECURE/RPMB holds attestation and rollback witnesses. USER carries ordinary data.
 
 ## Acceptance Boundary
 
 Boot read is not acceptance. Header match is not acceptance. Frame parse is not acceptance.
 
-The implementation exposes a separate candidate resolution function that requires an explicit secure receipt flag before returning `BOOT_OK`. Without that flag, a structurally parsed candidate returns `BOOT_ERROR_SECURE_REJECTION`.
+The implementation exposes a separate candidate resolution function that requires an explicit secure attestation flag before returning `BOOT_OK`. Without that flag, a structurally parsed candidate returns `BOOT_ERROR_SECURE_REJECTION`.
 
 Conformance target:
 
@@ -50,4 +50,4 @@ Conformance target:
 make test-boot-envelope
 ```
 
-This profile does not validate relations, merge origins, or issue receipts.
+This profile does not validate relations, merge origins, or issue attestations.

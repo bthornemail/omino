@@ -10,7 +10,7 @@ Canonical authority draft for the **Omnicron-Epistemic-Model**.
 
 This document defines the final Omnicron epistemic layer as the model where Omicron’s deterministic CONS relation is lifted into Omnicron’s deterministic, stream-safe, COBS-like escaped binary place-value surface.
 
-This is an interpretive and architectural authority document for Omnicron-facing canon. It does not replace Coq proof authority, runtime tests, Tetragrammatron validation, or receipt records.
+This is an interpretive and architectural authority document for Omnicron-facing canon. It does not replace Coq proof authority, runtime tests, Tetragrammatron validation, or attestation records.
 
 ---
 
@@ -301,7 +301,7 @@ Canonical lock:
 0x80..0xAF is a lazy .o carrier band.
 omi-port routes it.
 Omnicron interprets it.
-Receipt accepts only after validation.
+Attestation accepts only after validation.
 ```
 
 ---
@@ -524,7 +524,7 @@ Omicron CONS determinism
   -> Gnomic Omnicron resolution surface
   -> Lambda Canon Block candidate
   -> validation
-  -> receipt
+  -> attestation
 ```
 
 Readable form:
@@ -545,7 +545,7 @@ Gnomic Omicron:
 Lambda Canon Block:
   declaration unit
 
-Receipt:
+Attestation:
   durable acceptance record
 ```
 
@@ -596,7 +596,7 @@ The place-value metric is implemented as:
 Q(x,y) = 60x^2 + 16xy + 4y^2
 ```
 
-The implementation treats this value as diagnostic address energy. It is not validation authority, not a receipt, and not a replacement for `.o` provenance.
+The implementation treats this value as diagnostic address energy. It is not validation authority, not a attestation, and not a replacement for `.o` provenance.
 
 Verification targets:
 
@@ -648,12 +648,12 @@ It may not override OMI-ISA runtime behavior.
 
 It may not replace Tetragrammatron validation.
 
-It may not replace receipt.
+It may not replace attestation.
 
 Canonical boundary:
 
 ```text
-Notation is not receipt.
+Notation is not attestation.
 Projection is not validation.
 Routing is not authority.
 Interpretation is not proof.
@@ -700,7 +700,7 @@ Gnomic Omnicron makes projection readable.
 
 Validation accepts.
 
-Receipt records.
+Attestation records.
 ```
 
 ---
@@ -720,5 +720,5 @@ It reads the BQF as a 4-scaled place-value energy form.
 
 It treats 0xB..0xF as the high delineation band.
 
-It keeps validation and receipt separate from interpretation.
+It keeps validation and attestation separate from interpretation.
 ```

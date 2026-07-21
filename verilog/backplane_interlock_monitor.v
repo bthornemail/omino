@@ -7,7 +7,7 @@
  *
  * This block asserts an active-low lockout when phase, Tetragrammatron sum,
  * or Hamming double-error signatures drift. It is an interlock monitor only:
- * it does not validate relations, merge origins, or issue receipts.
+ * it does not validate relations, merge origins, or issue attestations.
  */
 module backplane_interlock_monitor (
     input  wire        clk,

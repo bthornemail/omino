@@ -7,4 +7,4 @@ cdr 0x00000000
 board 0x00
 expect selector 0
 expect route Local/CAR
-receipt pending
+attestation pending

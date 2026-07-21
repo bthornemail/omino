@@ -868,9 +868,9 @@ static bool omi_verify_omnion_azimuth_mirror(void) {
  *   9. The geometric vector (radius/azimuth, Section 11.3 below) is LAZY:
  *      it is a read-on-demand projection for display/calibration, computed
  *      only when asked, and never drives a state transition by itself.
- *  10. No wrapping "receipt" struct is introduced here. The address/state
+ *  10. No wrapping "attestation" struct is introduced here. The address/state
  *      word is already the place-value identity (Section 7's OMI addressing
- *      doctrine: address is identity). A receipt-commitment field would
+ *      doctrine: address is identity). A attestation-commitment field would
  *      manufacture a second identity channel next to the state itself --
  *      exactly the category error the no-hash-identity doctrine forbids.
  *      Peers compare the resolution value directly.
@@ -1090,7 +1090,7 @@ static bool omi_clock_sync_check_diagnostic(const OmiClockSyncPeer *local, const
 
 /* EXACT comparison: synchronized iff local_sync == remote_sync, where
  * each side is its own centroid_resolution under the same omnion orientation.
- * No raw state, receipt, or band is exchanged or required to decide this. */
+ * No raw state, attestation, or band is exchanged or required to decide this. */
 static bool omi_clock_sync_check_resolved(const OmiClockSyncPeer *local,
                                            const OmiClockSyncPeer *remote,
                                            uint8_t omnion) {

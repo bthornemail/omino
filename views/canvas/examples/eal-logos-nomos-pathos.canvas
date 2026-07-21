@@ -19,7 +19,7 @@
         "scope": "FS/GS/RS/US",
         "integrity": "LOGOS/NOMOS/PATHOS pending",
         "validation": "pending",
-        "receipt": "pending"
+        "attestation": "pending"
       }
     },
     {
@@ -41,7 +41,7 @@
         "scope": "FS/GS/RS/US",
         "integrity": "LOGOS/NOMOS/PATHOS pending",
         "validation": "pending",
-        "receipt": "pending"
+        "attestation": "pending"
       }
     },
     {
@@ -63,7 +63,7 @@
         "scope": "FS/GS/RS/US",
         "integrity": "hamming743",
         "validation": "pending",
-        "receipt": "pending"
+        "attestation": "pending"
       }
     },
     {
@@ -85,7 +85,7 @@
         "scope": "FS/GS/RS/US",
         "integrity": "LOGOS/NOMOS/PATHOS pending",
         "validation": "pending",
-        "receipt": "pending"
+        "attestation": "pending"
       }
     },
     {
@@ -107,7 +107,7 @@
         "scope": "FS/GS/RS/US",
         "integrity": "LOGOS/NOMOS/PATHOS pending",
         "validation": "pending",
-        "receipt": "pending"
+        "attestation": "pending"
       }
     },
     {
@@ -129,7 +129,7 @@
         "scope": "FS/GS/RS/US",
         "integrity": "LOGOS/NOMOS/PATHOS pending",
         "validation": "pending",
-        "receipt": "pending"
+        "attestation": "pending"
       }
     },
     {
@@ -151,7 +151,7 @@
         "scope": "FS/GS/RS/US",
         "integrity": "LOGOS/NOMOS/PATHOS pending",
         "validation": "pending",
-        "receipt": "pending"
+        "attestation": "pending"
       }
     },
     {
@@ -173,7 +173,7 @@
         "scope": "FS/GS/RS/US",
         "integrity": "LOGOS/NOMOS/PATHOS pending",
         "validation": "requires witness",
-        "receipt": "pending"
+        "attestation": "pending"
       }
     },
     {
@@ -195,7 +195,7 @@
         "scope": "FS/GS/RS/US",
         "integrity": "LOGOS/NOMOS/PATHOS pending",
         "validation": "pending",
-        "receipt": "scribe pending"
+        "attestation": "scribe pending"
       }
     },
     {
@@ -205,7 +205,7 @@
       "y": 560,
       "width": 300,
       "height": 160,
-      "text": "## Gnomonic Azimuth\nDisplay projection. Canvas is context, not receipt.",
+      "text": "## Gnomonic Azimuth\nDisplay projection. Canvas is context, not attestation.",
       "omi": {
         "source": "examples/o/clock-sync-pair.o",
         "origin": "0x4D494E49",
@@ -217,7 +217,7 @@
         "scope": "FS/GS/RS/US",
         "integrity": "LOGOS/NOMOS/PATHOS pending",
         "validation": "pending",
-        "receipt": "pending"
+        "attestation": "pending"
       }
     },
     {
@@ -239,7 +239,7 @@
         "scope": "FS/GS/RS/US",
         "integrity": "LOGOS/NOMOS/PATHOS pending",
         "validation": "pending",
-        "receipt": "pending"
+        "attestation": "pending"
       }
     }
   ],

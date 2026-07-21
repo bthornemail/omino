@@ -12,7 +12,7 @@ The system begins with `.o` declarations as source carriers. These declarations
 are resolved into typed axial coordinates, injected into a non-destructive
 coproduct blackboard, checked through LOGOS/NOMOS/PATHOS integrity relations,
 framed through COBS, continued through CONS, accepted only through validation,
-recorded through receipts, and finally rendered through HTML, JSON Canvas, DOT,
+recorded through attestations, and finally rendered through HTML, JSON Canvas, DOT,
 or SVG.
 
 The Algorithmic Clock is not a physical clock. It is a deterministic
@@ -21,7 +21,7 @@ carried through four-bit addresses, its integrity surface bifurcates between
 compact Hamming `[7,4,3]` and extended Miquel/Hamming `[8,4,4]`, and its analog
 modeling surface uses Pascal tetrahedron Layer-4 coefficients as entrainment
 weights. These weights affect projection and coupling only; they do not alter
-identity, validation, provenance, or receipt authority.
+identity, validation, provenance, or attestation authority.
 
 ## Build
 
@@ -81,7 +81,7 @@ Hamming and Miquel check integrity.
 COBS frames.
 CONS preserves continuation.
 Validation accepts.
-Receipt records.
+Attestation records.
 Projection displays.
 ```
 
@@ -103,14 +103,14 @@ source .o
 -> integrity check
 -> optional CONS recovery
 -> validation decision
--> receipt
+-> attestation
 -> projection
 ```
 
 Each stage has a distinct role. Declaration records intent and provenance.
 Integrity checks structural coherence. Recovery reconstructs a missing CAR, CDR,
 or CONS coordinate under a known resolver profile. Validation decides whether a
-candidate may be accepted. Receipt records the accepted or rejected result.
+candidate may be accepted. Attestation records the accepted or rejected result.
 Projection makes the state inspectable.
 
 JSON Canvas, HTML, DOT, SVG, and other views do not replace `.o` and do not
@@ -146,7 +146,7 @@ ordered CAR/CDR relation
 resolver profile
 scope
 validation status
-receipt status
+attestation status
 ```
 
 The conformance rules require deterministic board behavior, non-destructive
@@ -194,7 +194,7 @@ Faces `0..3` are local. Faces `4..7` are remote. Each remote face is the
 `XOR 0x80` mirror of its corresponding local face.
 
 The quadrant router is a routing and projection layer. It does not validate
-relations, merge origins, or issue receipts.
+relations, merge origins, or issue attestations.
 
 ## 5. Scope and Hamming Integrity
 
@@ -378,7 +378,7 @@ Pascal coefficient
 
 The weight may influence coupling strength, visualization, amplitude,
 multiplicity, or analog-style entrainment. It may not change identity,
-validation, origin, equivalence, or receipt status.
+validation, origin, equivalence, or attestation status.
 
 This distinction allows Omino to support both exact digital semantics and
 continuous or weighted modeling without confusing one for the other.
@@ -570,7 +570,7 @@ Delta positions
 the ruler embeds
 OMNION orients
 validation accepts
-receipt records
+attestation records
 ```
 
 Entrainment does not mean that two origins merge, that one declaration replaces
@@ -585,7 +585,7 @@ address 0x0000
 azimuth 0 degrees
 ```
 
-OMNION selects orientation but does not validate or issue receipts.
+OMNION selects orientation but does not validate or issue attestations.
 
 The binary export profile emits a deterministic 12-byte image:
 
@@ -638,7 +638,7 @@ FF 00 1C 1D 1E 1F 20 FF
 ```
 
 Boot parsing, header matching, and candidate staging are not acceptance. A
-separate secure receipt flag is required before a candidate returns an accepted
+separate secure attestation flag is required before a candidate returns an accepted
 boot result.
 
 ## 16. Hardware and Backend Surfaces
@@ -707,7 +707,7 @@ no random source-layout values
 ```
 
 Every projected node must retain source path, origin, address, CAR, CDR, CONS,
-selector, scope, integrity status, validation status, and receipt status when
+selector, scope, integrity status, validation status, and attestation status when
 available.
 
 To check native views:
@@ -737,8 +737,8 @@ o.glb.o
 ```
 
 Streaming, rendering, capture, and transcoding are enabled only when a carrier
-has receipt-backed authorization and a nonzero carrier hash. The bridge gates
-effects; it does not validate relations, merge origins, or issue receipts.
+has attestation-locked authorization and a nonzero carrier hash. The bridge gates
+effects; it does not validate relations, merge origins, or issue attestations.
 
 This allows multimedia and hardware side effects to remain downstream of
 symbolic validation.
@@ -886,7 +886,7 @@ checked cells in time. Pascal Layer-4 multiplicities provide analog entrainment
 weights. The 60-point Circular Slide Ruler embeds each annotation into a finite
 phase. The nibble and ruler jointly realign every 240 steps. OMNION fixes the
 projective centroid. The Blackboard quadrant selects local or remote routing.
-Validation accepts, receipt records, and projection remains inert.
+Validation accepts, attestation records, and projection remains inert.
 
 The architecture's defining discipline is separation:
 
@@ -898,7 +898,7 @@ routing is not acceptance
 weight is not identity
 orientation is not authority
 clock advancement is not physical time
-receipt is not display
+attestation is not display
 ```
 
 Within those boundaries, Omino provides a coherent bridge between symbolic Lisp

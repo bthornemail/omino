@@ -7,4 +7,4 @@ cdr 0x89ABCDEF
 board 0x48
 expect selector 3
 expect route Local/CAR
-receipt pending
+attestation pending

@@ -35,4 +35,4 @@ make clock-crosscheck
 ```
 
 Visual outputs do not validate relations, collapse nodes, merge origins, mutate
-memory, or issue receipts.
+memory, or issue attestations.

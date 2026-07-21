@@ -5,9 +5,9 @@ digraph cobs_cons_frame {
   cobs [label="COBS frame"];
   cons [label="CONS continuation"];
   validation [label="validation"];
-  receipt [label="receipt"];
+  attestation [label="attestation"];
   declaration -> cobs;
   cobs -> cons;
   cons -> validation;
-  validation -> receipt;
+  validation -> attestation;
 }

@@ -34,4 +34,4 @@ make test-base-metric
 ```
 
 This model parses carrier notation only. It does not validate relations, merge
-origins, or issue receipts.
+origins, or issue attestations.

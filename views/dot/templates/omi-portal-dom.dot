@@ -4,8 +4,8 @@ digraph omi_portal_dom {
   omi [label="omi-node"];
   content [label="projection context"];
   imo [label="imo-node"];
-  receipt [label="external receipt"];
+  attestation [label="external attestation"];
   omi -> content;
   content -> imo;
-  imo -> receipt;
+  imo -> attestation;
 }

@@ -202,7 +202,7 @@ The tangent operator appears at the **boundary between declaration and citation*
     ?O_o ← TANGENT BRANCH
     ↓
  2: Assertion (cited value becomes a claim)
- 3: Attestation (claim is receipted)
+ 3: Attestation (claim is attested)
  4: Observation (others may inspect)
  5: Annotation (another view creates relation)
  6: Agreement (contradiction resolved)

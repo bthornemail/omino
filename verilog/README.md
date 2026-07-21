@@ -15,7 +15,7 @@ observer boundary = token equals 0x80
 admissible = declaration-range token and matching OMNION parity
 ```
 
-`o_is_admissible` is an interlock signal. It is not a receipt and does not replace validation.
+`o_is_admissible` is an interlock signal. It is not a attestation and does not replace validation.
 
 ## Test
 
@@ -77,7 +77,7 @@ Q(x, y) = 60x^2 + 16xy + 4y^2
 0xB0..0xFF -> high-bit sparse lazy band, high-nibble delineation active
 ```
 
-The BQF output is a diagnostic place-value metric. The resolver does not validate relations, merge origins, or issue receipts.
+The BQF output is a diagnostic place-value metric. The resolver does not validate relations, merge origins, or issue attestations.
 
 Run:
 
@@ -115,7 +115,7 @@ machine word = opcode[15:12] || slot5040[11:0]
 ready        = slot5040 < 5040 and character_token <= 0x7F
 ```
 
-Invalid slots or tokens force the output to the `0x0000` centroid word. This is a lowering interlock, not validation or receipt authority.
+Invalid slots or tokens force the output to the `0x0000` centroid word. This is a lowering interlock, not validation or attestation authority.
 
 Run:
 
@@ -135,7 +135,7 @@ lockout      = active-low on phase, tetra, or Hamming double-error fault
 priority     = Hamming > Tetragrammatron > phase
 ```
 
-`o_lockout_n` is an interlock signal. It does not validate relations, merge origins, or issue receipts.
+`o_lockout_n` is an interlock signal. It does not validate relations, merge origins, or issue attestations.
 
 Run:
 
@@ -160,7 +160,7 @@ all other non-root nibbles -> weight 4
 ```
 
 The weight is an entrainment metric. It does not validate relations, merge
-origins, or issue receipts.
+origins, or issue attestations.
 
 Run:
 
@@ -182,7 +182,7 @@ reset clears the sticky interlock
 ```
 
 This interlock detects export drift. It does not prove compiler correctness,
-validate relations, merge origins, or issue receipts.
+validate relations, merge origins, or issue attestations.
 
 Run:
 

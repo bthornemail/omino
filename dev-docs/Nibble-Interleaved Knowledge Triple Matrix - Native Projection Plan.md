@@ -28,7 +28,7 @@ Hamming/Miquel checks integrity.
 COBS frames.
 CONS preserves continuation.
 Validation accepts.
-Receipt records.
+Attestation records.
 HTML/Canvas/DOT/SVG project.
 ```
 
@@ -45,7 +45,7 @@ HTML != authority
 Canvas != authority
 DOT != authority
 SVG != authority
-innerHTML != receipt
+innerHTML != attestation
 rendering != validation
 ```
 
@@ -62,7 +62,7 @@ selector
 scope
 integrity state
 validation state
-receipt state
+attestation state
 ```
 
 Overlapping contributions must remain distinct. Validated equivalence may appear as an edge or witness, but must not collapse source nodes automatically.
@@ -383,7 +383,7 @@ COBS frames but does not validate.
 CONS preserves ordered continuation.
 Hamming/Miquel checks integrity but does not accept.
 Validation accepts.
-Receipt records.
+Attestation records.
 Projection displays.
 ```
 
@@ -409,7 +409,7 @@ The Lambda Canon Block is a complete, non-divisible block. It stores local decla
 )
 ```
 
-This block is the declaration carrier after parsing and resolution. It is not a receipt, not a projection, and not an automatic equivalence proof.
+This block is the declaration carrier after parsing and resolution. It is not a attestation, not a projection, and not an automatic equivalence proof.
 
 ### 12.2 Architectural Space Partitioning
 
@@ -501,7 +501,7 @@ Notes for implementation:
 
 ```text
 i_received_omnion is used as an integrity witness input.
-o_is_admissible is an interlock signal, not a receipt.
+o_is_admissible is an interlock signal, not a attestation.
 The RTL must not become mandatory for the default C build.
 The C runtime remains the first conformance target until cross-check vectors pass.
 ```
@@ -556,7 +556,7 @@ source .o
 -> CAR/CDR contribution coordinates
 -> ordered CONS continuation
 -> optional recovery of a missing coordinate
--> validation and receipt only when explicit witnesses accept
+-> validation and attestation only when explicit witnesses accept
 ```
 
 The lawful resolver profile is the existing rotate/XOR fold:
@@ -573,7 +573,7 @@ CAR = rotr32(CONS XOR rotl32(CDR, 3) XOR salt, 1)
 CDR = rotr32(CONS XOR rotl32(CAR, 1) XOR salt, 3)
 ```
 
-This reconstructs a missing coordinate when the other coordinate, the CONS word, and the resolver profile are already known. It does not validate equivalence, does not receipt acceptance, and does not give Union-Find permission to merge origins.
+This reconstructs a missing coordinate when the other coordinate, the CONS word, and the resolver profile are already known. It does not validate equivalence, does not attestation acceptance, and does not give Union-Find permission to merge origins.
 
 The square tracking line remains diagnostic:
 
@@ -623,7 +623,7 @@ When GHC is installed, this target:
 2. Requires an invalid mux-band module using token `135` to fail type-checking.
 3. Requires an invalid observer-boundary module using token `127` to fail type-checking.
 
-These checks are reference-surface constraints. They do not replace runtime validation, receipt authority, `.o` provenance, or the C recovery/conformance tests.
+These checks are reference-surface constraints. They do not replace runtime validation, attestation authority, `.o` provenance, or the C recovery/conformance tests.
 
 ---
 
@@ -645,7 +645,7 @@ DIN 41612 J1/J2 pinout       defined_model
 LOCKOUT_N behavior           hardware profile
 ```
 
-The backplane profile does not validate relations and does not replace `.o` provenance, runtime validation, or receipts.
+The backplane profile does not validate relations and does not replace `.o` provenance, runtime validation, or attestations.
 
 ESP32 adapter status:
 
@@ -721,7 +721,7 @@ make clock-crosscheck
 make test-octahedral-types
 ```
 
-This router is projection and routing support. It does not validate, receipt, merge origins, or change the C runtime selector authority.
+This router is projection and routing support. It does not validate, attestation, merge origins, or change the C runtime selector authority.
 
 The Haskell type-level octahedral harness mirrors the same law under `tests/octahedral-types`. It intentionally rejects `0xA080 -> Face4`: `0xA080` compresses to row nibble `0xA`, column nibble `0x8`, and therefore resolves to Face 5.
 
@@ -763,7 +763,7 @@ Metatron owning 0x3C
 address plane 0x100
 ```
 
-These are namespace/category checks for the Haskell reference surface. They do not replace runtime validation, receipts, or source provenance.
+These are namespace/category checks for the Haskell reference surface. They do not replace runtime validation, attestations, or source provenance.
 
 ---
 
@@ -806,7 +806,7 @@ make metatron-scribe-test
 make clock-crosscheck
 ```
 
-This block is separated from Tetragrammatron closure. It logs route/place state and carries, but it does not accept relations or issue receipts.
+This block is separated from Tetragrammatron closure. It logs route/place state and carries, but it does not accept relations or issue attestations.
 
 ---
 
@@ -856,7 +856,7 @@ make omnicron-bqf-test
 make clock-crosscheck
 ```
 
-This layer is transport and diagnostic routing support. It does not replace `.o`, does not validate relations, does not merge coproduct origins, and does not issue receipts.
+This layer is transport and diagnostic routing support. It does not replace `.o`, does not validate relations, does not merge coproduct origins, and does not issue attestations.
 
 ---
 
@@ -918,7 +918,7 @@ make test-meta-compiler-types
 make clock-crosscheck
 ```
 
-These layers schedule and lower modeled instruction coordinates. They do not replace `.o`, do not validate relations, do not merge coproduct origins, and do not issue receipts.
+These layers schedule and lower modeled instruction coordinates. They do not replace `.o`, do not validate relations, do not merge coproduct origins, and do not issue attestations.
 
 ---
 
@@ -999,7 +999,7 @@ Proof checks are run from outside Omino:
 make -C /home/main/omi/axiomatic-sovereignty/LOGIC_PROOFS -f coq/Makefile proof
 ```
 
-Omino `make check` intentionally does not require Coq, the sibling proof repository, or generated proof artifacts. The bibliography does not replace runtime validation, `.o` provenance, or receipt authority.
+Omino `make check` intentionally does not require Coq, the sibling proof repository, or generated proof artifacts. The bibliography does not replace runtime validation, `.o` provenance, or attestation authority.
 
 ---
 
@@ -1030,7 +1030,7 @@ Fault priority is deterministic:
 00 no fault
 ```
 
-Any fault drives `o_lockout_n` low. This is a hardware interlock monitor only; it does not validate relations, merge origins, or issue receipts.
+Any fault drives `o_lockout_n` low. This is a hardware interlock monitor only; it does not validate relations, merge origins, or issue attestations.
 
 Conformance targets:
 
@@ -1085,7 +1085,7 @@ make test-esp32-gossip
 make test-tcg-backend-spec
 ```
 
-The gossip layer transports sparse board contributions; the TCG profile records a virtualization lowering surface. Neither layer validates relations, merges origins, or issues receipts.
+The gossip layer transports sparse board contributions; the TCG profile records a virtualization lowering surface. Neither layer validates relations, merges origins, or issues attestations.
 
 ---
 
@@ -1128,7 +1128,7 @@ The tetrahedral storage face map is:
 3 USER
 ```
 
-Boot read is not acceptance. Header match is not acceptance. Frame parse is not acceptance. The candidate resolution API returns `BOOT_ERROR_SECURE_REJECTION` unless an explicit secure receipt flag is supplied.
+Boot read is not acceptance. Header match is not acceptance. Frame parse is not acceptance. The candidate resolution API returns `BOOT_ERROR_SECURE_REJECTION` unless an explicit secure attestation flag is supplied.
 
 Conformance target:
 
@@ -1136,7 +1136,7 @@ Conformance target:
 make test-boot-envelope
 ```
 
-This profile stages boot candidates only. It does not validate relations, merge origins, or issue receipts.
+This profile stages boot candidates only. It does not validate relations, merge origins, or issue attestations.
 
 ---
 
@@ -1178,7 +1178,7 @@ transcode -> 0x1D55 @ 0x24
 ```
 
 The bridge authorizes hardware effect lanes only when the carrier is
-receipt-backed and has a nonzero carrier hash. Media data remains a carrier, not
+attestation-locked and has a nonzero carrier hash. Media data remains a carrier, not
 truth.
 
 The Metatron pre-closure profile models:
@@ -1200,7 +1200,7 @@ make test-metatron-preclosure
 ```
 
 These profiles parse carrier notation, gate effects, and inscribe pre-closure
-paths. They do not validate relations, merge origins, or issue receipts.
+paths. They do not validate relations, merge origins, or issue attestations.
 
 ---
 
@@ -1246,7 +1246,7 @@ make clock-crosscheck
 
 The nibble remains the exact digital routing coordinate. The Pascal coefficient
 is an entrainment metric only; it must not override identity, validation,
-receipt, or origin-preserving coproduct state.
+attestation, or origin-preserving coproduct state.
 
 ---
 
@@ -1292,7 +1292,7 @@ make clock-crosscheck
 ```
 
 This profile checks deterministic byte streams and interlocks on mismatches. It
-does not validate relations, merge origins, issue receipts, or prove universal
+does not validate relations, merge origins, issue attestations, or prove universal
 compiler correctness across platforms.
 
 ---
@@ -1343,4 +1343,4 @@ make clock-crosscheck
 ```
 
 These layouts are display/projection surfaces only. They must not collapse
-nodes, validate relations, mutate memory, merge origins, or issue receipts.
+nodes, validate relations, mutate memory, merge origins, or issue attestations.

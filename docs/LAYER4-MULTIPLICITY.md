@@ -31,4 +31,4 @@ make clock-crosscheck
 
 The nibble remains the exact digital route. The Pascal weight is an entrainment
 metric only; it does not alter identity, validate relations, merge origins, or
-issue receipts.
+issue attestations.

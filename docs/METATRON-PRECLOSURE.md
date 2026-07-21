@@ -23,4 +23,4 @@ Conformance target:
 make test-metatron-preclosure
 ```
 
-Metatron records where a relation occurred. It does not validate or receipt by itself.
+Metatron records where a relation occurred. It does not validate or attestation by itself.

@@ -38,4 +38,4 @@ make clock-crosscheck
 ```
 
 This profile computes presentation coordinates and fold/unfold witnesses. It
-does not validate relations, merge origins, mutate memory, or issue receipts.
+does not validate relations, merge origins, mutate memory, or issue attestations.

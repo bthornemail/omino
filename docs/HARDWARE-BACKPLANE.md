@@ -1,6 +1,6 @@
 # Multi-Board Backplane Clustering
 
-This document records the Section 30 physical backplane proposal as an implementation boundary. It is a hardware integration profile, not a new runtime authority. The C runtime, `.o` provenance, validation gate, and receipt layer remain authoritative for accepted relations.
+This document records the Section 30 physical backplane proposal as an implementation boundary. It is a hardware integration profile, not a new runtime authority. The C runtime, `.o` provenance, validation gate, and attestation layer remain authoritative for accepted relations.
 
 ## Topology
 

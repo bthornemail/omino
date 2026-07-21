@@ -26,7 +26,7 @@ Omi Object Model
 
 The Lambda Canon Block does not validate by itself.
 
-It does not receipt by itself.
+It does not attestation by itself.
 
 It does not make projection authoritative.
 
@@ -89,7 +89,7 @@ Each pair is a local declaration.
 
 The block is the agreement candidate.
 
-Validation and receipt remain downstream.
+Validation and attestation remain downstream.
 
 ---
 
@@ -371,12 +371,12 @@ The Lambda Canon Block prepares this condition.
 
 It does not complete it.
 
-Completion still requires validation and receipt.
+Completion still requires validation and attestation.
 
 ```text
 Declaration prepares.
 Validation accepts.
-Receipt records.
+Attestation records.
 Projection displays.
 ```
 
@@ -461,7 +461,7 @@ hypergraph incidence
 spherical coordination
 ```
 
-Its purpose is to define the predicate for canonical agreement from a declared subject without confusing classification, validation, receipt, projection, or interpretation.
+Its purpose is to define the predicate for canonical agreement from a declared subject without confusing classification, validation, attestation, projection, or interpretation.
 
 ---
 
@@ -819,7 +819,7 @@ CONS SHALL preserve relational continuation.
 
 The Miquel configuration SHALL preserve extended-code incidence.
 
-Validation and receipt alone SHALL accept state.
+Validation and attestation alone SHALL accept state.
 
 ---
 
@@ -895,7 +895,7 @@ It does not, by itself, safely distinguish every double-bit error from a single-
 
 Therefore an Omnicron implementation MUST choose one of two profiles.
 
-### Profile A: Hamming `[7,4,3]` with External Receipt Integrity
+### Profile A: Hamming `[7,4,3]` with External Attestation Integrity
 
 Use:
 
@@ -904,12 +904,12 @@ Hamming [7,4,3]
 +
 frame length
 +
-receipt hash or checksum
+attestation hash or checksum
 ```
 
 Hamming corrects one local bit.
 
-The receipt or frame-level integrity check rejects an incorrectly corrected multi-bit corruption.
+The attestation or frame-level integrity check rejects an incorrectly corrected multi-bit corruption.
 
 ### Profile B: Extended Hamming `[8,4,4]`
 
@@ -993,7 +993,7 @@ reconstruct CONS relations
 ↓
 validate
 ↓
-receipt
+attestation
 ```
 
 COBS MUST be applied after the Hamming-coded features have been packed into bytes.
@@ -1202,10 +1202,10 @@ correct
 resolve
 interpret
 validate
-receipt
+attestation
 ```
 
-Only validation and receipt accept state.
+Only validation and attestation accept state.
 
 ---
 
@@ -1241,7 +1241,7 @@ The decoder MUST NOT allow an integrity correction to:
 create new scope
 change address authority
 accept a declaration
-emit an accepted receipt without validation
+emit an accepted attestation without validation
 ```
 
 ---
@@ -1314,7 +1314,7 @@ OMI-Lisp / Lambda Canon Block
 validation
   acceptance decision
 
-receipt
+attestation
   durable accepted-state witness
 ```
 
@@ -1335,7 +1335,7 @@ FS/GS/RS/US carries scope.
 LOGOS/NOMOS/PATHOS checks the carried relation.
 CONS preserves relational traversal.
 COBS preserves stream boundaries.
-Validation and receipt alone accept state.
+Validation and attestation alone accept state.
 ```
 # Whitepaper: The 240-State Bridge in OMI
 

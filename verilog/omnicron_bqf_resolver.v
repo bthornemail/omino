@@ -7,7 +7,7 @@
  * 4-scaled binary quadratic form evaluation.
  *
  * This block reports routing/interlock signals. It does not validate relations,
- * merge origins, or issue receipts.
+ * merge origins, or issue attestations.
  */
 module omnicron_bqf_resolver (
     input  wire        clk,

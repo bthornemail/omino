@@ -2982,11 +2982,11 @@ No projection operation may change the accepted canonical relation unless it inv
 
 ---
 
-# 24. Validation, coordinates, and historical “receipts”
+# 24. Validation, coordinates, and historical “attestations”
 
 The architecture should prefer precise role names.
 
-Where older documents use “receipt” for several different things, the runtime should distinguish:
+Where older documents use “attestation” for several different things, the runtime should distinguish:
 
 ```text
 coordinate
@@ -3008,7 +3008,7 @@ projection
 an inspectable view
 ```
 
-“Receipt” may remain as a compatibility or historical term, but it must not collapse all of these roles.
+“Attestation” may remain as a compatibility or historical term, but it must not collapse all of these roles.
 
 ---
 

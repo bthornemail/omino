@@ -6,7 +6,7 @@ This is a projection/router layer:
 
 - It does not validate relations.
 - It does not merge coproduct origins.
-- It does not emit receipts.
+- It does not emit attestations.
 - It must stay equivalent to the runtime selector law.
 
 ## Face Law

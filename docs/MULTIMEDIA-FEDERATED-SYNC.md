@@ -15,7 +15,7 @@ Seed examples:
 (seed.model3d . o.glb.o)
 ```
 
-The media bridge gates hardware effects only when the carrier has a local receipt-backed authorization and a nonzero carrier hash.
+The media bridge gates hardware effects only when the carrier has a local attestation-locked authorization and a nonzero carrier hash.
 
 | Effect | Bridge word | Offset | Meaning |
 | --- | --- | --- | --- |
@@ -30,4 +30,4 @@ Conformance target:
 make test-media-bridge
 ```
 
-This layer gates effects. It does not validate relations, merge origins, or issue receipts.
+This layer gates effects. It does not validate relations, merge origins, or issue attestations.

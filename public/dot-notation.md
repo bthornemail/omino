@@ -1,7 +1,7 @@
 # Emergent Axial Lisp Native Dot-Notation View
 
 This file records the readable OMI CONS surface for the static native view.
-Projection is contextual. Receipt remains external and explicit.
+Projection is contextual. Attestation remains external and explicit.
 
 ## Lambda Canon Block
 
@@ -85,5 +85,5 @@ Hyphens delineate.
 Segments triangulate.
 DOM nests.
 Horn proves.
-Receipt accepts.
+Attestation accepts.
 ```

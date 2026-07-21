@@ -87,7 +87,7 @@ static omi_boot_status omi_boot_envelope_parse(const uint8_t *envelope_buf,
 static omi_boot_status omi_boot_resolve_candidate(uint8_t incidence_face,
                                                   uint32_t x,
                                                   uint32_t y,
-                                                  bool secure_receipt,
+                                                  bool secure_attestation,
                                                   OmiBootResolution *out_res) {
     if (out_res == NULL) return BOOT_ERROR_INVALID_ARGUMENT;
     if (incidence_face >= OMI_BOOT_FACE_COUNT || x >= OMI_BOOT_FIELD_X_LIMIT ||
@@ -99,7 +99,7 @@ static omi_boot_status omi_boot_resolve_candidate(uint8_t incidence_face,
     out_res->active_incidence_face = incidence_face;
     out_res->is_centroid_core = (x == 0u && y == 0u);
 
-    if (!secure_receipt) return BOOT_ERROR_SECURE_REJECTION;
+    if (!secure_attestation) return BOOT_ERROR_SECURE_REJECTION;
     return BOOT_OK;
 }
 

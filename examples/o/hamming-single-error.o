@@ -6,4 +6,4 @@ codeword clean 0100011
 corruption single position=5
 expect syndrome 5
 expect correction accepted_by_integrity_only
-receipt pending
+attestation pending

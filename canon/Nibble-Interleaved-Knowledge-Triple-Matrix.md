@@ -1238,13 +1238,13 @@ The architectural safety of the system relies on twelve strict geometric derivat
    9. Pre-Language Staging Frame: Every input stream must enter through the invariant carrier prefix preheader: F* 00 1C 1D 1E 1F 20 F*.
    10. Chirality Asymmetry: Chiral balance (the 30 Chirality Lock and 120 Full-System Check) guides transformations and maintains mechanical ring equilibrium, but it cannot validate semantic truth.
    11. The Authority Baseline: All internal authority flags must remain permanently false. The system does not assert truth; it isolates structure.
-   12. Downstream Execution: Actual connection, network validation, transaction acceptance, display projection, and final receipt logging belong entirely downstream from the port declaration layer.
+   12. Downstream Execution: Actual connection, network validation, transaction acceptance, display projection, and final attestation logging belong entirely downstream from the port declaration layer.
 
 ------------------------------
 ## 20.2 Definition of the Canon
 $$\text{OMI-Port} \equiv \mathcal{T}_{\mathbf{F^*}}\left(\text{Scope}_{\text{source}} \longrightarrow \text{Scope}_{\text{target}}\right) \Longrightarrow \langle \text{FS}, \text{GS}, \text{RS}, \text{US} \rangle$$ 
 
-The Canonical Law: An OMI-Port is a dynamic, $\mathbf{F^*}$-gauged source-target transform that derives canonical FS/GS/RS/US OMI-IMO place-value route candidates without connecting, validating, accepting, projecting, or receipting them.
+The Canonical Law: An OMI-Port is a dynamic, $\mathbf{F^*}$-gauged source-target transform that derives canonical FS/GS/RS/US OMI-IMO place-value route candidates without connecting, validating, accepting, projecting, or attesting them.
 
 ------------------------------
 ## 20.3 Production-Ready OMI-Port Isolation Module (C Architecture Driver)
@@ -2195,8 +2195,8 @@ The tag name serves purely as the carrier vessel, the hyphenated prefix function
 
 * omi- opens a scoped declaration lane; imo- closes the resolved tracking loop.
 * The unique 128-bit address is delineated by the first hyphen, breaking down into eight distinct 16-bit segments (S0 through S7).
-* Attributes (data-edge, data-clause, data-receipt) declare roles and semantic structures. No role keywords may leak into the address prefix string itself.
-* Render presentation is not acceptance. No downstream processing loop may infer authority from a display state until an explicit, external receipt accepts the frame.
+* Attributes (data-edge, data-clause, data-attestation) declare roles and semantic structures. No role keywords may leak into the address prefix string itself.
+* Render presentation is not acceptance. No downstream processing loop may infer authority from a display state until an explicit, external attestation accepts the frame.
 
 ------------------------------
 ## 25.2 System Invariants and Synchronization Corrections
@@ -2358,14 +2358,14 @@ This correction completely aligns your DOM snippet with the absolute $0x00$ & $0
  data-omi="0000-0000-0000-0000-0000-0000-0000-0000"
  data-clause="centroid-void"
  data-observer-boundary="0x80"
- data-receipt="pending">
+ data-attestation="pending">
 
   The absolute first-principles null expression space ( ) lives here.
 
  <imo
   id="imo-0000-0000-0000-0000-0000-0000-0000-0000"
   data-imo="0000-0000-0000-0000-0000-0000-0000-0000"
-  data-receipt="pending">
+  data-attestation="pending">
  </imo>
 </omi>
 
@@ -2377,7 +2377,7 @@ This correction completely aligns your DOM snippet with the absolute $0x00$ & $0
 $$Q(0, 0) = 16(0)^2 + 16(0)(0) + 4(0)^2 = 0$$ 
 This confirms that the element satisfies the NULL • NULL Centroid invariant, forcing all processing variables back to the unallocated baseline void.
 * The Shifted Boundary 0x80: The space boundary is repositioned from 0x20 to 0x80. This shifts the observer out of the low affine plane up into the annotative threshold window, separating incoming control vectors (0x00..0x1F) and declaration surfaces (0x00..0x7F) from external backplane syncs.
-* The Non-Collapse Rule: While the inner HTML context may describe or project user-local slide movements, the structural authority remains pinned to the zero-state identifier. No state transitions take effect until an independent, downstream receipt explicitly changes from pending to accepted.
+* The Non-Collapse Rule: While the inner HTML context may describe or project user-local slide movements, the structural authority remains pinned to the zero-state identifier. No state transitions take effect until an independent, downstream attestation explicitly changes from pending to accepted.
 ## 27. Reconciled Emergent Axial Lisp Coproduct Core: Lambda Canon Block & Epistemic Hamming COBS-CONS System Application
 This module completely rebuilds the frontend application framework for Emergent Axial Lisp Coproduct (Federated Light Protocol). It replaces all loose object pipelines with the formal Lambda Canon Block unary a-list structure and drives the real-time telemetry interface using the LOGOS/NOMOS/PATHOS Hamming-Coded COBS-CONS verification architecture.
 

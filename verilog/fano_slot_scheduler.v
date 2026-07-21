@@ -8,7 +8,7 @@
  *   slot5040 = fano7 * 720 + role3 * 240 + local240
  *
  * This is a scheduler/index projection. It does not validate relations, merge
- * origins, or issue receipts.
+ * origins, or issue attestations.
  */
 module fano_slot_scheduler (
     input  wire        clk,
