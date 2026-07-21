@@ -335,7 +335,16 @@ static OmiQuadrant16 omi_forward_map_quadrant(uint8_t selector_idx) {
     return q;
 }
 
-/* selector index and route from pure bit extraction -- no thresholds, no arithmetic */
+/* selector index and route from pure bit extraction -- no thresholds, no arithmetic.
+ *
+ * The selector index is the packed 3-bit Knowledge Triple corner:
+ *   bit 0    = right-bank column bit, from compressed column bit 3
+ *   bits 1-2 = row band, from compressed row bits 6-7
+ *
+ * Selector bit 2 is therefore the CAR/CDR bus discriminator:
+ *   0xxx -> Local/CAR selectors 0..3
+ *   1xxx -> Remote/CDR selectors 4..7
+ */
 static OmiBusRoute omi_reverse_route(uint16_t address, uint8_t *out_selector_idx) {
     uint8_t compressed = omi_nibble_compress(address);
 
@@ -359,6 +368,67 @@ static bool omi_verify_car_cdr_mirror(void) {
         uint8_t local_base  = OMI_SELECTOR_TABLE[i][0];
         uint8_t remote_base = OMI_SELECTOR_TABLE[i + 4][0];
         if ((uint8_t)(local_base ^ 0x80u) != remote_base) return false;
+    }
+    return true;
+}
+
+static bool omi_verify_selector_roundtrip(void) {
+    for (uint8_t selector = 0; selector < 8u; selector++) {
+        for (uint8_t corner = 0; corner < 4u; corner++) {
+            uint8_t compressed = OMI_SELECTOR_TABLE[selector][corner];
+            uint16_t expanded = omi_nibble_interleave(compressed);
+            if (omi_nibble_compress(expanded) != compressed) return false;
+        }
+    }
+    return true;
+}
+
+static bool omi_verify_quadrant_corner_decode(void) {
+    for (uint8_t selector = 0; selector < 8u; selector++) {
+        for (uint8_t corner = 0; corner < 4u; corner++) {
+            uint8_t decoded = 0xFFu;
+            OmiBusRoute route = omi_reverse_route(
+                omi_nibble_interleave(OMI_SELECTOR_TABLE[selector][corner]),
+                &decoded);
+            OmiBusRoute expected_route =
+                (selector & 0x04u) ? OMI_BUS_REMOTE_CDR : OMI_BUS_LOCAL_CAR;
+
+            if (decoded != selector) return false;
+            if (route != expected_route) return false;
+        }
+    }
+    return true;
+}
+
+static bool omi_verify_quadrant_interior_decode(void) {
+    static const uint8_t representative[8] = {
+        0x21u, 0x2Au, 0x51u, 0x5Au, 0x91u, 0x9Au, 0xD1u, 0xDAu
+    };
+
+    for (uint8_t selector = 0; selector < 8u; selector++) {
+        uint8_t decoded = 0xFFu;
+        OmiBusRoute route = omi_reverse_route(omi_nibble_interleave(representative[selector]),
+                                               &decoded);
+        OmiBusRoute expected_route =
+            (selector & 0x04u) ? OMI_BUS_REMOTE_CDR : OMI_BUS_LOCAL_CAR;
+
+        if (decoded != selector) return false;
+        if (route != expected_route) return false;
+    }
+    return true;
+}
+
+static bool omi_verify_selector_bus_split(void) {
+    for (uint8_t selector = 0; selector < 8u; selector++) {
+        uint8_t decoded = 0xFFu;
+        OmiBusRoute route = omi_reverse_route(omi_nibble_interleave(OMI_SELECTOR_TABLE[selector][0]),
+                                               &decoded);
+
+        if (decoded != selector) return false;
+        if ((selector < 4u && route != OMI_BUS_LOCAL_CAR) ||
+            (selector >= 4u && route != OMI_BUS_REMOTE_CDR)) {
+            return false;
+        }
     }
     return true;
 }
@@ -1196,6 +1266,14 @@ int main(void) {
            omi_nibble_compress(bounds.top_left),
            omi_nibble_compress(bounds.top_left) == OMI_SELECTOR_TABLE[selector_idx][0]
                ? "PASS" : "FAIL");
+    printf("  Full selector table interleave/compress roundtrip: %s\n",
+           omi_verify_selector_roundtrip() ? "PASS" : "FAIL");
+    printf("  All quadrant corners decode to their selectors and buses: %s\n",
+           omi_verify_quadrant_corner_decode() ? "PASS" : "FAIL");
+    printf("  Representative interior addresses decode correctly: %s\n",
+           omi_verify_quadrant_interior_decode() ? "PASS" : "FAIL");
+    printf("  Selector bus split 0..3=Local/CAR, 4..7=Remote/CDR: %s\n",
+           omi_verify_selector_bus_split() ? "PASS" : "FAIL");
 
     bool mirror_ok = omi_verify_car_cdr_mirror();
     printf("  Remote base == Local base XOR 0x80 for all 4 pairs: %s\n\n",
