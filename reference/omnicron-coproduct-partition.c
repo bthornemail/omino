@@ -798,7 +798,8 @@ static bool omi_verify_azimuth_anchors(void) {
  * azimuth positions. OMNION=0 is the reference orientation (0 degrees).
  * OMNION=1 is the antipodal orientation (180 degrees). This is the same
  * XOR-0x80 mirror as omi_plane_mirror and the CAR/CDR router's Local/Remote
- * split (Sections 1 and 6) -- one law, applied at the orientation layer. */
+ * split (Sections 1 and 6) -- one law, applied through
+ * Gnomonic Projection Azimuth. */
 static inline uint8_t omi_omnion_azimuth_byte(uint8_t omnion) {
     return (uint8_t)((omnion & 0x01u) << 7);
 }

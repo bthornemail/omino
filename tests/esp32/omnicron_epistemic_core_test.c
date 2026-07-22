@@ -49,7 +49,7 @@ int main(void) {
     q.local_field_x = OMI_LOCAL_240_FIELD;
     if (omnicron_resolve_epistemic_quadrant(&q, &res) !=
         OMNICRON_ERROR_DELINEATION_BREACH) {
-        return fail("local 240-field breach was accepted");
+        return fail("local 240-chart breach was accepted");
     }
 
     printf("Omnicron epistemic core conformance verified: examples/esp32/omnicron_epistemic_core.c\n");

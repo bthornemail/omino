@@ -117,7 +117,7 @@ BASE_METRIC_TEST := $(TEST_TMP_DIR)/base_metric_seed_model_test
 BINARY_EXPORT_EXAMPLE := examples/compiler/binary_export_verifier.c
 BINARY_EXPORT_TEST := $(TEST_TMP_DIR)/binary_export_verifier_test
 
-.PHONY: all run test test-strict test-sanitize test-conformance test-golden test-recovery test-algorithmic-laws test-o-lifecycle test-lambda-types test-octahedral-types test-canonical-types test-meta-compiler-types test-conformance-guardrail-types test-layer4-types test-metamorphic-types test-lagrange-types test-esp32 test-esp32-gossip test-boot-envelope test-omnicron-epistemic test-tcg-backend-spec test-runtime-lock test-media-bridge test-metatron-preclosure test-base-metric test-binary-export views html canvas dot svg verilog-test octahedral-router-test metatron-scribe-test omnicron-bqf-test fano-slot-test meta-assembler-test backplane-monitor-test layer4-multiplicity-test metamorphic-export-test visual-matrix-test lagrange-space-test clock-crosscheck check view-path clean dist
+.PHONY: all run test test-strict test-sanitize test-conformance test-golden test-recovery test-algorithmic-laws test-hamming-glossary test-o-lifecycle test-lambda-types test-octahedral-types test-canonical-types test-meta-compiler-types test-conformance-guardrail-types test-layer4-types test-metamorphic-types test-lagrange-types test-esp32 test-esp32-gossip test-boot-envelope test-omnicron-epistemic test-tcg-backend-spec test-runtime-lock test-media-bridge test-metatron-preclosure test-base-metric test-binary-export views html canvas dot svg verilog-test octahedral-router-test metatron-scribe-test omnicron-bqf-test fano-slot-test meta-assembler-test backplane-monitor-test layer4-multiplicity-test metamorphic-export-test visual-matrix-test lagrange-space-test clock-crosscheck check view-path clean dist
 
 all: $(TARGET)
 
@@ -141,7 +141,7 @@ test-sanitize: $(SRC) | $(BUILD_DIR) $(TEST_TMP_DIR)
 	$(CC) $(CFLAGS) -fsanitize=address,undefined $(SRC) $(LDFLAGS) -o $(TEST_TMP_DIR)/omnicron-coproduct-partition-sanitize
 	ASAN_OPTIONS=detect_leaks=0 $(TEST_TMP_DIR)/omnicron-coproduct-partition-sanitize >/dev/null
 
-test-conformance: test-golden test-recovery test-algorithmic-laws test-o-lifecycle test-lambda-types test-octahedral-types test-canonical-types test-meta-compiler-types test-conformance-guardrail-types test-layer4-types test-metamorphic-types test-lagrange-types test-esp32 test-esp32-gossip test-boot-envelope test-omnicron-epistemic test-tcg-backend-spec test-runtime-lock test-base-metric test-media-bridge test-metatron-preclosure test-binary-export views canvas dot
+test-conformance: test-golden test-recovery test-algorithmic-laws test-hamming-glossary test-o-lifecycle test-lambda-types test-octahedral-types test-canonical-types test-meta-compiler-types test-conformance-guardrail-types test-layer4-types test-metamorphic-types test-lagrange-types test-esp32 test-esp32-gossip test-boot-envelope test-omnicron-epistemic test-tcg-backend-spec test-runtime-lock test-base-metric test-media-bridge test-metatron-preclosure test-binary-export views canvas dot
 
 test-golden: $(TARGET) $(GOLDEN_RUNTIME) | $(TEST_TMP_DIR)
 	./$(TARGET) > $(RUNTIME_ACTUAL)
@@ -159,6 +159,55 @@ $(ALGORITHMIC_LAWS_TEST): tests/algorithmic/algorithmic_laws_conformance.c | $(T
 
 test-algorithmic-laws: $(ALGORITHMIC_LAWS_TEST)
 	$(ALGORITHMIC_LAWS_TEST)
+
+test-hamming-glossary: docs/OMI-HAMMING-GLOSSARY.md SKILLS.md AGENTS.md IMPLEMENTATION_PLAN.md dev-docs/Nibble-Interleaved\ Quadrant\ Decoding\ under\ a\ Concurrent\ 3D\ Knowledge\ Triple\ Matrix.md
+	@rg -q 'Nibble-Interleaved Quadrant Decoding under a Concurrent 3D Knowledge Triple Matrix\.md' docs/OMI-HAMMING-GLOSSARY.md
+	@rg -q 'Nibble-Interleaved Quadrant Decoding under a Concurrent 3D Knowledge Triple Matrix\.md' IMPLEMENTATION_PLAN.md
+	@rg -q 'Bit 1 = FS = FACTS\.omi' docs/OMI-HAMMING-GLOSSARY.md
+	@rg -q 'Bit 2 = GS = RULES\.omi' docs/OMI-HAMMING-GLOSSARY.md
+	@rg -q 'Bit 3 = RS = COMBINATORS\.omi' docs/OMI-HAMMING-GLOSSARY.md
+	@rg -q 'Bit 4 = US = CLOSURES\.omi' docs/OMI-HAMMING-GLOSSARY.md
+	@rg -q 'LOGOS = FACTS XOR RULES XOR CLOSURES' docs/OMI-HAMMING-GLOSSARY.md
+	@rg -q 'NOMOS = FACTS XOR COMBINATORS XOR CLOSURES' docs/OMI-HAMMING-GLOSSARY.md
+	@rg -q 'PATHOS = RULES XOR COMBINATORS XOR CLOSURES' docs/OMI-HAMMING-GLOSSARY.md
+	@rg -q 'CONS\.omi folds the carried quartet against LOGOS/NOMOS/PATHOS' SKILLS.md
+	@rg -q 'Bit 1 / FS = FACTS\.omi' IMPLEMENTATION_PLAN.md
+	@rg -q 'Bit 2 / GS = RULES\.omi' IMPLEMENTATION_PLAN.md
+	@rg -q 'Bit 3 / RS = COMBINATORS\.omi' IMPLEMENTATION_PLAN.md
+	@rg -q 'Bit 4 / US = CLOSURES\.omi' IMPLEMENTATION_PLAN.md
+	@rg -q '0xYX -> 0xY0X0' IMPLEMENTATION_PLAN.md
+	@rg -q 'SELECTOR_TABLE\[8\]\[4\]' IMPLEMENTATION_PLAN.md
+	@rg -q 'Software Paradigm Drift Lock' IMPLEMENTATION_PLAN.md
+	@rg -q 'runtime evaluator loops' IMPLEMENTATION_PLAN.md
+	@rg -q 'BRANCHLESS ALGEBRAIC STATE TRANSFORMATION' SKILLS.md
+	@rg -q 'current coordinate -> XOR/shift/rotate transform -> next coordinate' SKILLS.md
+	@rg -q 'EXECUTE_CORE_TRANSFORM' SKILLS.md
+	@rg -q 'MAP_KLEIN_QUADRATIC' SKILLS.md
+	@rg -q 'OUTPUT_COORDINATE = blended_matrix \^ 0x1D1D1D1D1D1D1D1D' SKILLS.md
+	@rg -q 'Q16\(x, y\) = \(4x \+ 2y\)\^2' IMPLEMENTATION_PLAN.md
+	@rg -q 'Q60\(x, y\) = 4\(4x\^2 \+ 11x\^2 \+ 4xy \+ y\^2\)' SKILLS.md
+	@rg -q 'Branchless Algebraic Transform' IMPLEMENTATION_PLAN.md
+	@rg -q 'Q60 Klein split' IMPLEMENTATION_PLAN.md
+	@rg -q 'omnicron-object-model COMPILATION TARGET' SKILLS.md
+	@rg -q 'NOMENCLATURE STATUS: FROZEN PHASE LOCK' SKILLS.md
+	@rg -q 'EXECUTE_omino_TRANSFORM' SKILLS.md
+	@rg -q 'ROUTE_omi_OBJECT_STRATA' SKILLS.md
+	@rg -q 'OUTPUT_omino_TILE  = blended_matrix \^ 0x1D1D1D1D1D1D1D1D' SKILLS.md
+	@rg -q 'omnicron-object-model' IMPLEMENTATION_PLAN.md
+	@rg -q 'omi-object-model' IMPLEMENTATION_PLAN.md
+	@rg -q 'omino Tile' IMPLEMENTATION_PLAN.md
+	@rg -q 'omnicron-object-model' AGENTS.md
+	@rg -q 'omi-object-model' AGENTS.md
+	@rg -q 'omino Tile' AGENTS.md
+	@rg -q 'TRI-LAYER AXIAL-LISP FILE ARCHITECTURE' SKILLS.md
+	@rg -q 'target\.omi = CONS\(RULES \. COMBINATORS\)' SKILLS.md
+	@rg -q 'target\.imo = CONS\(FACTS \. CLOSURES\)' SKILLS.md
+	@rg -q 'target\.o   = CONDENSE\(target\.omi \. target\.imo\)' SKILLS.md
+	@rg -q 'Tri-Layer Axial-Lisp File Architecture' IMPLEMENTATION_PLAN.md
+	@rg -q '\*\.omi' IMPLEMENTATION_PLAN.md
+	@rg -q '\*\.imo' IMPLEMENTATION_PLAN.md
+	@rg -q '\*\.o' IMPLEMENTATION_PLAN.md
+	@printf '%s\n' "OMI Hamming glossary verified"
 
 test-o-lifecycle: docs/O-SOURCE-LIFECYCLE.md $(O_EXAMPLES)
 	@rg -q 'attestation' docs/O-SOURCE-LIFECYCLE.md

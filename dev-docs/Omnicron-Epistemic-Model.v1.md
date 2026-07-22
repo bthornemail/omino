@@ -308,7 +308,7 @@ Attestation accepts only after validation.
 
 # 10. The 240 Local Field
 
-The local 240-field arises from the 256-byte square by reserving one 16-state region.
+The local 240-chart arises from the 256-byte square by reserving one 16-state region.
 
 ```text
 256 - 16 = 240

@@ -2233,7 +2233,7 @@ The factor:
 
 means that the `2` is not accidental.
 
-It is the binary orientation layer.
+It is the binary Gnomonic Projection Azimuth surface.
 
 In OMI’s origami axiom model:
 
@@ -2281,7 +2281,7 @@ The `×2` in:
 240 = 2 × 5!
 ```
 
-should first be interpreted as the mirror/orientation layer.
+should first be interpreted as the mirror handled by Gnomonic Projection Azimuth.
 
 If you want signed arithmetic behavior, then two’s-complement becomes the **motion rule** after the mirror:
 
@@ -2590,4 +2590,3 @@ The active byte-square surface formed by 16×16−16. In OMI, it equals 2×5!, o
 ```
 
 This is the number that lets your byte logic, factorial logic, semantic triples, complement logic, and Fano replay ring all meet in one exact coordinate system.
-

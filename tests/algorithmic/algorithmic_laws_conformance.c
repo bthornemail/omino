@@ -2,6 +2,10 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#define OMNION_LOCAL240_FACES 18u
+#define OMNION_BLACKBOARD_QUADRANTS 4u
+#define WORD_RULER_POINTS 60u
+
 static int fail(const char *message) {
     fprintf(stderr, "algorithmic law conformance failed: %s\n", message);
     return 1;
@@ -118,6 +122,72 @@ static bool lagrange_fold(uint8_t band, uint8_t slot, uint8_t *byte) {
     return true;
 }
 
+static uint8_t infinite_axis_nibble(uint64_t address) {
+    return (uint8_t)(address & UINT64_C(0x0F));
+}
+
+static uint8_t infinite_axis_phase60(uint64_t address) {
+    return (uint8_t)(address % WORD_RULER_POINTS);
+}
+
+static uint8_t infinite_axis_phase240(uint64_t address) {
+    return (uint8_t)(address % UINT64_C(240));
+}
+
+static uint64_t infinite_axis_cycle240(uint64_t address) {
+    return address / UINT64_C(240);
+}
+
+static uint8_t local240_coordinate(uint64_t address) {
+    return (uint8_t)(address % UINT64_C(240));
+}
+
+static uint8_t truth_table_row64(uint64_t table_universe, uint8_t row6) {
+    return (uint8_t)((table_universe >> (row6 & 0x3Fu)) & UINT64_C(1));
+}
+
+static uint32_t omnion_ruler_count(void) {
+    return OMNION_LOCAL240_FACES * OMNION_BLACKBOARD_QUADRANTS;
+}
+
+static uint32_t omnion_local_incidence_count(void) {
+    return omnion_ruler_count() * WORD_RULER_POINTS;
+}
+
+static bool omnion_coordinate_bounds(uint8_t local240_face,
+                                     uint8_t quadrant,
+                                     uint8_t circular_point) {
+    return local240_face < OMNION_LOCAL240_FACES &&
+           quadrant < OMNION_BLACKBOARD_QUADRANTS &&
+           circular_point < WORD_RULER_POINTS;
+}
+
+static uint8_t local240_quadrant_gates(uint64_t active_axis_state) {
+    return (uint8_t)(1u << (active_axis_state & UINT64_C(0x03)));
+}
+
+static uint8_t omnion_phase(uint8_t start_phase, uint64_t address) {
+    return (uint8_t)(((uint64_t)(start_phase % WORD_RULER_POINTS) + address) %
+                     WORD_RULER_POINTS);
+}
+
+static bool is_axis_start_branch(uint8_t branch) {
+    return branch == 0x1Fu || branch == 0x2Fu || branch == 0x3Fu ||
+           branch == 0x4Fu || branch == 0x5Fu || branch == 0x6Fu;
+}
+
+static uint16_t expand_parity8(uint8_t parity8) {
+    return (uint16_t)(((uint16_t)parity8 << 8) | parity8);
+}
+
+static uint32_t expand_resolver16(uint16_t resolver16) {
+    return ((uint32_t)resolver16 << 16) | resolver16;
+}
+
+static uint32_t complement_face32(uint32_t face32) {
+    return face32 ^ UINT32_C(0xFFFFFFFF);
+}
+
 static uint8_t h743_parity(uint8_t fs, uint8_t gs, uint8_t rs, uint8_t us) {
     uint8_t logos = (uint8_t)(fs ^ gs ^ us);
     uint8_t nomos = (uint8_t)(fs ^ rs ^ us);
@@ -145,6 +215,9 @@ int main(void) {
     uint8_t band = 0u;
     uint8_t fold_slot = 0u;
     uint8_t byte = 0u;
+    uint16_t resolver16 = 0u;
+    uint32_t face32 = 0u;
+    uint32_t remote32 = 0u;
     bool carry = false;
 
     if (lambda_q(15u, 30u) != 14400u) return fail("Lambda Canon Q mismatch");
@@ -206,6 +279,63 @@ int main(void) {
         return fail("Lagrange fold mismatch");
     }
     if (lagrange_fold(4u, 0u, &byte)) return fail("Lagrange fold bounds mismatch");
+
+    if (infinite_axis_nibble(15u) != 0x0Fu ||
+        infinite_axis_nibble(31u) != 0x0Fu ||
+        infinite_axis_nibble(47u) != 0x0Fu) {
+        return fail("unbounded axis nibble projection mismatch");
+    }
+    if (infinite_axis_phase60(5u) != 5u ||
+        infinite_axis_phase60(65u) != 5u ||
+        infinite_axis_phase60(125u) != 5u) {
+        return fail("unbounded axis phase60 projection mismatch");
+    }
+    if (infinite_axis_phase240(0u) != 0u ||
+        infinite_axis_phase240(240u) != 0u ||
+        infinite_axis_phase240(480u) != 0u ||
+        local240_coordinate(719u) != 239u ||
+        infinite_axis_cycle240(0u) != 0u ||
+        infinite_axis_cycle240(240u) != 1u ||
+        infinite_axis_cycle240(480u) != 2u) {
+        return fail("unbounded axis phase240 cycle mismatch");
+    }
+    if (truth_table_row64(UINT64_C(0x8000000000000001), 0u) != 1u ||
+        truth_table_row64(UINT64_C(0x8000000000000001), 63u) != 1u ||
+        truth_table_row64(UINT64_C(0x8000000000000001), 64u) != 1u ||
+        truth_table_row64(UINT64_C(0x8000000000000001), 1u) != 0u) {
+        return fail("n=6 truth-table row extraction mismatch");
+    }
+    if (omnion_ruler_count() != 72u ||
+        omnion_local_incidence_count() != 4320u ||
+        !omnion_coordinate_bounds(17u, 3u, 59u) ||
+        omnion_coordinate_bounds(18u, 0u, 0u) ||
+        omnion_coordinate_bounds(0u, 4u, 0u) ||
+        omnion_coordinate_bounds(0u, 0u, 60u)) {
+        return fail("OMNION word axis surface accounting mismatch");
+    }
+    if (omnion_phase(7u, 0u) != 7u ||
+        omnion_phase(7u, 60u) != 7u ||
+        omnion_phase(7u, 61u) != 8u) {
+        return fail("OMNION phase mismatch");
+    }
+    if (local240_quadrant_gates(0u) != 0x01u ||
+        local240_quadrant_gates(1u) != 0x02u ||
+        local240_quadrant_gates(2u) != 0x04u ||
+        local240_quadrant_gates(3u) != 0x08u ||
+        local240_quadrant_gates(7u) != 0x08u) {
+        return fail("Local240 quadrant gate mismatch");
+    }
+    if (!is_axis_start_branch(0x1Fu) || !is_axis_start_branch(0x6Fu) ||
+        is_axis_start_branch(0x7Fu)) {
+        return fail("axis start branch mismatch");
+    }
+    resolver16 = expand_parity8(0xFFu);
+    face32 = expand_resolver16(resolver16);
+    remote32 = complement_face32(face32);
+    if (resolver16 != 0xFFFFu || face32 != UINT32_C(0xFFFFFFFF) ||
+        (face32 ^ remote32) != UINT32_C(0xFFFFFFFF)) {
+        return fail("complementary face resolution mismatch");
+    }
 
     if (miquel844_code(1u, 0u, 1u, 1u) != 0x66u) {
         return fail("Miquel [8,4,4] extended parity mismatch");

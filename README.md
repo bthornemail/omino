@@ -237,6 +237,12 @@ PATHOS = GS XOR RS XOR US
 
 FS/GS/RS/US carries scope. LOGOS/NOMOS/PATHOS checks the carried scope.
 
+The root `.omi` file discipline is mapped onto a systematic Hamming cell in
+[OMI-HAMMING-GLOSSARY.md](docs/OMI-HAMMING-GLOSSARY.md). In that map,
+`FS=FACTS.omi`, `GS=RULES.omi`, `RS=COMBINATORS.omi`, and
+`US=CLOSURES.omi`; `CONS.omi` folds the carried quartet against
+`LOGOS/NOMOS/PATHOS`.
+
 The compact `[7,4,3]` profile supports single-error correction when protected by
 an external frame-level witness.
 
@@ -488,6 +494,62 @@ twelve agreement contacts
 The circular ruler does not bound the annotation sequence. It is a finite
 projection of an unbounded four-bit carry-forward address.
 
+## 11.1 OMNION Word Axis Surface
+
+The 72-ruler, 4,320-incidence ruler surface belongs to one unified OMNION word
+axis context. It is not spread across program memory, object arrays, worker
+grids, or sequential tables.
+
+Inside one OMNION word axis, the local fiber is:
+
+```text
+18 Local240 Blackboard Faces
+4 Blackboard Quadrants per face
+60 circular points per quadrant ruler
+```
+
+Therefore:
+
+```text
+18 * 4 * 60 = 4320
+```
+
+The local interpretation coordinate is:
+
+```text
+R[b,q,phi]
+```
+
+where:
+
+```text
+b
+  Local240 Blackboard Face, 0..17
+
+q
+  Blackboard Quadrant, 0..3
+
+phi
+  circular point, 0..59
+```
+
+The full OMNION coordinate retains the local chart together with the
+interpretation start and carry depth:
+
+```text
+OMNION[b_start,k,b,q,phi]
+```
+
+where `b_start` is selected from:
+
+```text
+0x1F, 0x2F, 0x3F, 0x4F, 0x5F, 0x6F
+```
+
+and `k` is the carry or revolution depth. The carry-depth component prevents
+repeated local charts from collapsing into the same addressed position, while
+the 4,320 local incidences remain inside the single OMNION word axis context.
+
 ## 12. The 240-Step Realignment
 
 The local nibble repeats every 16 steps:
@@ -523,9 +585,43 @@ This gives a precise modular basis for the 240-position clockwork:
 
 The 240-step field is therefore not only a geometric analogy. It is the exact
 supercycle of the local hexadecimal route and the sexagesimal phase embedding.
+It is a reusable local chart, not a final address ceiling.
 
-The Omnicron conformance surface explicitly protects the local 240-field
-boundary and rejects values outside that bounded local field.
+The complete decomposition is:
+
+```text
+a = 240k + rho
+```
+
+where:
+
+```text
+k
+  unbounded carry, revolution, or place-value depth
+
+rho
+  local240 coordinate, 0..239
+```
+
+Two addresses may share the same finite projection while remaining different
+global carry-forward coordinates:
+
+```text
+0, 240, 480
+  same phase240
+  different carried address depth
+
+5, 65, 125
+  same phase60
+  different completed revolutions
+
+15, 31, 47
+  same local nibble
+  different higher address places
+```
+
+The Omnicron conformance surface explicitly protects the local 240-chart
+projection while preserving the unbounded carry-forward address above it.
 
 ## 13. Analog Entrainment
 

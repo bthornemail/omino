@@ -30,6 +30,7 @@ PHYSICAL_PROFILE
 | 02 | Selector routing | PASS | `make test-golden` |
 | 03 | XOR-0x80 involution | PASS | `make test-golden`, `make test-conformance-guardrail-types` |
 | 04 | Hamming [7,4,3] | PASS | `make test-golden` |
+| 04A | Hamming five-file glossary | PASS | `make test-hamming-glossary`, `docs/OMI-HAMMING-GLOSSARY.md` |
 | 05 | Miquel [8,4,4] | PASS | `make test-algorithmic-laws` extended parity law |
 | 06 | Single-error correction | PASS | `make test-golden` |
 | 07 | Double-error trap | PASS | `make test-golden` |
@@ -47,7 +48,7 @@ PHYSICAL_PROFILE
 | 19 | Octahedral selector routing | PASS | `make test-algorithmic-laws`, `make test-octahedral-types` |
 | 20 | Canonical namespaces | PASS | `make test-algorithmic-laws`, `make test-canonical-types` |
 | 21 | Metatron inscription | PASS | `make test-algorithmic-laws`, `make test-metatron-preclosure` |
-| 22 | Omnicron local 240 field | PASS | `make test-omnicron-epistemic` |
+| 22 | Omnicron local 240 chart | PASS | `make test-omnicron-epistemic` |
 | 23 | Omnicron BQF logic | PASS | `make test-algorithmic-laws`, `make test-omnicron-epistemic` |
 | 24 | Fano slot engine | PASS | `make test-algorithmic-laws`, `make test-conformance-guardrail-types` |
 | 25 | EAL meta-assembler | PASS | `make test-algorithmic-laws`, `make test-meta-compiler-types` |
@@ -64,18 +65,19 @@ PHYSICAL_PROFILE
 | 36 | Binary export invariance | PASS | `make test-binary-export`, `make test-metamorphic-types` |
 | 37 | Visual matrix coordinate projection | PASS | `make test-algorithmic-laws` |
 | 38 | Lagrange fold/unfold space | PASS | `make test-algorithmic-laws`, `make test-lagrange-types` |
-| 39 | Verilog Lambda Canon backend | BACKEND_OPTIONAL | `make verilog-test`, `make clock-crosscheck` |
-| 40 | Verilog octahedral router backend | BACKEND_OPTIONAL | `make octahedral-router-test`, `make clock-crosscheck` |
-| 41 | Verilog Metatron scribe backend | BACKEND_OPTIONAL | `make metatron-scribe-test`, `make clock-crosscheck` |
-| 42 | Verilog Omnicron BQF backend | BACKEND_OPTIONAL | `make omnicron-bqf-test`, `make clock-crosscheck` |
-| 43 | Verilog Fano scheduler backend | BACKEND_OPTIONAL | `make fano-slot-test`, `make clock-crosscheck` |
-| 44 | Verilog meta-assembler backend | BACKEND_OPTIONAL | `make meta-assembler-test`, `make clock-crosscheck` |
-| 45 | Verilog backplane monitor backend | BACKEND_OPTIONAL | `make backplane-monitor-test`, `make clock-crosscheck` |
-| 46 | Verilog Layer-4 multiplicity backend | BACKEND_OPTIONAL | `make layer4-multiplicity-test`, `make clock-crosscheck` |
-| 47 | Verilog metamorphic export backend | BACKEND_OPTIONAL | `make metamorphic-export-test`, `make clock-crosscheck` |
-| 48 | Verilog visual matrix backend | BACKEND_OPTIONAL | `make visual-matrix-test`, `make clock-crosscheck` |
-| 49 | Verilog Lagrange resolver backend | BACKEND_OPTIONAL | `make lagrange-space-test`, `make clock-crosscheck` |
-| 50 | External Coq proof complex | EXTERNAL_PROOF | `docs/EXTERNAL-PROOF-COMPLEX.md` |
+| 39 | Single OMNION word axis projection | PASS | `make test-algorithmic-laws` |
+| 40 | Verilog Lambda Canon backend | BACKEND_OPTIONAL | `make verilog-test`, `make clock-crosscheck` |
+| 41 | Verilog octahedral router backend | BACKEND_OPTIONAL | `make octahedral-router-test`, `make clock-crosscheck` |
+| 42 | Verilog Metatron scribe backend | BACKEND_OPTIONAL | `make metatron-scribe-test`, `make clock-crosscheck` |
+| 43 | Verilog Omnicron BQF backend | BACKEND_OPTIONAL | `make omnicron-bqf-test`, `make clock-crosscheck` |
+| 44 | Verilog Fano scheduler backend | BACKEND_OPTIONAL | `make fano-slot-test`, `make clock-crosscheck` |
+| 45 | Verilog meta-assembler backend | BACKEND_OPTIONAL | `make meta-assembler-test`, `make clock-crosscheck` |
+| 46 | Verilog backplane monitor backend | BACKEND_OPTIONAL | `make backplane-monitor-test`, `make clock-crosscheck` |
+| 47 | Verilog Layer-4 multiplicity backend | BACKEND_OPTIONAL | `make layer4-multiplicity-test`, `make clock-crosscheck` |
+| 48 | Verilog metamorphic export backend | BACKEND_OPTIONAL | `make metamorphic-export-test`, `make clock-crosscheck` |
+| 49 | Verilog visual matrix backend | BACKEND_OPTIONAL | `make visual-matrix-test`, `make clock-crosscheck` |
+| 50 | Verilog Lagrange resolver backend | BACKEND_OPTIONAL | `make lagrange-space-test`, `make clock-crosscheck` |
+| 51 | External Coq proof complex | EXTERNAL_PROOF | `docs/EXTERNAL-PROOF-COMPLEX.md` |
 
 ## External Proof Boundary
 
